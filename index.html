@@ -6651,6 +6651,86 @@ window.hitRateUnmatchedNames = function(year) {
   return all;
 };
 
+// Console diagnostic: run `await sleeperNameLookup(['Will Fuller', 'NKeal Harry'])`
+// to see how Sleeper names those players. This prevents blind aliasing by showing
+// exact normalized keys and close candidates from Sleeper's player database.
+window.sleeperNameLookup = async function(names, pos) {
+  const input = Array.isArray(names) ? names : [names];
+  const players = Object.keys(sleeperPlayers || {}).length ? sleeperPlayers : await sleeperFetch('/players/nfl');
+  if (!players) { console.warn('Could not load Sleeper players.'); return null; }
+  sleeperPlayers = players;
+
+  const sleeperRows = Object.values(players)
+    .filter(p => p && (p.first_name || p.last_name || p.full_name))
+    .map(p => {
+      const full = (p.full_name || `${p.first_name || ''} ${p.last_name || ''}`).trim();
+      const key = normalizeName(full);
+      return {
+        sleeperId: p.player_id,
+        fullName: full,
+        key,
+        pos: p.position || '',
+        team: p.team || '',
+        status: p.status || '',
+        yearsExp: p.years_exp,
+      };
+    });
+
+  const scoreCandidate = (targetKey, targetPos, row) => {
+    if (targetPos && row.pos && row.pos !== targetPos) return -1;
+    if (row.key === targetKey) return 100;
+    const a = new Set(targetKey.split(' ').filter(Boolean));
+    const b = new Set(row.key.split(' ').filter(Boolean));
+    let overlap = 0;
+    a.forEach(token => { if (b.has(token)) overlap++; });
+    const union = new Set([...a, ...b]).size || 1;
+    let score = Math.round((overlap / union) * 80);
+    if (targetKey && row.key && (row.key.includes(targetKey) || targetKey.includes(row.key))) score += 15;
+    return score;
+  };
+
+  const results = [];
+  input.filter(Boolean).forEach(raw => {
+    const original = typeof raw === 'string' ? raw : raw.original;
+    const targetPos = pos || (typeof raw === 'object' ? raw.pos : '');
+    const targetKey = normalizeName(original);
+    const candidates = sleeperRows
+      .map(row => ({ ...row, score: scoreCandidate(targetKey, targetPos, row) }))
+      .filter(row => row.score >= 35)
+      .sort((a, b) => b.score - a.score || a.fullName.localeCompare(b.fullName))
+      .slice(0, 5);
+
+    if (candidates.length === 0) {
+      results.push({ original, normalized: targetKey, pos: targetPos || '', candidate: '(none)', sleeperKey: '', score: 0, team: '', status: '' });
+    } else {
+      candidates.forEach((c, i) => {
+        results.push({
+          original: i === 0 ? original : '',
+          normalized: i === 0 ? targetKey : '',
+          pos: i === 0 ? (targetPos || '') : '',
+          candidate: c.fullName,
+          sleeperKey: c.key,
+          score: c.score,
+          team: c.team,
+          status: c.status,
+        });
+      });
+    }
+  });
+
+  console.table(results);
+  return results;
+};
+
+// Console diagnostic: run `await hitRateSleeperNameAudit()` after
+// `hitRateUnmatchedNames()` has data. It queries Sleeper and suggests likely
+// alias pairs for every currently unmatched ADP name.
+window.hitRateSleeperNameAudit = async function(year) {
+  const unmatched = window.hitRateUnmatchedNames(year);
+  if (!unmatched?.length) return unmatched;
+  return sleeperNameLookup(unmatched);
+};
+
 // Console diagnostic: run `await hitRateKickerSpotCheck(2024)` to verify kicker scoring
 // is producing real, nonzero point totals (sanity check after fixing the missing kicker
 // scoring formula). Fetches that year's Sleeper stats directly and prints the top 10
