@@ -9040,22 +9040,34 @@ async function testYahooSync() {
     picks.forEach(p => teamCounts[p.teamName] = (teamCounts[p.teamName] || 0) + 1);
 
     if (picks.length === 0) {
-      // Debug: show raw HTML snippets around draft-related markers
-      const markers = ['class="player', 'class="name"', 'draftresults', 'pick', 'Round '];
-      let snippets = '';
-      markers.forEach(m => {
+      // Debug: hunt for embedded JSON data inside <script> tags
+      // Yahoo SPAs typically embed page data as a JSON blob in a script tag
+      const jsonMarkers = ['"draft"', '"picks"', '"draftPick"', '"player_key"', '"round"', '"draftResults"',
+                           '"overall"', '"playerName"', '"cost"', '"team_key"', 'ydraft', 'DraftResult'];
+      let found = '';
+      jsonMarkers.forEach(m => {
         const idx = html.indexOf(m);
-        if (idx > -1) snippets += `\n── "${m}" found at char ${idx} ──\n${html.substring(Math.max(0, idx - 80), idx + 200)}\n`;
+        if (idx > -1) found += `  ✓ ${m} at char ${idx}: ...${html.substring(Math.max(0, idx - 40), idx + 120).replace(/\n/g,'\\n')}...\n`;
       });
-      outputEl.textContent = `⚠️ Yahoo returned HTML but parser found 0 picks.\n`
-        + `HTML length: ${html.length} chars\n`
-        + `Contains "Round": ${html.includes('Round')}\n`
-        + `Contains "player": ${html.includes('player')}\n`
-        + `Contains "<tr>": ${html.includes('<tr>')}\n`
-        + `Contains "draftresults": ${html.includes('draftresults')}\n\n`
-        + `── Raw HTML snippets ──${snippets}\n\n`
-        + `── First 1500 chars of <body> ──\n${(html.split('<body')[1] || html).substring(0, 1500)}`;
-      statusEl.textContent = '⚠️ 0 picks — check debug output';
+
+      // Find all <script> blocks and show the largest ones (likely contain data)
+      const scripts = [];
+      const scriptRe = /<script[^>]*>([\s\S]*?)<\/script>/g;
+      let sm;
+      while ((sm = scriptRe.exec(html)) !== null) {
+        if (sm[1].trim().length > 100) {
+          scripts.push({ len: sm[1].length, pos: sm.index, preview: sm[1].substring(0, 300) });
+        }
+      }
+      scripts.sort((a, b) => b.len - a.len);
+
+      outputEl.textContent = `⚠️ Yahoo SPA detected (no <tr> tags — data is likely in a JSON blob)\n`
+        + `HTML length: ${html.length} chars\n\n`
+        + `── JSON marker scan ──\n${found || '  (none found)'}\n\n`
+        + `── ${scripts.length} script blocks found (by size) ──\n`
+        + scripts.slice(0, 5).map((s, i) => `\n#${i+1} — ${s.len.toLocaleString()} chars at pos ${s.pos}\n${s.preview}...\n`).join('')
+        + `\n\n── Page title ──\n${(html.match(/<title>([^<]*)<\/title>/)?.[1] || '(none)')}`;
+      statusEl.textContent = '⚠️ 0 picks — SPA detected, check debug';
       return;
     }
 
