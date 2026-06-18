@@ -1570,16 +1570,30 @@
       </div>
     </div>
 
+    <!-- Extension card — shared across both platforms -->
+    <div class="insight-card" style="margin-bottom:16px">
+      <div class="t1 fw6" style="font-size:13px;margin-bottom:4px">🧩 Fantasy League Sync — Browser Extension</div>
+      <div class="t3 fs10" style="line-height:1.5;margin-bottom:10px">One extension for both ESPN and Yahoo. It auto-detects which platform you're on, grabs the right cookies, finds your league ID, and sends everything here in one click.</div>
+      <ol class="t3 fs10" style="line-height:1.8;margin:0 0 8px 16px;padding:0">
+        <li>Download → <button onclick="downloadYahooExtension()" style="padding:4px 12px;border-radius:6px;border:1px solid #7c3aed;background:rgba(124,58,237,0.15);color:#7c3aed;font-size:11px;font-weight:700;cursor:pointer">📦 fantasy-league-sync.zip</button></li>
+        <li>Unzip the folder</li>
+        <li><strong>Chrome:</strong> <code style="background:var(--surface2);padding:2px 6px;border-radius:4px">chrome://extensions</code> → Developer Mode on → "Load unpacked" → select folder</li>
+        <li><strong>Firefox:</strong> <code style="background:var(--surface2);padding:2px 6px;border-radius:4px">about:debugging#/runtime/this-firefox</code> → "Load Temporary Add-on" → select manifest.json</li>
+        <li>Navigate to your ESPN or Yahoo Fantasy league page, click the extension icon</li>
+      </ol>
+    </div>
+
     <div id="espnSyncSection">
 
     <!-- Credentials card -->
     <div class="insight-card" style="margin-bottom:16px">
       <div class="t1 fw6" style="font-size:13px;margin-bottom:4px">League Credentials</div>
-      <div class="t3 fs11" style="margin-bottom:16px;line-height:1.5">Connect your ESPN league in two steps — no DevTools, no copying cookies.</div>
+      <div class="t3 fs11" style="margin-bottom:16px;line-height:1.5">Connect your ESPN league using the extension above, or use the bookmarklet below as a fallback.</div>
 
       <!-- Connected banner — shown after bookmarklet fires -->
       <div id="espnLoginStatus" class="fs12 aic" style="display:none;background:rgba(0,210,106,0.1);border:1px solid var(--green);border-radius:8px;padding:10px 14px;margin-bottom:16px;color:var(--green);gap:8px">
         ✅ <span id="espnLoginStatusText">ESPN connected</span>
+        <span id="espnLastSync" class="t3 fs10" style="margin-left:4px"></span>
         <button onclick="logoutEspn()" class="t3 fs11" style="margin-left:auto;background:none;border:none;cursor:pointer">Disconnect</button>
       </div>
 
@@ -1747,28 +1761,11 @@
         <!-- Yahoo credential status -->
         <div id="yahooCookieStatus" class="fs12" style="display:none;background:rgba(0,210,106,0.08);border:1px solid var(--green);border-radius:8px;padding:10px 14px;margin-bottom:12px;color:var(--green)"></div>
 
-        <!-- Yahoo extension instructions -->
-        <div style="margin-bottom:16px">
-          <div class="t1 fs11 fw6" style="margin-bottom:6px">Use the Yahoo Sync browser extension</div>
-          <div class="t3 fs10" style="line-height:1.5;margin-bottom:10px">Yahoo marks its auth cookies as HttpOnly (unreadable by bookmarklets), so we use a lightweight extension instead. One-time setup:</div>
-          <ol class="t3 fs10" style="line-height:1.8;margin:0 0 8px 16px;padding:0">
-            <li>Download → <button onclick="downloadYahooExtension()" style="padding:4px 12px;border-radius:6px;border:1px solid #7c3aed;background:rgba(124,58,237,0.15);color:#7c3aed;font-size:11px;font-weight:700;cursor:pointer">📦 yahoo-sync-extension.zip</button></li>
-            <li>Unzip the folder</li>
-            <li><strong>Chrome:</strong> <code style="background:var(--surface2);padding:2px 6px;border-radius:4px">chrome://extensions</code> → Developer Mode on → "Load unpacked" → select folder</li>
-            <li><strong>Firefox:</strong> <code style="background:var(--surface2);padding:2px 6px;border-radius:4px">about:debugging#/runtime/this-firefox</code> → "Load Temporary Add-on" → select manifest.json</li>
-            <li>Log into <a href="https://football.fantasysports.yahoo.com" target="_blank" style="color:var(--blue)">Yahoo Fantasy</a>, click extension icon → "Send Cookies"</li>
-          </ol>
-        </div>
-
         <!-- Yahoo League ID -->
         <div class="df aic" style="gap:8px;flex-wrap:wrap;margin-bottom:16px">
           <label class="t2 fs11 fw6" for="yahooLeagueId">League ID:</label>
           <input id="yahooLeagueId" type="text" placeholder="e.g. 95358"
             style="flex:1;min-width:100px;max-width:180px;padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text1);font-size:13px;font-family:inherit"
-          />
-          <label class="t2 fs11 fw6" for="yahooYear">Year:</label>
-          <input id="yahooYear" type="text" placeholder="2025" value="2025"
-            style="width:70px;padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text1);font-size:13px;font-family:inherit"
           />
         </div>
 
@@ -8764,12 +8761,25 @@ function checkYahooHashCredentials() {
     const y  = params.get('yahoo_y');
 
     if (!a1 || !t || !y) {
-      showEspnError('Yahoo credentials in URL were empty. Please try the bookmarklet again.');
+      showEspnError('Yahoo credentials in URL were empty. Please try the extension again.');
       return;
     }
 
+    // Extract league ID if the extension included it
+    const leagueId = params.get('yahoo_league');
+
     history.replaceState(null, '', window.location.pathname + window.location.search);
     handleYahooCookies({ a1, t, y });
+
+    // Auto-populate league ID if detected
+    if (leagueId) {
+      const el = document.getElementById('yahooLeagueId');
+      if (el) el.value = leagueId;
+    }
+
+    // Auto-switch to the Yahoo platform and the League Sync tab
+    switchTab('espn');
+    setPlatform('yahoo');
   } catch(e) {
     showEspnError('Error reading Yahoo credentials from URL: ' + e.message);
   }
@@ -8778,6 +8788,7 @@ function checkYahooHashCredentials() {
 function handleYahooCookies(data) {
   if (!data?.a1 || !data?.t || !data?.y) return;
   yahooSession = { a1: data.a1, t: data.t, y: data.y };
+  try { localStorage.setItem('yahooCredentials', JSON.stringify(yahooSession)); } catch(e) {}
   console.log('[Yahoo] Credentials captured — A1:', data.a1.substring(0, 20) + '...', 'T:', data.t.substring(0, 20) + '...', 'Y:', data.y.substring(0, 20) + '...');
 
   // Show Yahoo connected state
@@ -8811,6 +8822,14 @@ async function yahooFetch(path) {
   }
 
   return res.text(); // Returns HTML, not JSON
+}
+
+function timeSince(ts) {
+  const sec = Math.floor((Date.now() - ts) / 1000);
+  if (sec < 60)   return 'just now';
+  if (sec < 3600) return `${Math.floor(sec / 60)}m ago`;
+  if (sec < 86400) return `${Math.floor(sec / 3600)}h ago`;
+  return `${Math.floor(sec / 86400)}d ago`;
 }
 
 function enableSyncBtn(enabled) {
@@ -9008,104 +9027,112 @@ function setPlatform(platform) {
 }
 
 function downloadYahooExtension() {
-  const b64 = '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';
+  const b64 = 'UEsDBAoAAAAAACkR0lwAAAAAAAAAAAAAAAAVABwAeWFob28tc3luYy1leHRlbnNpb24vVVQJAANNUzNqcVMzanV4CwABBAAAAAAEAAAAAFBLAwQUAAAACAB5jdJcwBcuy8QDAAAACQAAHwAcAHlhaG9vLXN5bmMtZXh0ZW5zaW9uL3BvcHVwLmh0bWxVVAkAA1YuNGqR1zNqdXgLAAEEAAAAAAQAAAAAjVbNbuM2EL7vU0wVFGgBSdaPJf/E8aHZ3dNiu2i6hxwpiZJY06QgUkm8Re+99RH6in2EDvVvxykK27A45nzzzXzDoXffvf/5/tfHLx+g1Ee+f7cbvijJ9u8AdkqfODVPAInMTvA7PLNMl1sIA696uYWKZBkTxRb82CxzKbSTkyPjpy04pKo4ddRJaXq0oft2GoaPRChH0Zrlt5CQ9FDUshHZFm584pOA3kIquaxxTT3zuoUjqQsmtoCPf7RkygCpjFZ8+cEYX7FvFAlFxjAA5Xk+uLpKE90o9J/IYy49QiLrjNZOTTLWqC2sL1HbTV1gJ5Fay2PnfgucCeqUlBWlRpMbjfHkAWPN06yLhPzg2YHv2b4X257rRz8OkdEVuSjJWQY3npcFMZmyGNY9MK3ra8jB0rM3G/N+Gzn34jAOZ/Xp1z3yM2H6GvRqafvLpR0E/8V6STYeDSbsYd1jV5zoXNZHxM+YwhW2ChNt9RIu08OsqUIji3dFls4418UfDc+9BCvPe0OpoXyqEteS9DexHXp2tMYcg+sppkufhmTeXnGy9kfkEymlvAodLA1uEK7exl6lIaHZhE1W6ySfRBe00TXhV4WPInv4oDzX4aMomrA3m80AzElC+VyTXoxXRR59VyRM4lclXr4SIvbGY8tE1ehpiPie970h+WICtIr3OqNp1gbrt9ognmxnOYZheDlYfP9iGPy/Q93RThq0iUveZ+Pj+uQYuAkp6HnI8Hq/pk2tDMdKMqFpfZHF5cmaTbWO4raUT/RyKNyEZJVk0cVO1JkknGa4WVYkZRol99zlRCGjOWm4HhuvREa4eZ6EN++HOJ6aQcuqr8DFVFx2cLtFf7HsFt1VszO3S3vjlMH+n7//+hM+EqGJOsEnSoqGwsNJpLg5aPdk7AlYdmcNo8RJSFZQC1JOlJrM0J8Va/+eappqFMt13d0C3c9geBvCYSKXI0Z/SciDBS3VO2s4GEZLa/8apfO4BDCT1NrflzQ9YHgsljwwqs5otCdv/yibekz6nvAUvv7yabfofjTburNjImkp+deaW6BPFRLT9EVbgNxSWkqO/XZnlVpXartYnBC0wYtWkCN1C6bLJnGZXPRhPkqpE8L5woJFG6LvcxOjkD9pYcHQJfsHKjLQ8ozhbtE5jGXoUzedYu0/kydWEE2Nl+EBHx6+fAZZw2M7HQegrvh4mApqgy6pQBSWHvCRKcDMqFBMCtdUA9CiyBP2LKqL4r5o0AwTm0qp0ppVGlSdYhfIqqnc35TRqrObduv6DDup/aPzL1BLAwQKAAAAAAApEdJcboB+4eAAAADgAAAAHwAcAHlhaG9vLXN5bmMtZXh0ZW5zaW9uL2ljb24xNi5wbmdVVAkAA01TM2pxUzNqdXgLAAEEAAAAAAQAAAAAiVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAp0lEQVR4nGOssXr7n4ECwESJ5pFggJgCM0POYn4GRiRVmfP4GMSVmIkz4NWDvwyv7v1l0HFiY2BgYGBQt2JlePf0H8PLe3+JM4CBgYFh//zvDPbxnAyMTAwMdrGcDPvnfifeCwwMDAyvH/xleHnnL4N/GTfDh5f/GF49+IsiT1Qg7p//ncHIm51h/7zvGHJEGfDm0V+Gn9/+M7x59BdDbuDTAePQz0wAUW4zqAJ0DOkAAAAASUVORK5CYIJQSwMEFAAAAAgAi43SXPGE91qVBgAA1BYAAB0AHAB5YWhvby1zeW5jLWV4dGVuc2lvbi9wb3B1cC5qc1VUCQADdS40aovZM2p1eAsAAQQAAAAABAAAAADdWN1uGkcUvucpporlXRp7qdteQRwrcaiKajuR7ci1AMXD7gBbDzN0Z9YEEaTc9A1y2afLk/Sc+dkFDCZVIyWphc169syZc775zs9MLIXS5PX5yZvfmtfkkAR9KjRV04upiC+l5K8zHjQqsZFSmupcNTkhIJjIOB8xoaMB003O8PH5tJWEgZUKqn4WZ3SQs22zrNR+KvqynNqjycDOfGjqmFPdl9lo34iXswfyuRaEbJltpMpJecZbYpzrhydphwxMq3CmiTcB5oic8wbMrtVIwNRYBOQdCaZ0KCU+4VszY5DRXo8luMps3jBDFoJWgrsAmFdAwwW9AxlcDbeoEg8zOWKR0jKjAxZxGVOOtoVu//ZImFBNq+TwKZlVCEn7dqDt3nerhX/RHeU5Qx8X3zcqc3CpkKFJ0rwDp09SpZlgWRjEQyoAY1ioWGStUQqMmpFCb31l3Uhn6QhU4Gr4i75+/PAePuSVhzJhmsU6lcK9+Zo/FYgYEZN+LqzF1nZwEAHS2dR8A1SGYm1Ne11Ank5oqj18MKaiP3OWTQE3ClruWB1m5myPxHmWwSZcpSKREztogEONuMPfwdyjCACukozpPBOAJ7EMbF68OqsTF9IR0jGK5ajWl1L3KOe1KIqOPO0Of8efBTtR/JTqeAi2whK4QjTC/8Oa09gxKjuos1Mo7dSi79tHu91Cb9hJHldrCwaXit+9KzSnIuZ5wlQYrJobVKsOP7IYaDa6Gu7FQvAU6o+i9kEX1wgKMZdRophTpc7oCCOgSCBkSaMX1eytPpYCAkCjMEJKfrEmFrLolbegNJYUuQ+8g/D59fL0BFTcnJhR8kTpTIrB052Znzp/UnNjN437OpSechYlqQJ7p2hKD2LttrBh7r49B+yYZ8I1ZiCggtukyIGsxjLTKjL5yVBjNmU0m9f6B7XSKqTJAi+M8CZieBIsL9CxKzimdJLZz3MgzEGndo8bC8ofIseq3Zs4YhPvGpKU6/xrlizr3EATg/e3xpOH/RYs1xnlTtEGv8/oXTqgmkHRMtmHyIwsYUH6aaa0UTInsdnokAEW88p8sQwcS3mbMlsmUzH4BmrAxmKAPjQhs7hyYINIALoKAGubNPZG/Qg1Nbi4ar0Iuo1CaJQqhc6DmBmFbSBhOZ/IvtXjqVRWGq8hXq0zscFVma5hhlW5ToKh1mNVr9XuJd49u4wvNpa/8ZGt4VXfw7RRCAtabF94YcYV8y5E41wNQxR0upb2fp2U4Sn+Aicu5S0TxJpOPr7/YBwd5VynY86gSxvRVJAx1ZplQi3jBB4iTO2HnCzerRubTCalbPe/IG3RrNsSsv/yrHnRumxGV83n+6/OX76INDoZbAR7VsAdWMlFxEkvY/S24WJ7Ja4sjKZTWFVRXUbeDRsLbHrw7xsYnWt4bUJ7A7GfHSCOl/jn+kuyekvJ+zpYvgbuMhm2BLj6xfPa50yR4QqXUvDQ0chubOI66Ianri9DnhX+MLpcrOwoYVnmylQhtlKnXo4ho0xlnm2oUraaQlIZQAeuh5h+eBrfwmMK6t+CGgV2R26VspaaSrrK87IjOfR9Kzlyji5Uh/rCkAss08qj/547nImBHn4eEG5OrdI62Zl5/X/IVIQYstV5RE7pLSMqzxgiFcAXl4MBHEhTEd3YAm7Y/wm2yNstpnz8+y/yjHOwZD1YwU9mowIACR4NOsHclQQFUTaGDWCJa4fMmR47INrjDLu9PgU77fbMq+HygfOCieT/FVzW/TWHd2Qw7K2NvfIEj5cP7kYDsFp7Ui/C0Ml9pihswlNmw9AH3jHlMV522D5xXYB96pWDd8km9tJB9xRBfwxJJ3gUVNs/dE2gIRBDqobuBsa6vIaP3nsne+NauMOdGROxTNjr89axHI2lADfDoub6Rq9bne+qSZpsEbfNIMiaorxF2LcE5hhTnd+UB6ryuGGsfQzm7hpL7IvDhVPF/Zj2Dppi+YYebLECKj4abKX1FuHLBdnpFtlrlN3ilNW0yasyLfdz7ohwszNzXJg/2pmhJhS2Lec5ywEF9haCB3M4HERxYSgE9jYOigDl0HMlUyKhkqy55UGxF7YzPYSj0wQ5HfroiWSWDlJ3+HLytKceuhTy7Ym7m/GGmRO4ivqpSEKNAa3xwEx2d+0DxAiFbucq1cOwtKi6eBnjNJXH0fsm5OMEjnSFaJQme8S1WQ7NvaU7q4VeamJurSA9SMXCYnT57HmvYy1D3CwfA9Cw/PKKbo1V/Tj6D1BLAwQUAAAACABcjdJclUUm+BgBAAAHAgAAIgAcAHlhaG9vLXN5bmMtZXh0ZW5zaW9uL21hbmlmZXN0Lmpzb25VVAkAAx8uNGqR1zNqdXgLAAEEAAAAAAQAAAAAdVBfa8IwEH/vpzjyKC7OTUR8HdvT2Ab6MsYYZ3q2wTYJvdQh0u++JK1ThnsJd79/d5djBiBqNHpL7L/21LC2RizhfhwJgzWFRjyh8cgHeCYsWoLVwSiRBGeDuJO3PZYTq0Y7P+Cvhm5UpdUOONhgaxt4XL29AJoc3rG0Fk7pVUpn+Na+BF/SL7FuMCd4wEq1FXrbyH6Qo6bWHOdzGPQhlLU7TSzGIDiosKBYetwkCJXXe1rjRnwmd2nDwX8jSu8dLyeTkTzE1aSy9WQU3WeC2JkB74NicDr1GLp0/xbbKmRb17r4A6mQpa+rtPeFRKsLY8Cn86iP6HQunSkGfWBmixMzWyQmEV14u7REZPi8wz9BV2O6rMt+AFBLAwQUAAAACAApEdJcFo7PbhYBAAAjAQAAHwAcAHlhaG9vLXN5bmMtZXh0ZW5zaW9uL2ljb240OC5wbmdVVAkAA01TM2pxUzNqdXgLAAEEAAAAAAQAAAAA6wzwc+flkuJiYGDg9fRwCQLSBiDMwQYkw5l+tgOpV54ujiEVc95e38t3MEDi2MflLIKc0qsjdNSS2YVWHxTtiEwy2ylqumPCvQ6Py0cu/OrwTLaI8I3dYzPRZj93xeX/sy9Plsl/On/+j2TWb+w1Xow5XAnBDLOZbvgwzXqrJHabbc/2zM8L+sKWZxjaTfd0kLJcUt1+bwUPw4tfqjF8/CrV6UDhm4Jc5pJtm7X2MBnMCBNcZ7z64s4zTH0TnTcVz9DJ3qHGv+Ti9+38Ev+PPFRzro9xlPiT9ruh8IBm2Y778yyO7r9ptyB7yvnL3T0+cKtFDixjMGPdoNngiyK0Tfwmj/GL0707PYC+ZvB09XNZ55TQBABQSwECHgMKAAAAAAApEdJcAAAAAAAAAAAAAAAAFQAYAAAAAAAAABAA7UEAAAAAeWFob28tc3luYy1leHRlbnNpb24vVVQFAANNUzNqdXgLAAEEAAAAAAQAAAAAUEsBAh4DFAAAAAgAeY3SXMAXLsvEAwAAAAkAAB8AGAAAAAAAAQAAAKSBTwAAAHlhaG9vLXN5bmMtZXh0ZW5zaW9uL3BvcHVwLmh0bWxVVAUAA1YuNGp1eAsAAQQAAAAABAAAAABQSwECHgMKAAAAAAApEdJcboB+4eAAAADgAAAAHwAYAAAAAAAAAAAApIFsBAAAeWFob28tc3luYy1leHRlbnNpb24vaWNvbjE2LnBuZ1VUBQADTVMzanV4CwABBAAAAAAEAAAAAFBLAQIeAxQAAAAIAIuN0lzxhPdalQYAANQWAAAdABgAAAAAAAEAAACkgaUFAAB5YWhvby1zeW5jLWV4dGVuc2lvbi9wb3B1cC5qc1VUBQADdS40anV4CwABBAAAAAAEAAAAAFBLAQIeAxQAAAAIAFyN0lyVRSb4GAEAAAcCAAAiABgAAAAAAAEAAACkgZEMAAB5YWhvby1zeW5jLWV4dGVuc2lvbi9tYW5pZmVzdC5qc29uVVQFAAMfLjRqdXgLAAEEAAAAAAQAAAAAUEsBAh4DFAAAAAgAKRHSXBaOz24WAQAAIwEAAB8AGAAAAAAAAAAAAKSBBQ4AAHlhaG9vLXN5bmMtZXh0ZW5zaW9uL2ljb240OC5wbmdVVAUAA01TM2p1eAsAAQQAAAAABAAAAABQSwUGAAAAAAYABgBVAgAAdA8AAAAA';
   const bytes = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
   const blob = new Blob([bytes], { type: 'application/zip' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'yahoo-sync-extension.zip';
+  a.download = 'fantasy-league-sync.zip';
   a.click();
   URL.revokeObjectURL(a.href);
 }
 
 async function testYahooSync() {
   const leagueId = document.getElementById('yahooLeagueId')?.value?.trim();
-  const year     = document.getElementById('yahooYear')?.value?.trim() || '2025';
   const statusEl = document.getElementById('yahooSyncStatus');
   const resultEl = document.getElementById('yahooTestResults');
   const outputEl = document.getElementById('yahooTestOutput');
 
   if (!leagueId) { statusEl.textContent = '⚠️ Enter a league ID'; return; }
-  if (!yahooSession) { statusEl.textContent = '⚠️ Run the bookmarklet first'; return; }
+  if (!yahooSession) { statusEl.textContent = '⚠️ Run the extension first'; return; }
+  try { localStorage.setItem('yahooLeagueId', leagueId); } catch(e) {}
 
-  statusEl.textContent = '⏳ Fetching draft results...';
+  const rowRegex = /<tr>\s*<td class="first">(\d+)\.\s*<\/td>\s*<td class="player[^"]*"><a href="https:\/\/sports\.yahoo\.com\/nfl\/players\/(\d+)"[^>]*class="name">([^<]+)<\/a>([^<]*(?:<span[^>]*title="This player is a keeper\."[^<]*<\/span>)?)\s*<\/td>\s*<td class="last[^"]*"\s*title="([^"]*)">/g;
+
   resultEl.style.display = 'block';
-  outputEl.textContent = '';
+  outputEl.textContent = '🔍 Detecting league tenure...\n';
+  const allSeasons = [];
 
-  try {
-    const html = await yahooFetch(`/${year}/f1/${leagueId}/draftresults`);
-    // Parse draft picks from the HTML table
-    const picks = [];
-    const rowRegex = /<tr>\s*<td class="first">(\d+)\.\s*<\/td>\s*<td class="player[^"]*"><a href="https:\/\/sports\.yahoo\.com\/nfl\/players\/(\d+)"[^>]*class="name">([^<]+)<\/a>([^<]*(?:<span[^>]*title="This player is a keeper\."[^<]*<\/span>)?)\s*<\/td>\s*<td class="last[^"]*"\s*title="([^"]*)">/g;
-    let match;
-    while ((match = rowRegex.exec(html)) !== null) {
-      picks.push({
-        overall: parseInt(match[1]),
-        yahooPlayerId: match[2],
-        playerName: match[3].trim(),
-        isKeeper: match[4].includes('keeper'),
-        teamName: match[5].trim(),
-      });
-    }
+  // Start from current year and work backwards until we hit 2 consecutive
+  // failures (league didn't exist yet). This discovers the league's actual
+  // lifespan instead of assuming a fixed year range. The floor is 2006 —
+  // Yahoo Fantasy launched in 2005, and meaningful ADP data starts ~2006.
+  const currentYear = new Date().getFullYear();
+  const FLOOR_YEAR = 2006;
+  let consecutiveFailures = 0;
 
-    const teamCounts = {};
-    picks.forEach(p => teamCounts[p.teamName] = (teamCounts[p.teamName] || 0) + 1);
+  for (let year = currentYear; year >= FLOOR_YEAR && consecutiveFailures < 2; year--) {
+    statusEl.textContent = `⏳ Fetching ${year} draft...`;
+    outputEl.textContent += `${year}... `;
+    try {
+      const html = await yahooFetch(`/${year}/f1/${leagueId}/draftresults`);
+      const title = html.match(/<title>([^<]*)<\/title>/)?.[1] || '';
 
-    if (picks.length === 0) {
-      // Debug: hunt for embedded JSON data inside <script> tags
-      // Yahoo SPAs typically embed page data as a JSON blob in a script tag
-      const jsonMarkers = ['"draft"', '"picks"', '"draftPick"', '"player_key"', '"round"', '"draftResults"',
-                           '"overall"', '"playerName"', '"cost"', '"team_key"', 'ydraft', 'DraftResult'];
-      let found = '';
-      jsonMarkers.forEach(m => {
-        const idx = html.indexOf(m);
-        if (idx > -1) found += `  ✓ ${m} at char ${idx}: ...${html.substring(Math.max(0, idx - 40), idx + 120).replace(/\n/g,'\\n')}...\n`;
-      });
-
-      // Find all <script> blocks and show the largest ones (likely contain data)
-      const scripts = [];
-      const scriptRe = /<script[^>]*>([\s\S]*?)<\/script>/g;
-      let sm;
-      while ((sm = scriptRe.exec(html)) !== null) {
-        if (sm[1].trim().length > 100) {
-          scripts.push({ len: sm[1].length, pos: sm.index, preview: sm[1].substring(0, 300) });
-        }
+      if (title.includes('problem') || title.includes('Error') || html.length < 5000) {
+        outputEl.textContent += `— not found\n`;
+        consecutiveFailures++;
+        continue;
       }
-      scripts.sort((a, b) => b.len - a.len);
 
-      outputEl.textContent = `⚠️ Yahoo SPA detected (no <tr> tags — data is likely in a JSON blob)\n`
-        + `HTML length: ${html.length} chars\n\n`
-        + `── JSON marker scan ──\n${found || '  (none found)'}\n\n`
-        + `── ${scripts.length} script blocks found (by size) ──\n`
-        + scripts.slice(0, 5).map((s, i) => `\n#${i+1} — ${s.len.toLocaleString()} chars at pos ${s.pos}\n${s.preview}...\n`).join('')
-        + `\n\n── Page title ──\n${(html.match(/<title>([^<]*)<\/title>/)?.[1] || '(none)')}`;
-      statusEl.textContent = '⚠️ 0 picks — SPA detected, check debug';
-      return;
+      const picks = [];
+      rowRegex.lastIndex = 0;
+      let match;
+      while ((match = rowRegex.exec(html)) !== null) {
+        picks.push({
+          overall: parseInt(match[1]),
+          yahooPlayerId: match[2],
+          playerName: match[3].trim(),
+          isKeeper: match[4].includes('keeper'),
+          teamName: match[5].trim(),
+        });
+      }
+
+      if (picks.length === 0) {
+        outputEl.textContent += `⚠️ page loaded, 0 picks parsed\n`;
+        consecutiveFailures++;
+        continue;
+      }
+
+      consecutiveFailures = 0; // reset on success
+      const teams = new Set(picks.map(p => p.teamName));
+      const keepers = picks.filter(p => p.isKeeper).length;
+      allSeasons.push({ year, picks, teams: teams.size, keepers });
+      outputEl.textContent += `✅ ${picks.length} picks · ${teams.size} teams${keepers ? ` · ${keepers}K` : ''}\n`;
+    } catch (err) {
+      outputEl.textContent += `❌ ${err.message}\n`;
+      consecutiveFailures++;
     }
-
-    outputEl.textContent = `✅ Yahoo Draft Results — ${year} · League ${leagueId}\n`
-      + `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`
-      + `Total picks parsed: ${picks.length}\n`
-      + `Teams found: ${Object.keys(teamCounts).length}\n`
-      + `Keepers: ${picks.filter(p => p.isKeeper).length}\n\n`
-      + `Teams:\n${Object.entries(teamCounts).sort((a,b) => b[1]-a[1]).map(([t,c]) => `  ${t}: ${c} picks`).join('\n')}\n\n`
-      + `First 10 picks:\n${picks.slice(0, 10).map(p => `  ${p.overall}. ${p.playerName} → ${p.teamName}${p.isKeeper ? ' (K)' : ''}`).join('\n')}\n\n`
-      + `Last 5 picks:\n${picks.slice(-5).map(p => `  ${p.overall}. ${p.playerName} → ${p.teamName}`).join('\n')}`;
-
-    statusEl.textContent = `✅ ${picks.length} picks from ${Object.keys(teamCounts).length} teams`;
-  } catch (err) {
-    outputEl.textContent = `❌ Error: ${err.message}`;
-    statusEl.textContent = '❌ Sync failed';
   }
+
+  // Summary
+  const totalPicks = allSeasons.reduce((s, y) => s + y.picks.length, 0);
+  const allTeams = new Set();
+  allSeasons.forEach(s => s.picks.forEach(p => allTeams.add(p.teamName)));
+  const years = allSeasons.map(s => s.year);
+
+  outputEl.textContent += `\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`
+    + `✅ Yahoo Sync Summary — League ${leagueId}\n`
+    + `League tenure: ${years.length ? `${Math.min(...years)}–${Math.max(...years)}` : 'none found'} (${years.length} seasons)\n`
+    + `Total picks: ${totalPicks}\n`
+    + `Unique team names: ${allTeams.size}\n\n`
+    + allSeasons.map(s =>
+        `  ${s.year}: ${s.picks.length} picks · ${s.picks.slice(0, 3).map(p => p.playerName).join(', ')}...`
+      ).join('\n');
+
+  statusEl.textContent = allSeasons.length > 0
+    ? `✅ ${allSeasons.length} seasons (${Math.min(...years)}–${Math.max(...years)}) · ${totalPicks} picks`
+    : '⚠️ No seasons found';
 }
 
 function logoutEspn() {
   espnSession = null;
   espnWaiting = false;
+  try { localStorage.removeItem('espnCredentials'); } catch(e) {}
+  try { localStorage.removeItem('espnSyncTimestamp'); } catch(e) {}
   document.getElementById('espnLoginStatus').style.display           = 'none';
   document.getElementById('espnBookmarkletStep').style.display       = 'flex';
   document.getElementById('espnWaitingForBookmarklet').style.display = 'none';
-
+  enableSyncBtn(false);
 }
 
 function cancelEspnWait() {
@@ -9131,6 +9158,7 @@ function checkEspnHashCredentials() {
     const espnS2    = params.get('espn_s2');
     const swid      = params.get('swid');
     const espnToken = params.get('token') || '';
+    const espnLeague = params.get('espn_league');
 
 
     if (!espnS2 || !swid) {
@@ -9142,6 +9170,16 @@ function checkEspnHashCredentials() {
     history.replaceState(null, '', window.location.pathname + window.location.search);
 
     handleEspnCookies({ type: 'ESPN_COOKIES', espnS2, swid, espnToken });
+
+    // Auto-populate league ID if detected by the extension
+    if (espnLeague) {
+      const el = document.getElementById('espnLeagueId');
+      if (el) el.value = espnLeague;
+    }
+
+    // Auto-switch to the League Sync tab
+    switchTab('espn');
+    setPlatform('espn');
   } catch(e) {
 
     showEspnError('Error reading credentials from URL: ' + e.message);
@@ -9167,6 +9205,9 @@ function handleEspnCookies(data) {
 
   espnSession = { espnS2, swid, espnToken: espnToken || '' };
   espnWaiting = false;
+
+  // Persist credentials so the page can auto-sync on next visit
+  try { localStorage.setItem('espnCredentials', JSON.stringify(espnSession)); } catch(e) {}
 
   document.getElementById('espnLoginStatusText').textContent         = 'ESPN connected ✓';
   document.getElementById('espnLoginStatus').style.display           = 'flex';
@@ -9240,9 +9281,61 @@ function initEspnTab() {
     const savedScoring = localStorage.getItem('espnScoring') || 'half';
     setEspnScoring(savedScoring);
   } catch(e) { setEspnScoring('half'); }
+
+  // ── Restore saved credentials ─────────────────────────────────────────────
+  // ESPN cookies (espn_s2, SWID) persist in the browser for months/years.
+  // We cache them in localStorage so the user only needs to use the extension
+  // once per season — every subsequent visit auto-connects and can re-sync
+  // without any user interaction.
+  try {
+    const savedEspn = JSON.parse(localStorage.getItem('espnCredentials') || 'null');
+    if (savedEspn?.espnS2 && savedEspn?.swid) {
+      espnSession = savedEspn;
+      document.getElementById('espnLoginStatus').style.display     = 'flex';
+      document.getElementById('espnBookmarkletStep').style.display = 'none';
+      enableSyncBtn(true);
+      console.log('[ESPN] Credentials restored from localStorage');
+    }
+  } catch(e) { console.warn('[localStorage] restore espnCredentials failed:', e.message); }
+
+  // Restore Yahoo credentials too
+  try {
+    const savedYahoo = JSON.parse(localStorage.getItem('yahooCredentials') || 'null');
+    if (savedYahoo?.a1 && savedYahoo?.t && savedYahoo?.y) {
+      yahooSession = savedYahoo;
+      const statusEl = document.getElementById('yahooCookieStatus');
+      if (statusEl) { statusEl.style.display = 'block'; statusEl.textContent = '✅ Yahoo credentials restored from last session'; }
+      const syncBtn = document.getElementById('yahooSyncBtn');
+      if (syncBtn) { syncBtn.style.opacity = '1'; syncBtn.style.pointerEvents = 'auto'; }
+      console.log('[Yahoo] Credentials restored from localStorage');
+    }
+  } catch(e) {}
+
+  // Restore Yahoo league ID
+  try {
+    const savedYahooLeague = localStorage.getItem('yahooLeagueId');
+    if (savedYahooLeague) {
+      const el = document.getElementById('yahooLeagueId');
+      if (el && !el.value) el.value = savedYahooLeague;
+    }
+  } catch(e) {}
+
+  // ── Restore cached sync data ──────────────────────────────────────────────
   try {
     const saved = JSON.parse(localStorage.getItem('espnSyncData') || 'null');
-    if (saved) { espnData = saved; renderEspnResults(); }
+    if (saved) {
+      espnData = saved;
+      renderEspnResults();
+      // Show last sync time
+      const syncTime = localStorage.getItem('espnSyncTimestamp');
+      if (syncTime) {
+        const ago = timeSince(parseInt(syncTime));
+        const lastSyncEl = document.getElementById('espnLastSync');
+        if (lastSyncEl) lastSyncEl.textContent = `· Last synced ${ago}`;
+        const statusEl = document.getElementById('espnSyncStatus');
+        if (statusEl) statusEl.textContent = `Synced ${ago} · Click "Sync League" to refresh`;
+      }
+    }
   } catch(e) { console.warn('[localStorage] parse espnSyncData failed (cache corrupted, will resync):', e.message); }
   fetchFantasyProsProjections().then(() => renderRosterView());
   if (espnSession) {
@@ -9875,6 +9968,7 @@ async function runEspnSync() {
     setEspnProgress(100, '✅ Sync complete!', `${draftHistory.length} seasons · Week 7 rosters · 2025 scores loaded`);
     espnData = data;
     try { localStorage.setItem('espnSyncData', JSON.stringify(data)); } catch(e) { console.warn('[localStorage] write espnSyncData failed (storage full?):', e.message); }
+    try { localStorage.setItem('espnSyncTimestamp', String(Date.now())); } catch(e) {}
 
     // Wire data into calculators
     applyEspnDataToCalculators(data);
