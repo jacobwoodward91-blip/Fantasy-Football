@@ -9039,6 +9039,26 @@ async function testYahooSync() {
     const teamCounts = {};
     picks.forEach(p => teamCounts[p.teamName] = (teamCounts[p.teamName] || 0) + 1);
 
+    if (picks.length === 0) {
+      // Debug: show raw HTML snippets around draft-related markers
+      const markers = ['class="player', 'class="name"', 'draftresults', 'pick', 'Round '];
+      let snippets = '';
+      markers.forEach(m => {
+        const idx = html.indexOf(m);
+        if (idx > -1) snippets += `\n── "${m}" found at char ${idx} ──\n${html.substring(Math.max(0, idx - 80), idx + 200)}\n`;
+      });
+      outputEl.textContent = `⚠️ Yahoo returned HTML but parser found 0 picks.\n`
+        + `HTML length: ${html.length} chars\n`
+        + `Contains "Round": ${html.includes('Round')}\n`
+        + `Contains "player": ${html.includes('player')}\n`
+        + `Contains "<tr>": ${html.includes('<tr>')}\n`
+        + `Contains "draftresults": ${html.includes('draftresults')}\n\n`
+        + `── Raw HTML snippets ──${snippets}\n\n`
+        + `── First 1500 chars of <body> ──\n${(html.split('<body')[1] || html).substring(0, 1500)}`;
+      statusEl.textContent = '⚠️ 0 picks — check debug output';
+      return;
+    }
+
     outputEl.textContent = `✅ Yahoo Draft Results — ${year} · League ${leagueId}\n`
       + `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`
       + `Total picks parsed: ${picks.length}\n`
