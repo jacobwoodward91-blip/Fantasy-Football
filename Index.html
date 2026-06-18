@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en"><head>
-<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<html lang="en">
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Draft Pick Trade Calculator</title>
-<link rel="preconnect" href="https://fonts.googleapis.com/">
-<link href="Index_files/css2.css" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -829,7 +829,7 @@
   .fsh0{flex-shrink:0}
   .f1{flex:1}
 </style>
-</head><body>
+<body>
 
 <header>
   <div class="header-left">
@@ -908,16 +908,16 @@
     </div>
     <div class="field-meter-wrap">
       <div class="field-meter">
-        <div class="yard-lines" id="yardLines"><div class="yard-line major"></div><div class="yard-line"></div><div class="yard-line major"></div><div class="yard-line"></div><div class="yard-line major"></div><div class="yard-line"></div><div class="yard-line major"></div><div class="yard-line"></div><div class="yard-line major"></div><div class="yard-line"></div><div class="yard-line major"></div><div class="yard-line"></div><div class="yard-line major"></div><div class="yard-line"></div><div class="yard-line major"></div><div class="yard-line"></div><div class="yard-line major"></div><div class="yard-line"></div><div class="yard-line major"></div><div class="yard-line"></div></div>
+        <div class="yard-lines" id="yardLines"></div>
         <div class="meter-bar-a" id="meterA" style="width:0%"></div>
         <div class="meter-bar-b" id="meterB" style="width:0%"></div>
         <div class="meter-center"></div>
         <svg class="meter-football" id="footballIcon" style="left:calc(50% - 11px)" viewBox="0 0 44 32" fill="none">
-          <ellipse cx="22" cy="16" rx="18" ry="11" fill="#8B5E3C" stroke="#5A3A1A" stroke-width="2"></ellipse>
-          <line x1="22" y1="6" x2="22" y2="26" stroke="white" stroke-width="1.5" opacity="0.7"></line>
-          <line x1="14" y1="13" x2="30" y2="13" stroke="white" stroke-width="1" opacity="0.5"></line>
-          <line x1="14" y1="16" x2="30" y2="16" stroke="white" stroke-width="1" opacity="0.5"></line>
-          <line x1="14" y1="19" x2="30" y2="19" stroke="white" stroke-width="1" opacity="0.5"></line>
+          <ellipse cx="22" cy="16" rx="18" ry="11" fill="#8B5E3C" stroke="#5A3A1A" stroke-width="2"/>
+          <line x1="22" y1="6" x2="22" y2="26" stroke="white" stroke-width="1.5" opacity="0.7"/>
+          <line x1="14" y1="13" x2="30" y2="13" stroke="white" stroke-width="1" opacity="0.5"/>
+          <line x1="14" y1="16" x2="30" y2="16" stroke="white" stroke-width="1" opacity="0.5"/>
+          <line x1="14" y1="19" x2="30" y2="19" stroke="white" stroke-width="1" opacity="0.5"/>
         </svg>
         <div class="meter-label-a" id="labelA">A</div>
         <div class="meter-label-b" id="labelB">B</div>
@@ -938,7 +938,7 @@
       <div class="verdict-dot" id="verdictDot" style="background: var(--text3)"></div>
       <div class="verdict-text" id="verdictText" style="color: var(--text3)">Add picks to both sides to evaluate the trade.</div>
     </div>
-    <div class="fair-suggestion" id="fairSuggestion" style="display: none;"></div>
+    <div class="fair-suggestion" id="fairSuggestion"></div>
   </div>
 
   <!-- PICK PANELS -->
@@ -956,11 +956,13 @@
       <div class="add-pick-row">
         <div class="input-group">
           <div class="input-label">Pick</div>
-          <select id="pickSelA"><optgroup label="── Round 1 ──"><option value="1" selected="selected">Pick 1 · Rd 1 · Team 1 · 100.0 pts</option><option value="2">Pick 2 · Rd 1 · Team 2 · 96.5 pts</option><option value="3">Pick 3 · Rd 1 · Team 3 · 93.1 pts</option><option value="4">Pick 4 · Rd 1 · Team 4 · 89.9 pts</option><option value="5">Pick 5 · Rd 1 · Team 5 · 86.7 pts</option><option value="6">Pick 6 · Rd 1 · Team 6 · 83.7 pts</option><option value="7">Pick 7 · Rd 1 · Team 7 · 80.8 pts</option><option value="8">Pick 8 · Rd 1 · Team 8 · 77.9 pts</option><option value="9">Pick 9 · Rd 1 · Team 9 · 75.2 pts</option><option value="10">Pick 10 · Rd 1 · Team 10 · 72.6 pts</option><option value="11">Pick 11 · Rd 1 · Team 11 · 70.0 pts</option><option value="12">Pick 12 · Rd 1 · Team 12 · 67.6 pts</option><option value="13">Pick 13 · Rd 1 · Team 13 · 65.2 pts</option><option value="14">Pick 14 · Rd 1 · Team 14 · 62.9 pts</option></optgroup><optgroup label="── Round 2 ──"><option value="15">Pick 15 · Rd 2 · Team 14 · 60.7 pts</option><option value="16">Pick 16 · Rd 2 · Team 13 · 58.6 pts</option><option value="17">Pick 17 · Rd 2 · Team 12 · 56.6 pts</option><option value="18">Pick 18 · Rd 2 · Team 11 · 54.6 pts</option><option value="19">Pick 19 · Rd 2 · Team 10 · 52.7 pts</option><option value="20">Pick 20 · Rd 2 · Team 9 · 50.8 pts</option><option value="21">Pick 21 · Rd 2 · Team 8 · 49.0 pts</option><option value="22">Pick 22 · Rd 2 · Team 7 · 47.3 pts</option><option value="23">Pick 23 · Rd 2 · Team 6 · 45.7 pts</option><option value="24">Pick 24 · Rd 2 · Team 5 · 44.1 pts</option><option value="25">Pick 25 · Rd 2 · Team 4 · 42.5 pts</option><option value="26">Pick 26 · Rd 2 · Team 3 · 41.0 pts</option><option value="27">Pick 27 · Rd 2 · Team 2 · 39.6 pts</option><option value="28">Pick 28 · Rd 2 · Team 1 · 38.2 pts</option></optgroup><optgroup label="── Round 3 ──"><option value="29">Pick 29 · Rd 3 · Team 1 · 36.9 pts</option><option value="30">Pick 30 · Rd 3 · Team 2 · 35.6 pts</option><option value="31">Pick 31 · Rd 3 · Team 3 · 34.3 pts</option><option value="32">Pick 32 · Rd 3 · Team 4 · 33.1 pts</option><option value="33">Pick 33 · Rd 3 · Team 5 · 32.0 pts</option><option value="34">Pick 34 · Rd 3 · Team 6 · 30.9 pts</option><option value="35">Pick 35 · Rd 3 · Team 7 · 29.8 pts</option><option value="36">Pick 36 · Rd 3 · Team 8 · 28.7 pts</option><option value="37">Pick 37 · Rd 3 · Team 9 · 27.7 pts</option><option value="38">Pick 38 · Rd 3 · Team 10 · 26.8 pts</option><option value="39">Pick 39 · Rd 3 · Team 11 · 25.8 pts</option><option value="40">Pick 40 · Rd 3 · Team 12 · 24.9 pts</option><option value="41">Pick 41 · Rd 3 · Team 13 · 24.0 pts</option><option value="42">Pick 42 · Rd 3 · Team 14 · 23.2 pts</option></optgroup><optgroup label="── Round 4 ──"><option value="43">Pick 43 · Rd 4 · Team 14 · 22.4 pts</option><option value="44">Pick 44 · Rd 4 · Team 13 · 21.6 pts</option><option value="45">Pick 45 · Rd 4 · Team 12 · 20.9 pts</option><option value="46">Pick 46 · Rd 4 · Team 11 · 20.1 pts</option><option value="47">Pick 47 · Rd 4 · Team 10 · 19.4 pts</option><option value="48">Pick 48 · Rd 4 · Team 9 · 18.7 pts</option><option value="49">Pick 49 · Rd 4 · Team 8 · 18.1 pts</option><option value="50">Pick 50 · Rd 4 · Team 7 · 17.5 pts</option><option value="51">Pick 51 · Rd 4 · Team 6 · 16.8 pts</option><option value="52">Pick 52 · Rd 4 · Team 5 · 16.3 pts</option><option value="53">Pick 53 · Rd 4 · Team 4 · 15.7 pts</option><option value="54">Pick 54 · Rd 4 · Team 3 · 15.1 pts</option><option value="55">Pick 55 · Rd 4 · Team 2 · 14.6 pts</option><option value="56">Pick 56 · Rd 4 · Team 1 · 14.1 pts</option></optgroup><optgroup label="── Round 5 ──"><option value="57">Pick 57 · Rd 5 · Team 1 · 13.6 pts</option><option value="58">Pick 58 · Rd 5 · Team 2 · 13.1 pts</option><option value="59">Pick 59 · Rd 5 · Team 3 · 12.7 pts</option><option value="60">Pick 60 · Rd 5 · Team 4 · 12.2 pts</option><option value="61">Pick 61 · Rd 5 · Team 5 · 11.8 pts</option><option value="62">Pick 62 · Rd 5 · Team 6 · 11.4 pts</option><option value="63">Pick 63 · Rd 5 · Team 7 · 11.0 pts</option><option value="64">Pick 64 · Rd 5 · Team 8 · 10.6 pts</option><option value="65">Pick 65 · Rd 5 · Team 9 · 10.2 pts</option><option value="66">Pick 66 · Rd 5 · Team 10 · 9.9 pts</option><option value="67">Pick 67 · Rd 5 · Team 11 · 9.5 pts</option><option value="68">Pick 68 · Rd 5 · Team 12 · 9.2 pts</option><option value="69">Pick 69 · Rd 5 · Team 13 · 8.9 pts</option><option value="70">Pick 70 · Rd 5 · Team 14 · 8.6 pts</option></optgroup><optgroup label="── Round 6 ──"><option value="71">Pick 71 · Rd 6 · Team 14 · 8.3 pts</option><option value="72">Pick 72 · Rd 6 · Team 13 · 8.0 pts</option><option value="73">Pick 73 · Rd 6 · Team 12 · 7.7 pts</option><option value="74">Pick 74 · Rd 6 · Team 11 · 7.4 pts</option><option value="75">Pick 75 · Rd 6 · Team 10 · 7.2 pts</option><option value="76">Pick 76 · Rd 6 · Team 9 · 6.9 pts</option><option value="77">Pick 77 · Rd 6 · Team 8 · 6.7 pts</option><option value="78">Pick 78 · Rd 6 · Team 7 · 6.4 pts</option><option value="79">Pick 79 · Rd 6 · Team 6 · 6.2 pts</option><option value="80">Pick 80 · Rd 6 · Team 5 · 6.0 pts</option><option value="81">Pick 81 · Rd 6 · Team 4 · 5.8 pts</option><option value="82">Pick 82 · Rd 6 · Team 3 · 5.6 pts</option><option value="83">Pick 83 · Rd 6 · Team 2 · 5.4 pts</option><option value="84">Pick 84 · Rd 6 · Team 1 · 5.2 pts</option></optgroup><optgroup label="── Round 7 ──"><option value="85">Pick 85 · Rd 7 · Team 1 · 5.0 pts</option><option value="86">Pick 86 · Rd 7 · Team 2 · 4.8 pts</option><option value="87">Pick 87 · Rd 7 · Team 3 · 4.7 pts</option><option value="88">Pick 88 · Rd 7 · Team 4 · 4.5 pts</option><option value="89">Pick 89 · Rd 7 · Team 5 · 4.3 pts</option><option value="90">Pick 90 · Rd 7 · Team 6 · 4.2 pts</option><option value="91">Pick 91 · Rd 7 · Team 7 · 4.1 pts</option><option value="92">Pick 92 · Rd 7 · Team 8 · 3.9 pts</option><option value="93">Pick 93 · Rd 7 · Team 9 · 3.8 pts</option><option value="94">Pick 94 · Rd 7 · Team 10 · 3.6 pts</option><option value="95">Pick 95 · Rd 7 · Team 11 · 3.5 pts</option><option value="96">Pick 96 · Rd 7 · Team 12 · 3.4 pts</option><option value="97">Pick 97 · Rd 7 · Team 13 · 3.3 pts</option><option value="98">Pick 98 · Rd 7 · Team 14 · 3.2 pts</option></optgroup><optgroup label="── Round 8 ──"><option value="99">Pick 99 · Rd 8 · Team 14 · 3.0 pts</option><option value="100">Pick 100 · Rd 8 · Team 13 · 2.9 pts</option><option value="101">Pick 101 · Rd 8 · Team 12 · 2.8 pts</option><option value="102">Pick 102 · Rd 8 · Team 11 · 2.7 pts</option><option value="103">Pick 103 · Rd 8 · Team 10 · 2.6 pts</option><option value="104">Pick 104 · Rd 8 · Team 9 · 2.5 pts</option><option value="105">Pick 105 · Rd 8 · Team 8 · 2.5 pts</option><option value="106">Pick 106 · Rd 8 · Team 7 · 2.4 pts</option><option value="107">Pick 107 · Rd 8 · Team 6 · 2.3 pts</option><option value="108">Pick 108 · Rd 8 · Team 5 · 2.2 pts</option><option value="109">Pick 109 · Rd 8 · Team 4 · 2.1 pts</option><option value="110">Pick 110 · Rd 8 · Team 3 · 2.1 pts</option><option value="111">Pick 111 · Rd 8 · Team 2 · 2.0 pts</option><option value="112">Pick 112 · Rd 8 · Team 1 · 1.9 pts</option></optgroup><optgroup label="── Round 9 ──"><option value="113">Pick 113 · Rd 9 · Team 1 · 1.8 pts</option><option value="114">Pick 114 · Rd 9 · Team 2 · 1.8 pts</option><option value="115">Pick 115 · Rd 9 · Team 3 · 1.7 pts</option><option value="116">Pick 116 · Rd 9 · Team 4 · 1.7 pts</option><option value="117">Pick 117 · Rd 9 · Team 5 · 1.6 pts</option><option value="118">Pick 118 · Rd 9 · Team 6 · 1.5 pts</option><option value="119">Pick 119 · Rd 9 · Team 7 · 1.5 pts</option><option value="120">Pick 120 · Rd 9 · Team 8 · 1.4 pts</option><option value="121">Pick 121 · Rd 9 · Team 9 · 1.4 pts</option><option value="122">Pick 122 · Rd 9 · Team 10 · 1.3 pts</option><option value="123">Pick 123 · Rd 9 · Team 11 · 1.3 pts</option><option value="124">Pick 124 · Rd 9 · Team 12 · 1.2 pts</option><option value="125">Pick 125 · Rd 9 · Team 13 · 1.2 pts</option><option value="126">Pick 126 · Rd 9 · Team 14 · 1.2 pts</option></optgroup><optgroup label="── Round 10 ──"><option value="127">Pick 127 · Rd 10 · Team 14 · 1.1 pts</option><option value="128">Pick 128 · Rd 10 · Team 13 · 1.1 pts</option><option value="129">Pick 129 · Rd 10 · Team 12 · 1.0 pts</option><option value="130">Pick 130 · Rd 10 · Team 11 · 1.0 pts</option><option value="131">Pick 131 · Rd 10 · Team 10 · 1.0 pts</option><option value="132">Pick 132 · Rd 10 · Team 9 · 0.9 pts</option><option value="133">Pick 133 · Rd 10 · Team 8 · 0.9 pts</option><option value="134">Pick 134 · Rd 10 · Team 7 · 0.9 pts</option><option value="135">Pick 135 · Rd 10 · Team 6 · 0.8 pts</option><option value="136">Pick 136 · Rd 10 · Team 5 · 0.8 pts</option><option value="137">Pick 137 · Rd 10 · Team 4 · 0.8 pts</option><option value="138">Pick 138 · Rd 10 · Team 3 · 0.8 pts</option><option value="139">Pick 139 · Rd 10 · Team 2 · 0.7 pts</option><option value="140">Pick 140 · Rd 10 · Team 1 · 0.7 pts</option></optgroup><optgroup label="── Round 11 ──"><option value="141">Pick 141 · Rd 11 · Team 1 · 0.7 pts</option><option value="142">Pick 142 · Rd 11 · Team 2 · 0.7 pts</option><option value="143">Pick 143 · Rd 11 · Team 3 · 0.6 pts</option><option value="144">Pick 144 · Rd 11 · Team 4 · 0.6 pts</option><option value="145">Pick 145 · Rd 11 · Team 5 · 0.6 pts</option><option value="146">Pick 146 · Rd 11 · Team 6 · 0.6 pts</option><option value="147">Pick 147 · Rd 11 · Team 7 · 0.6 pts</option><option value="148">Pick 148 · Rd 11 · Team 8 · 0.5 pts</option><option value="149">Pick 149 · Rd 11 · Team 9 · 0.5 pts</option><option value="150">Pick 150 · Rd 11 · Team 10 · 0.5 pts</option><option value="151">Pick 151 · Rd 11 · Team 11 · 0.5 pts</option><option value="152">Pick 152 · Rd 11 · Team 12 · 0.5 pts</option><option value="153">Pick 153 · Rd 11 · Team 13 · 0.4 pts</option><option value="154">Pick 154 · Rd 11 · Team 14 · 0.4 pts</option></optgroup><optgroup label="── Round 12 ──"><option value="155">Pick 155 · Rd 12 · Team 14 · 0.4 pts</option><option value="156">Pick 156 · Rd 12 · Team 13 · 0.4 pts</option><option value="157">Pick 157 · Rd 12 · Team 12 · 0.4 pts</option><option value="158">Pick 158 · Rd 12 · Team 11 · 0.4 pts</option><option value="159">Pick 159 · Rd 12 · Team 10 · 0.4 pts</option><option value="160">Pick 160 · Rd 12 · Team 9 · 0.3 pts</option><option value="161">Pick 161 · Rd 12 · Team 8 · 0.3 pts</option><option value="162">Pick 162 · Rd 12 · Team 7 · 0.3 pts</option><option value="163">Pick 163 · Rd 12 · Team 6 · 0.3 pts</option><option value="164">Pick 164 · Rd 12 · Team 5 · 0.3 pts</option><option value="165">Pick 165 · Rd 12 · Team 4 · 0.3 pts</option><option value="166">Pick 166 · Rd 12 · Team 3 · 0.3 pts</option><option value="167">Pick 167 · Rd 12 · Team 2 · 0.3 pts</option><option value="168">Pick 168 · Rd 12 · Team 1 · 0.3 pts</option></optgroup><optgroup label="── Round 13 ──"><option value="169">Pick 169 · Rd 13 · Team 1 · 0.3 pts</option><option value="170">Pick 170 · Rd 13 · Team 2 · 0.2 pts</option><option value="171">Pick 171 · Rd 13 · Team 3 · 0.2 pts</option><option value="172">Pick 172 · Rd 13 · Team 4 · 0.2 pts</option><option value="173">Pick 173 · Rd 13 · Team 5 · 0.2 pts</option><option value="174">Pick 174 · Rd 13 · Team 6 · 0.2 pts</option><option value="175">Pick 175 · Rd 13 · Team 7 · 0.2 pts</option><option value="176">Pick 176 · Rd 13 · Team 8 · 0.2 pts</option><option value="177">Pick 177 · Rd 13 · Team 9 · 0.2 pts</option><option value="178">Pick 178 · Rd 13 · Team 10 · 0.2 pts</option><option value="179">Pick 179 · Rd 13 · Team 11 · 0.2 pts</option><option value="180">Pick 180 · Rd 13 · Team 12 · 0.2 pts</option><option value="181">Pick 181 · Rd 13 · Team 13 · 0.2 pts</option><option value="182">Pick 182 · Rd 13 · Team 14 · 0.2 pts</option></optgroup><optgroup label="── Round 14 ──"><option value="183">Pick 183 · Rd 14 · Team 14 · 0.2 pts</option><option value="184">Pick 184 · Rd 14 · Team 13 · 0.1 pts</option><option value="185">Pick 185 · Rd 14 · Team 12 · 0.1 pts</option><option value="186">Pick 186 · Rd 14 · Team 11 · 0.1 pts</option><option value="187">Pick 187 · Rd 14 · Team 10 · 0.1 pts</option><option value="188">Pick 188 · Rd 14 · Team 9 · 0.1 pts</option><option value="189">Pick 189 · Rd 14 · Team 8 · 0.1 pts</option><option value="190">Pick 190 · Rd 14 · Team 7 · 0.1 pts</option><option value="191">Pick 191 · Rd 14 · Team 6 · 0.1 pts</option><option value="192">Pick 192 · Rd 14 · Team 5 · 0.1 pts</option><option value="193">Pick 193 · Rd 14 · Team 4 · 0.1 pts</option><option value="194">Pick 194 · Rd 14 · Team 3 · 0.1 pts</option><option value="195">Pick 195 · Rd 14 · Team 2 · 0.1 pts</option><option value="196">Pick 196 · Rd 14 · Team 1 · 0.1 pts</option></optgroup><optgroup label="── Round 15 ──"><option value="197">Pick 197 · Rd 15 · Team 1 · 0.1 pts</option><option value="198">Pick 198 · Rd 15 · Team 2 · 0.1 pts</option><option value="199">Pick 199 · Rd 15 · Team 3 · 0.1 pts</option><option value="200">Pick 200 · Rd 15 · Team 4 · 0.1 pts</option><option value="201">Pick 201 · Rd 15 · Team 5 · 0.1 pts</option><option value="202">Pick 202 · Rd 15 · Team 6 · 0.1 pts</option><option value="203">Pick 203 · Rd 15 · Team 7 · 0.1 pts</option><option value="204">Pick 204 · Rd 15 · Team 8 · 0.1 pts</option><option value="205">Pick 205 · Rd 15 · Team 9 · 0.1 pts</option><option value="206">Pick 206 · Rd 15 · Team 10 · 0.1 pts</option><option value="207">Pick 207 · Rd 15 · Team 11 · 0.1 pts</option><option value="208">Pick 208 · Rd 15 · Team 12 · 0.1 pts</option><option value="209">Pick 209 · Rd 15 · Team 13 · 0.1 pts</option><option value="210">Pick 210 · Rd 15 · Team 14 · 0.1 pts</option></optgroup><optgroup label="── Round 16 ──"><option value="211">Pick 211 · Rd 16 · Team 14 · 0.1 pts</option><option value="212">Pick 212 · Rd 16 · Team 13 · 0.1 pts</option><option value="213">Pick 213 · Rd 16 · Team 12 · 0.1 pts</option><option value="214">Pick 214 · Rd 16 · Team 11 · 0.1 pts</option><option value="215">Pick 215 · Rd 16 · Team 10 · 0.0 pts</option><option value="216">Pick 216 · Rd 16 · Team 9 · 0.0 pts</option><option value="217">Pick 217 · Rd 16 · Team 8 · 0.0 pts</option><option value="218">Pick 218 · Rd 16 · Team 7 · 0.0 pts</option><option value="219">Pick 219 · Rd 16 · Team 6 · 0.0 pts</option><option value="220">Pick 220 · Rd 16 · Team 5 · 0.0 pts</option><option value="221">Pick 221 · Rd 16 · Team 4 · 0.0 pts</option><option value="222">Pick 222 · Rd 16 · Team 3 · 0.0 pts</option><option value="223">Pick 223 · Rd 16 · Team 2 · 0.0 pts</option><option value="224">Pick 224 · Rd 16 · Team 1 · 0.0 pts</option></optgroup></select>
+          <select id="pickSelA"></select>
         </div>
         <button class="add-btn" onclick="addPick('A')">+ Add</button>
       </div>
-      <div class="pick-list" id="listA"><div class="pick-empty">No picks added yet.</div></div>
+      <div class="pick-list" id="listA">
+        <div class="pick-empty">No picks added yet.</div>
+      </div>
       <div class="bottom-controls">
         <button class="mini-btn" onclick="clearSide('A')">Clear all</button>
       </div>
@@ -979,12 +981,12 @@
       <div class="add-pick-row">
         <div class="input-group" style="flex:0 0 110px">
           <div class="input-label">Pick</div>
-          <select id="pickSelB"><optgroup label="── Round 1 ──"><option value="1" selected="selected">Pick 1 · Rd 1 · Team 1 · 100.0 pts</option><option value="2">Pick 2 · Rd 1 · Team 2 · 96.5 pts</option><option value="3">Pick 3 · Rd 1 · Team 3 · 93.1 pts</option><option value="4">Pick 4 · Rd 1 · Team 4 · 89.9 pts</option><option value="5">Pick 5 · Rd 1 · Team 5 · 86.7 pts</option><option value="6">Pick 6 · Rd 1 · Team 6 · 83.7 pts</option><option value="7">Pick 7 · Rd 1 · Team 7 · 80.8 pts</option><option value="8">Pick 8 · Rd 1 · Team 8 · 77.9 pts</option><option value="9">Pick 9 · Rd 1 · Team 9 · 75.2 pts</option><option value="10">Pick 10 · Rd 1 · Team 10 · 72.6 pts</option><option value="11">Pick 11 · Rd 1 · Team 11 · 70.0 pts</option><option value="12">Pick 12 · Rd 1 · Team 12 · 67.6 pts</option><option value="13">Pick 13 · Rd 1 · Team 13 · 65.2 pts</option><option value="14">Pick 14 · Rd 1 · Team 14 · 62.9 pts</option></optgroup><optgroup label="── Round 2 ──"><option value="15">Pick 15 · Rd 2 · Team 14 · 60.7 pts</option><option value="16">Pick 16 · Rd 2 · Team 13 · 58.6 pts</option><option value="17">Pick 17 · Rd 2 · Team 12 · 56.6 pts</option><option value="18">Pick 18 · Rd 2 · Team 11 · 54.6 pts</option><option value="19">Pick 19 · Rd 2 · Team 10 · 52.7 pts</option><option value="20">Pick 20 · Rd 2 · Team 9 · 50.8 pts</option><option value="21">Pick 21 · Rd 2 · Team 8 · 49.0 pts</option><option value="22">Pick 22 · Rd 2 · Team 7 · 47.3 pts</option><option value="23">Pick 23 · Rd 2 · Team 6 · 45.7 pts</option><option value="24">Pick 24 · Rd 2 · Team 5 · 44.1 pts</option><option value="25">Pick 25 · Rd 2 · Team 4 · 42.5 pts</option><option value="26">Pick 26 · Rd 2 · Team 3 · 41.0 pts</option><option value="27">Pick 27 · Rd 2 · Team 2 · 39.6 pts</option><option value="28">Pick 28 · Rd 2 · Team 1 · 38.2 pts</option></optgroup><optgroup label="── Round 3 ──"><option value="29">Pick 29 · Rd 3 · Team 1 · 36.9 pts</option><option value="30">Pick 30 · Rd 3 · Team 2 · 35.6 pts</option><option value="31">Pick 31 · Rd 3 · Team 3 · 34.3 pts</option><option value="32">Pick 32 · Rd 3 · Team 4 · 33.1 pts</option><option value="33">Pick 33 · Rd 3 · Team 5 · 32.0 pts</option><option value="34">Pick 34 · Rd 3 · Team 6 · 30.9 pts</option><option value="35">Pick 35 · Rd 3 · Team 7 · 29.8 pts</option><option value="36">Pick 36 · Rd 3 · Team 8 · 28.7 pts</option><option value="37">Pick 37 · Rd 3 · Team 9 · 27.7 pts</option><option value="38">Pick 38 · Rd 3 · Team 10 · 26.8 pts</option><option value="39">Pick 39 · Rd 3 · Team 11 · 25.8 pts</option><option value="40">Pick 40 · Rd 3 · Team 12 · 24.9 pts</option><option value="41">Pick 41 · Rd 3 · Team 13 · 24.0 pts</option><option value="42">Pick 42 · Rd 3 · Team 14 · 23.2 pts</option></optgroup><optgroup label="── Round 4 ──"><option value="43">Pick 43 · Rd 4 · Team 14 · 22.4 pts</option><option value="44">Pick 44 · Rd 4 · Team 13 · 21.6 pts</option><option value="45">Pick 45 · Rd 4 · Team 12 · 20.9 pts</option><option value="46">Pick 46 · Rd 4 · Team 11 · 20.1 pts</option><option value="47">Pick 47 · Rd 4 · Team 10 · 19.4 pts</option><option value="48">Pick 48 · Rd 4 · Team 9 · 18.7 pts</option><option value="49">Pick 49 · Rd 4 · Team 8 · 18.1 pts</option><option value="50">Pick 50 · Rd 4 · Team 7 · 17.5 pts</option><option value="51">Pick 51 · Rd 4 · Team 6 · 16.8 pts</option><option value="52">Pick 52 · Rd 4 · Team 5 · 16.3 pts</option><option value="53">Pick 53 · Rd 4 · Team 4 · 15.7 pts</option><option value="54">Pick 54 · Rd 4 · Team 3 · 15.1 pts</option><option value="55">Pick 55 · Rd 4 · Team 2 · 14.6 pts</option><option value="56">Pick 56 · Rd 4 · Team 1 · 14.1 pts</option></optgroup><optgroup label="── Round 5 ──"><option value="57">Pick 57 · Rd 5 · Team 1 · 13.6 pts</option><option value="58">Pick 58 · Rd 5 · Team 2 · 13.1 pts</option><option value="59">Pick 59 · Rd 5 · Team 3 · 12.7 pts</option><option value="60">Pick 60 · Rd 5 · Team 4 · 12.2 pts</option><option value="61">Pick 61 · Rd 5 · Team 5 · 11.8 pts</option><option value="62">Pick 62 · Rd 5 · Team 6 · 11.4 pts</option><option value="63">Pick 63 · Rd 5 · Team 7 · 11.0 pts</option><option value="64">Pick 64 · Rd 5 · Team 8 · 10.6 pts</option><option value="65">Pick 65 · Rd 5 · Team 9 · 10.2 pts</option><option value="66">Pick 66 · Rd 5 · Team 10 · 9.9 pts</option><option value="67">Pick 67 · Rd 5 · Team 11 · 9.5 pts</option><option value="68">Pick 68 · Rd 5 · Team 12 · 9.2 pts</option><option value="69">Pick 69 · Rd 5 · Team 13 · 8.9 pts</option><option value="70">Pick 70 · Rd 5 · Team 14 · 8.6 pts</option></optgroup><optgroup label="── Round 6 ──"><option value="71">Pick 71 · Rd 6 · Team 14 · 8.3 pts</option><option value="72">Pick 72 · Rd 6 · Team 13 · 8.0 pts</option><option value="73">Pick 73 · Rd 6 · Team 12 · 7.7 pts</option><option value="74">Pick 74 · Rd 6 · Team 11 · 7.4 pts</option><option value="75">Pick 75 · Rd 6 · Team 10 · 7.2 pts</option><option value="76">Pick 76 · Rd 6 · Team 9 · 6.9 pts</option><option value="77">Pick 77 · Rd 6 · Team 8 · 6.7 pts</option><option value="78">Pick 78 · Rd 6 · Team 7 · 6.4 pts</option><option value="79">Pick 79 · Rd 6 · Team 6 · 6.2 pts</option><option value="80">Pick 80 · Rd 6 · Team 5 · 6.0 pts</option><option value="81">Pick 81 · Rd 6 · Team 4 · 5.8 pts</option><option value="82">Pick 82 · Rd 6 · Team 3 · 5.6 pts</option><option value="83">Pick 83 · Rd 6 · Team 2 · 5.4 pts</option><option value="84">Pick 84 · Rd 6 · Team 1 · 5.2 pts</option></optgroup><optgroup label="── Round 7 ──"><option value="85">Pick 85 · Rd 7 · Team 1 · 5.0 pts</option><option value="86">Pick 86 · Rd 7 · Team 2 · 4.8 pts</option><option value="87">Pick 87 · Rd 7 · Team 3 · 4.7 pts</option><option value="88">Pick 88 · Rd 7 · Team 4 · 4.5 pts</option><option value="89">Pick 89 · Rd 7 · Team 5 · 4.3 pts</option><option value="90">Pick 90 · Rd 7 · Team 6 · 4.2 pts</option><option value="91">Pick 91 · Rd 7 · Team 7 · 4.1 pts</option><option value="92">Pick 92 · Rd 7 · Team 8 · 3.9 pts</option><option value="93">Pick 93 · Rd 7 · Team 9 · 3.8 pts</option><option value="94">Pick 94 · Rd 7 · Team 10 · 3.6 pts</option><option value="95">Pick 95 · Rd 7 · Team 11 · 3.5 pts</option><option value="96">Pick 96 · Rd 7 · Team 12 · 3.4 pts</option><option value="97">Pick 97 · Rd 7 · Team 13 · 3.3 pts</option><option value="98">Pick 98 · Rd 7 · Team 14 · 3.2 pts</option></optgroup><optgroup label="── Round 8 ──"><option value="99">Pick 99 · Rd 8 · Team 14 · 3.0 pts</option><option value="100">Pick 100 · Rd 8 · Team 13 · 2.9 pts</option><option value="101">Pick 101 · Rd 8 · Team 12 · 2.8 pts</option><option value="102">Pick 102 · Rd 8 · Team 11 · 2.7 pts</option><option value="103">Pick 103 · Rd 8 · Team 10 · 2.6 pts</option><option value="104">Pick 104 · Rd 8 · Team 9 · 2.5 pts</option><option value="105">Pick 105 · Rd 8 · Team 8 · 2.5 pts</option><option value="106">Pick 106 · Rd 8 · Team 7 · 2.4 pts</option><option value="107">Pick 107 · Rd 8 · Team 6 · 2.3 pts</option><option value="108">Pick 108 · Rd 8 · Team 5 · 2.2 pts</option><option value="109">Pick 109 · Rd 8 · Team 4 · 2.1 pts</option><option value="110">Pick 110 · Rd 8 · Team 3 · 2.1 pts</option><option value="111">Pick 111 · Rd 8 · Team 2 · 2.0 pts</option><option value="112">Pick 112 · Rd 8 · Team 1 · 1.9 pts</option></optgroup><optgroup label="── Round 9 ──"><option value="113">Pick 113 · Rd 9 · Team 1 · 1.8 pts</option><option value="114">Pick 114 · Rd 9 · Team 2 · 1.8 pts</option><option value="115">Pick 115 · Rd 9 · Team 3 · 1.7 pts</option><option value="116">Pick 116 · Rd 9 · Team 4 · 1.7 pts</option><option value="117">Pick 117 · Rd 9 · Team 5 · 1.6 pts</option><option value="118">Pick 118 · Rd 9 · Team 6 · 1.5 pts</option><option value="119">Pick 119 · Rd 9 · Team 7 · 1.5 pts</option><option value="120">Pick 120 · Rd 9 · Team 8 · 1.4 pts</option><option value="121">Pick 121 · Rd 9 · Team 9 · 1.4 pts</option><option value="122">Pick 122 · Rd 9 · Team 10 · 1.3 pts</option><option value="123">Pick 123 · Rd 9 · Team 11 · 1.3 pts</option><option value="124">Pick 124 · Rd 9 · Team 12 · 1.2 pts</option><option value="125">Pick 125 · Rd 9 · Team 13 · 1.2 pts</option><option value="126">Pick 126 · Rd 9 · Team 14 · 1.2 pts</option></optgroup><optgroup label="── Round 10 ──"><option value="127">Pick 127 · Rd 10 · Team 14 · 1.1 pts</option><option value="128">Pick 128 · Rd 10 · Team 13 · 1.1 pts</option><option value="129">Pick 129 · Rd 10 · Team 12 · 1.0 pts</option><option value="130">Pick 130 · Rd 10 · Team 11 · 1.0 pts</option><option value="131">Pick 131 · Rd 10 · Team 10 · 1.0 pts</option><option value="132">Pick 132 · Rd 10 · Team 9 · 0.9 pts</option><option value="133">Pick 133 · Rd 10 · Team 8 · 0.9 pts</option><option value="134">Pick 134 · Rd 10 · Team 7 · 0.9 pts</option><option value="135">Pick 135 · Rd 10 · Team 6 · 0.8 pts</option><option value="136">Pick 136 · Rd 10 · Team 5 · 0.8 pts</option><option value="137">Pick 137 · Rd 10 · Team 4 · 0.8 pts</option><option value="138">Pick 138 · Rd 10 · Team 3 · 0.8 pts</option><option value="139">Pick 139 · Rd 10 · Team 2 · 0.7 pts</option><option value="140">Pick 140 · Rd 10 · Team 1 · 0.7 pts</option></optgroup><optgroup label="── Round 11 ──"><option value="141">Pick 141 · Rd 11 · Team 1 · 0.7 pts</option><option value="142">Pick 142 · Rd 11 · Team 2 · 0.7 pts</option><option value="143">Pick 143 · Rd 11 · Team 3 · 0.6 pts</option><option value="144">Pick 144 · Rd 11 · Team 4 · 0.6 pts</option><option value="145">Pick 145 · Rd 11 · Team 5 · 0.6 pts</option><option value="146">Pick 146 · Rd 11 · Team 6 · 0.6 pts</option><option value="147">Pick 147 · Rd 11 · Team 7 · 0.6 pts</option><option value="148">Pick 148 · Rd 11 · Team 8 · 0.5 pts</option><option value="149">Pick 149 · Rd 11 · Team 9 · 0.5 pts</option><option value="150">Pick 150 · Rd 11 · Team 10 · 0.5 pts</option><option value="151">Pick 151 · Rd 11 · Team 11 · 0.5 pts</option><option value="152">Pick 152 · Rd 11 · Team 12 · 0.5 pts</option><option value="153">Pick 153 · Rd 11 · Team 13 · 0.4 pts</option><option value="154">Pick 154 · Rd 11 · Team 14 · 0.4 pts</option></optgroup><optgroup label="── Round 12 ──"><option value="155">Pick 155 · Rd 12 · Team 14 · 0.4 pts</option><option value="156">Pick 156 · Rd 12 · Team 13 · 0.4 pts</option><option value="157">Pick 157 · Rd 12 · Team 12 · 0.4 pts</option><option value="158">Pick 158 · Rd 12 · Team 11 · 0.4 pts</option><option value="159">Pick 159 · Rd 12 · Team 10 · 0.4 pts</option><option value="160">Pick 160 · Rd 12 · Team 9 · 0.3 pts</option><option value="161">Pick 161 · Rd 12 · Team 8 · 0.3 pts</option><option value="162">Pick 162 · Rd 12 · Team 7 · 0.3 pts</option><option value="163">Pick 163 · Rd 12 · Team 6 · 0.3 pts</option><option value="164">Pick 164 · Rd 12 · Team 5 · 0.3 pts</option><option value="165">Pick 165 · Rd 12 · Team 4 · 0.3 pts</option><option value="166">Pick 166 · Rd 12 · Team 3 · 0.3 pts</option><option value="167">Pick 167 · Rd 12 · Team 2 · 0.3 pts</option><option value="168">Pick 168 · Rd 12 · Team 1 · 0.3 pts</option></optgroup><optgroup label="── Round 13 ──"><option value="169">Pick 169 · Rd 13 · Team 1 · 0.3 pts</option><option value="170">Pick 170 · Rd 13 · Team 2 · 0.2 pts</option><option value="171">Pick 171 · Rd 13 · Team 3 · 0.2 pts</option><option value="172">Pick 172 · Rd 13 · Team 4 · 0.2 pts</option><option value="173">Pick 173 · Rd 13 · Team 5 · 0.2 pts</option><option value="174">Pick 174 · Rd 13 · Team 6 · 0.2 pts</option><option value="175">Pick 175 · Rd 13 · Team 7 · 0.2 pts</option><option value="176">Pick 176 · Rd 13 · Team 8 · 0.2 pts</option><option value="177">Pick 177 · Rd 13 · Team 9 · 0.2 pts</option><option value="178">Pick 178 · Rd 13 · Team 10 · 0.2 pts</option><option value="179">Pick 179 · Rd 13 · Team 11 · 0.2 pts</option><option value="180">Pick 180 · Rd 13 · Team 12 · 0.2 pts</option><option value="181">Pick 181 · Rd 13 · Team 13 · 0.2 pts</option><option value="182">Pick 182 · Rd 13 · Team 14 · 0.2 pts</option></optgroup><optgroup label="── Round 14 ──"><option value="183">Pick 183 · Rd 14 · Team 14 · 0.2 pts</option><option value="184">Pick 184 · Rd 14 · Team 13 · 0.1 pts</option><option value="185">Pick 185 · Rd 14 · Team 12 · 0.1 pts</option><option value="186">Pick 186 · Rd 14 · Team 11 · 0.1 pts</option><option value="187">Pick 187 · Rd 14 · Team 10 · 0.1 pts</option><option value="188">Pick 188 · Rd 14 · Team 9 · 0.1 pts</option><option value="189">Pick 189 · Rd 14 · Team 8 · 0.1 pts</option><option value="190">Pick 190 · Rd 14 · Team 7 · 0.1 pts</option><option value="191">Pick 191 · Rd 14 · Team 6 · 0.1 pts</option><option value="192">Pick 192 · Rd 14 · Team 5 · 0.1 pts</option><option value="193">Pick 193 · Rd 14 · Team 4 · 0.1 pts</option><option value="194">Pick 194 · Rd 14 · Team 3 · 0.1 pts</option><option value="195">Pick 195 · Rd 14 · Team 2 · 0.1 pts</option><option value="196">Pick 196 · Rd 14 · Team 1 · 0.1 pts</option></optgroup><optgroup label="── Round 15 ──"><option value="197">Pick 197 · Rd 15 · Team 1 · 0.1 pts</option><option value="198">Pick 198 · Rd 15 · Team 2 · 0.1 pts</option><option value="199">Pick 199 · Rd 15 · Team 3 · 0.1 pts</option><option value="200">Pick 200 · Rd 15 · Team 4 · 0.1 pts</option><option value="201">Pick 201 · Rd 15 · Team 5 · 0.1 pts</option><option value="202">Pick 202 · Rd 15 · Team 6 · 0.1 pts</option><option value="203">Pick 203 · Rd 15 · Team 7 · 0.1 pts</option><option value="204">Pick 204 · Rd 15 · Team 8 · 0.1 pts</option><option value="205">Pick 205 · Rd 15 · Team 9 · 0.1 pts</option><option value="206">Pick 206 · Rd 15 · Team 10 · 0.1 pts</option><option value="207">Pick 207 · Rd 15 · Team 11 · 0.1 pts</option><option value="208">Pick 208 · Rd 15 · Team 12 · 0.1 pts</option><option value="209">Pick 209 · Rd 15 · Team 13 · 0.1 pts</option><option value="210">Pick 210 · Rd 15 · Team 14 · 0.1 pts</option></optgroup><optgroup label="── Round 16 ──"><option value="211">Pick 211 · Rd 16 · Team 14 · 0.1 pts</option><option value="212">Pick 212 · Rd 16 · Team 13 · 0.1 pts</option><option value="213">Pick 213 · Rd 16 · Team 12 · 0.1 pts</option><option value="214">Pick 214 · Rd 16 · Team 11 · 0.1 pts</option><option value="215">Pick 215 · Rd 16 · Team 10 · 0.0 pts</option><option value="216">Pick 216 · Rd 16 · Team 9 · 0.0 pts</option><option value="217">Pick 217 · Rd 16 · Team 8 · 0.0 pts</option><option value="218">Pick 218 · Rd 16 · Team 7 · 0.0 pts</option><option value="219">Pick 219 · Rd 16 · Team 6 · 0.0 pts</option><option value="220">Pick 220 · Rd 16 · Team 5 · 0.0 pts</option><option value="221">Pick 221 · Rd 16 · Team 4 · 0.0 pts</option><option value="222">Pick 222 · Rd 16 · Team 3 · 0.0 pts</option><option value="223">Pick 223 · Rd 16 · Team 2 · 0.0 pts</option><option value="224">Pick 224 · Rd 16 · Team 1 · 0.0 pts</option></optgroup></select>
+          <select id="pickSelB"></select>
         </div>
         <div class="input-group" style="flex:0 0 80px">
           <div class="input-label">Position</div>
           <select id="posSelB">
-            <option value="" selected="selected">—</option>
+            <option value="">—</option>
             <option value="QB">QB</option>
             <option value="RB">RB</option>
             <option value="WR">WR</option>
@@ -995,7 +997,9 @@
         </div>
         <button class="add-btn" onclick="addPick('B')">+ Add</button>
       </div>
-      <div class="pick-list" id="listB"><div class="pick-empty">No picks added yet.</div></div>
+      <div class="pick-list" id="listB">
+        <div class="pick-empty">No picks added yet.</div>
+      </div>
       <div class="bottom-controls">
         <button class="mini-btn" onclick="clearSide('B')">Clear all</button>
       </div>
@@ -1004,8 +1008,8 @@
 
   <!-- EVALUATE BAR -->
   <div class="evaluate-bar">
-    <button class="evaluate-btn" id="evaluateBtn" onclick="evaluateTrade()" disabled="disabled">Evaluate Trade</button>
-    <span class="stale-badge" id="staleBadge" style="display: none;">Picks changed — re-evaluate</span>
+    <button class="evaluate-btn" id="evaluateBtn" onclick="evaluateTrade()" disabled>Evaluate Trade</button>
+    <span class="stale-badge" id="staleBadge">Picks changed — re-evaluate</span>
     <span class="t3 fs10" id="evaluateHint">Add at least one pick to each side</span>
   </div>
 
@@ -1037,7 +1041,7 @@
             <div class="input-group">
               <div class="input-label">Your Team Slot</div>
               <select id="myTeamSel" onchange="onMyTeamChange()">
-                <option value="" selected="selected">— Select —</option>
+                <option value="">— Select —</option>
               </select>
             </div>
             <button class="inv-set-btn" onclick="resetMyPicks()">Reset to Default</button>
@@ -1056,7 +1060,7 @@
             <div class="input-group">
               <div class="input-label">Their Team Slot</div>
               <select id="theirTeamSel" onchange="onTheirTeamChange()">
-                <option value="" selected="selected">— Select —</option>
+                <option value="">— Select —</option>
               </select>
             </div>
             <button class="inv-set-btn" onclick="resetTheirPicks()">Reset to Default</button>
@@ -1068,10 +1072,7 @@
       </div>
 
       <div class="t3 fs10" style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);line-height:1.6">
-        <strong class="t2">How to use:</strong> Select your team slot — 
-your default picks auto-populate (all your own picks across all 16 
-rounds). If you've traded away a pick or acquired one from another team,
- use the dropdown on that round to swap it out. <span style="color:var(--amber)">Amber</span> rows indicate picks that differ from your default.
+        <strong class="t2" >How to use:</strong> Select your team slot — your default picks auto-populate (all your own picks across all 16 rounds). If you've traded away a pick or acquired one from another team, use the dropdown on that round to swap it out. <span style="color:var(--amber)">Amber</span> rows indicate picks that differ from your default.
       </div>
 
     </div>
@@ -1100,8 +1101,8 @@ rounds). If you've traded away a pick or acquired one from another team,
         <div class="df aic" style="gap:6px">
           <div class="mono fs11" style="color:var(--green)">Pick 1.01: <span id="p1val">100.0</span></div>
           <div class="t3 fs10 tac f1" id="spreadArrow">→</div>
-          <div class="mono fs11" style="color:var(--amber)">Last Rd1: <span id="p32val">62.9</span></div>
-          <div class="t3 mono fs10">(<span id="spreadPct">37</span>% drop)</div>
+          <div class="mono fs11" style="color:var(--amber)">Last Rd1: <span id="p32val"></span></div>
+          <div class="t3 mono fs10" >(<span id="spreadPct"></span>% drop)</div>
         </div>
       </div>
     </div>
@@ -1113,7 +1114,9 @@ rounds). If you've traded away a pick or acquired one from another team,
       <span class="scenario-title">📋 Saved Scenarios</span>
       <button class="save-scenario-btn" onclick="saveScenario()">Save Current</button>
     </div>
-    <div id="scenarioList" class="scenario-list"><div class="scenario-empty">No scenarios saved. Build a trade and hit "Save Current."</div></div>
+    <div id="scenarioList" class="scenario-list">
+      <div class="scenario-empty">No scenarios saved. Build a trade and hit "Save Current."</div>
+    </div>
   </div>
 
   <!-- EXPORT -->
@@ -1178,7 +1181,7 @@ rounds). If you've traded away a pick or acquired one from another team,
       <div class="meter-section" style="margin-bottom:16px">
         <div class="meter-header">
           <span class="meter-title">In-Season Trade Balance</span>
-          <div class="t3 fs9">Select players from the rosters below</div>
+          <div class="t3 fs9" >Select players from the rosters below</div>
         </div>
         <div class="stat-row">
           <div class="stat-block">
@@ -1199,16 +1202,16 @@ rounds). If you've traded away a pick or acquired one from another team,
         </div>
         <div class="field-meter-wrap">
           <div class="field-meter">
-            <div class="yard-lines" id="sYardLines"><div class="yard-line major"></div><div class="yard-line"></div><div class="yard-line major"></div><div class="yard-line"></div><div class="yard-line major"></div><div class="yard-line"></div><div class="yard-line major"></div><div class="yard-line"></div><div class="yard-line major"></div><div class="yard-line"></div><div class="yard-line major"></div><div class="yard-line"></div><div class="yard-line major"></div><div class="yard-line"></div><div class="yard-line major"></div><div class="yard-line"></div><div class="yard-line major"></div><div class="yard-line"></div><div class="yard-line major"></div><div class="yard-line"></div></div>
+            <div class="yard-lines" id="sYardLines"></div>
             <div class="meter-bar-a" id="sMeterA" style="width:0%"></div>
             <div class="meter-bar-b" id="sMeterB" style="width:0%"></div>
             <div class="meter-center"></div>
             <svg class="meter-football" id="sFootball" style="left:calc(50% - 11px)" viewBox="0 0 44 32" fill="none">
-              <ellipse cx="22" cy="16" rx="18" ry="11" fill="#8B5E3C" stroke="#5A3A1A" stroke-width="2"></ellipse>
-              <line x1="22" y1="6" x2="22" y2="26" stroke="white" stroke-width="1.5" opacity="0.7"></line>
-              <line x1="14" y1="13" x2="30" y2="13" stroke="white" stroke-width="1" opacity="0.5"></line>
-              <line x1="14" y1="16" x2="30" y2="16" stroke="white" stroke-width="1" opacity="0.5"></line>
-              <line x1="14" y1="19" x2="30" y2="19" stroke="white" stroke-width="1" opacity="0.5"></line>
+              <ellipse cx="22" cy="16" rx="18" ry="11" fill="#8B5E3C" stroke="#5A3A1A" stroke-width="2"/>
+              <line x1="22" y1="6" x2="22" y2="26" stroke="white" stroke-width="1.5" opacity="0.7"/>
+              <line x1="14" y1="13" x2="30" y2="13" stroke="white" stroke-width="1" opacity="0.5"/>
+              <line x1="14" y1="16" x2="30" y2="16" stroke="white" stroke-width="1" opacity="0.5"/>
+              <line x1="14" y1="19" x2="30" y2="19" stroke="white" stroke-width="1" opacity="0.5"/>
             </svg>
             <div class="meter-label-a" id="sLabelA">Give</div>
             <div class="meter-label-b" id="sLabelB">Receive</div>
@@ -1216,7 +1219,7 @@ rounds). If you've traded away a pick or acquired one from another team,
         </div>
         <div class="verdict-bar" id="sVerdictBar">
           <div class="verdict-dot" id="sVerdictDot" style="background:var(--text3)"></div>
-          <div class="verdict-text t3" id="sVerdictText">Select players from the rosters below to evaluate the trade.</div>
+          <div class="verdict-text t3" id="sVerdictText" >Select players from the rosters below to evaluate the trade.</div>
         </div>
       </div>
 
@@ -1247,7 +1250,7 @@ rounds). If you've traded away a pick or acquired one from another team,
               </div>
               <div class="add-pick-row" style="flex-direction:column;gap:6px">
                 <div class="df" style="gap:6px;width:100%">
-                  <div class="input-group f1">
+                  <div class="input-group f1" >
                     <div class="input-label">Search Player</div>
                     <input type="text" id="searchA" placeholder="Name or position..." oninput="onSearchInput('A')" autocomplete="off" style="width:100%">
                   </div>
@@ -1273,7 +1276,7 @@ rounds). If you've traded away a pick or acquired one from another team,
               </div>
               <div class="add-pick-row" style="flex-direction:column;gap:6px">
                 <div class="df" style="gap:6px;width:100%">
-                  <div class="input-group f1">
+                  <div class="input-group f1" >
                     <div class="input-label">Search Player</div>
                     <input type="text" id="searchB" placeholder="Name or position..." oninput="onSearchInput('B')" autocomplete="off" style="width:100%">
                   </div>
@@ -1290,10 +1293,11 @@ rounds). If you've traded away a pick or acquired one from another team,
 
           <!-- Analyze button -->
           <div class="df aic" style="margin-top:12px;gap:10px">
-            <button onclick="submitManualTradeAnalysis()" class="fw7" style="background:var(--green);color:#000;border:none;border-radius:8px;padding:10px 24px;font-size:13px;cursor:pointer;font-family:var(--sans)">
+            <button onclick="submitManualTradeAnalysis()"
+      class="fw7" style="background:var(--green);color:#000;border:none;border-radius:8px;padding:10px 24px;font-size:13px;cursor:pointer;font-family:var(--sans)">
               ⚡ Analyze Trade
             </button>
-            <span class="t3 fs10">Powered by FantasyPros 2026 projections</span>
+            <span class="t3 fs10" >Powered by FantasyPros 2026 projections</span>
           </div>
           <div id="manualTradeResults" style="margin-top:12px"></div>
         </div>
@@ -1304,12 +1308,14 @@ rounds). If you've traded away a pick or acquired one from another team,
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
             <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px">
               <div class="fs11 fw6" style="color:var(--green);margin-bottom:8px">YOUR TEAM</div>
-              <select id="myTeamSelect" onchange="onTeamSelectChange()" class="t1 fs12" style="width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:8px 10px;font-family:var(--sans)">
+              <select id="myTeamSelect" onchange="onTeamSelectChange()"
+       class="t1 fs12" style="width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:8px 10px;font-family:var(--sans)">
               </select>
             </div>
             <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px">
               <div class="fs11 fw6" style="color:#4A90E2;margin-bottom:8px">TRADE PARTNER</div>
-              <select id="tradePartnerSelect" onchange="onTeamSelectChange()" class="t1 fs12" style="width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:8px 10px;font-family:var(--sans)">
+              <select id="tradePartnerSelect" onchange="onTeamSelectChange()"
+       class="t1 fs12" style="width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:8px 10px;font-family:var(--sans)">
               </select>
             </div>
           </div>
@@ -1321,12 +1327,14 @@ rounds). If you've traded away a pick or acquired one from another team,
             <div class="df aic" style="gap:10px;flex-wrap:wrap">
               <div class="f1" style="min-width:0">
                 <div class="t3 fs9 caps" style="letter-spacing:.05em;margin-bottom:3px">Trade Summary</div>
-                <div id="tradeSelectionSummary" class="t1 fs11">Click players from the rosters below to build your trade</div>
+                <div id="tradeSelectionSummary" class="t1 fs11" >Click players from the rosters below to build your trade</div>
               </div>
-              <button onclick="submitTrade()" id="simulateTradeBtn" class="fw7" style="background:var(--green);color:#000;border:none;border-radius:8px;padding:10px 20px;font-size:13px;cursor:pointer;font-family:var(--sans);opacity:0.4;pointer-events:none;white-space:nowrap">
+              <button onclick="submitTrade()" id="simulateTradeBtn"
+       class="fw7" style="background:var(--green);color:#000;border:none;border-radius:8px;padding:10px 20px;font-size:13px;cursor:pointer;font-family:var(--sans);opacity:0.4;pointer-events:none;white-space:nowrap">
                 ⚡ Simulate
               </button>
-              <button onclick="clearTrade()" class="t2 fs12" style="background:var(--surface3);border:1px solid var(--border2);border-radius:8px;padding:10px 14px;cursor:pointer;font-family:var(--sans)">
+              <button onclick="clearTrade()"
+       class="t2 fs12" style="background:var(--surface3);border:1px solid var(--border2);border-radius:8px;padding:10px 14px;cursor:pointer;font-family:var(--sans)">
                 Clear
               </button>
             </div>
@@ -1336,7 +1344,7 @@ rounds). If you've traded away a pick or acquired one from another team,
           <div id="tradeSimLoading" class="tac" style="display:none;padding:28px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:12px">
             <div style="font-size:28px;margin-bottom:10px">⚡</div>
             <div class="t1 fs12 fw6" style="margin-bottom:4px">Running Monte Carlo simulation…</div>
-            <div class="t3 fs10">1,000 simulations · 14-week season — takes a few seconds</div>
+            <div class="t3 fs10" >1,000 simulations · 14-week season — takes a few seconds</div>
             <div style="margin-top:12px;height:4px;background:var(--surface2);border-radius:2px;overflow:hidden">
               <div id="tradeSimProgress" style="height:100%;background:var(--green);width:0%;transition:width 0.3s;border-radius:2px"></div>
             </div>
@@ -1411,7 +1419,7 @@ rounds). If you've traded away a pick or acquired one from another team,
         <div class="legend-item"><div class="legend-swatch" style="background:rgba(255,255,255,0.04);border:1px solid var(--border2)"></div>&lt;10%</div>
       </div>
       <div class="heatmap-note" id="heatmapNote">
-        Slot baseline (any position) shown in the top row. Position rows show <strong class="t1">real hit rates</strong> from 2018–2024 Sleeper stats + FFC ADP data — % of players at that position/round who returned starter-level value. <strong class="t1">Bold cells</strong> beat the slot baseline by 5%+. Falls back to estimated rates if API unavailable.
+        Slot baseline (any position) shown in the top row. Position rows show <strong class="t1" >real hit rates</strong> from 2018–2024 Sleeper stats + FFC ADP data — % of players at that position/round who returned starter-level value. <strong class="t1" >Bold cells</strong> beat the slot baseline by 5%+. Falls back to estimated rates if API unavailable.
       </div>
     </div>
 
@@ -1423,18 +1431,19 @@ rounds). If you've traded away a pick or acquired one from another team,
       </div>
       <div class="df aic" style="gap:10px;flex-wrap:wrap;margin-bottom:12px">
         <div class="team-btns">
-          <button class="team-btn" data-adp="std" onclick="setAdpScoring('std')">STD</button>
+          <button class="team-btn" data-adp="std"  onclick="setAdpScoring('std')">STD</button>
           <button class="team-btn active" data-adp="half" onclick="setAdpScoring('half')">HALF</button>
-          <button class="team-btn" data-adp="ppr" onclick="setAdpScoring('ppr')">PPR</button>
+          <button class="team-btn" data-adp="ppr"  onclick="setAdpScoring('ppr')">PPR</button>
         </div>
         <div class="team-btns">
-          <button class="team-btn active" data-adppos="ALL" onclick="setAdpPos('ALL')">All</button>
-          <button class="team-btn" data-adppos="QB" onclick="setAdpPos('QB')">QB</button>
-          <button class="team-btn" data-adppos="RB" onclick="setAdpPos('RB')">RB</button>
-          <button class="team-btn" data-adppos="WR" onclick="setAdpPos('WR')">WR</button>
-          <button class="team-btn" data-adppos="TE" onclick="setAdpPos('TE')">TE</button>
+          <button class="team-btn active" data-adppos="ALL"  onclick="setAdpPos('ALL')">All</button>
+          <button class="team-btn" data-adppos="QB"  onclick="setAdpPos('QB')">QB</button>
+          <button class="team-btn" data-adppos="RB"  onclick="setAdpPos('RB')">RB</button>
+          <button class="team-btn" data-adppos="WR"  onclick="setAdpPos('WR')">WR</button>
+          <button class="team-btn" data-adppos="TE"  onclick="setAdpPos('TE')">TE</button>
         </div>
-        <input id="adpSearch" type="text" placeholder="Search player..." oninput="renderAdpTable()" style="background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:6px 10px;color:var(--text1);font-size:11px;width:160px;outline:none">
+        <input id="adpSearch" type="text" placeholder="Search player..." oninput="renderAdpTable()"
+          style="background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:6px 10px;color:var(--text1);font-size:11px;width:160px;outline:none">
       </div>
       <div style="overflow-x:auto">
         <table id="adpTable" style="width:100%;border-collapse:collapse;font-size:11px"></table>
@@ -1467,7 +1476,7 @@ rounds). If you've traded away a pick or acquired one from another team,
         <div>
           <div class="t3 fs9 fw7 caps" style="letter-spacing:.09em;margin-bottom:4px">Your Team</div>
           <select id="suggestMyTeam" onchange="onSuggestTeamChange()" class="t1 fs12 fw6" style="background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:5px 10px;min-width:160px">
-            <option value="" selected="selected">— Select your team —</option>
+            <option value="">— Select your team —</option>
           </select>
         </div>
         <button onclick="runSuggestions()" id="suggestRunBtn" class="fs11 fw7" style="margin-left:auto;color:#0B1220;background:var(--green);border:none;border-radius:7px;padding:8px 18px;cursor:pointer;letter-spacing:.03em">
@@ -1507,9 +1516,7 @@ rounds). If you've traded away a pick or acquired one from another team,
       <!-- League-wide draft ranking — all 14 managers at a glance -->
       <div style="margin-bottom:28px">
         <div class="t1 fw6 fs12" style="margin-bottom:6px">🏆 League Draft Ranking</div>
-        <div class="t3 fs10" style="margin-bottom:10px">All managers 
-ranked by Hits/Yr (volume) with Hit % (rate) for cross-reference. Filter
- by a single draft year using the pills below.</div>
+        <div class="t3 fs10" style="margin-bottom:10px">All managers ranked by Hits/Yr (volume) with Hit % (rate) for cross-reference. Filter by a single draft year using the pills below.</div>
         <div id="leagueDraftRanking">
           <div class="t3 fs10" style="padding:20px;text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:10px">Loading…</div>
         </div>
@@ -1520,7 +1527,8 @@ ranked by Hits/Yr (volume) with Hit % (rate) for cross-reference. Filter
       <!-- Manager selector -->
       <div class="df aic" style="gap:12px;margin-bottom:20px;flex-wrap:wrap">
         <label class="t2 fs11 fw6">Select Manager:</label>
-        <select id="tendenciesTeamSelect" onchange="renderTeamTendencies()" style="background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:7px 12px;color:var(--text1);font-size:12px;outline:none;min-width:180px">
+        <select id="tendenciesTeamSelect" onchange="renderTeamTendencies()"
+          style="background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:7px 12px;color:var(--text1);font-size:12px;outline:none;min-width:180px">
         </select>
         <div class="t3 fs10" id="tendenciesSummaryBadge"></div>
       </div>
@@ -1554,10 +1562,7 @@ ranked by Hits/Yr (volume) with Hit % (rate) for cross-reference. Filter
     <!-- Header -->
     <div style="margin-bottom:24px">
       <div class="t1 fw7" style="font-size:18px;margin-bottom:6px">🔗 League Sync</div>
-      <div class="t2 fs12" style="line-height:1.6;margin-bottom:14px">Connect
- your private league to unlock real roster data, historical draft 
-analysis, and league-specific trade values. Your credentials never leave
- your browser.</div>
+      <div class="t2 fs12" style="line-height:1.6;margin-bottom:14px">Connect your private league to unlock real roster data, historical draft analysis, and league-specific trade values. Your credentials never leave your browser.</div>
       <div class="df aic" style="gap:8px">
         <span class="t3 fs10 fw6">Platform:</span>
         <span id="platformEspnPill" onclick="setPlatform('espn')" style="cursor:pointer;padding:5px 14px;border-radius:14px;font-size:12px;font-weight:600;border:1px solid var(--blue);background:var(--blue);color:#fff;transition:all 0.15s;user-select:none">ESPN</span>
@@ -1568,10 +1573,7 @@ analysis, and league-specific trade values. Your credentials never leave
     <!-- Extension card — shared across both platforms -->
     <div class="insight-card" style="margin-bottom:16px">
       <div class="t1 fw6" style="font-size:13px;margin-bottom:4px">🧩 Fantasy League Sync — Browser Extension</div>
-      <div class="t3 fs10" style="line-height:1.5;margin-bottom:10px">One
- extension for both ESPN and Yahoo. It auto-detects which platform 
-you're on, grabs the right cookies, finds your league ID, and sends 
-everything here in one click.</div>
+      <div class="t3 fs10" style="line-height:1.5;margin-bottom:10px">One extension for both ESPN and Yahoo. It auto-detects which platform you're on, grabs the right cookies, finds your league ID, and sends everything here in one click.</div>
       <ol class="t3 fs10" style="line-height:1.8;margin:0 0 8px 16px;padding:0">
         <li>Download → <button onclick="downloadYahooExtension()" style="padding:4px 12px;border-radius:6px;border:1px solid #7c3aed;background:rgba(124,58,237,0.15);color:#7c3aed;font-size:11px;font-weight:700;cursor:pointer">📦 fantasy-league-sync.zip</button></li>
         <li>Unzip the folder</li>
@@ -1598,21 +1600,25 @@ everything here in one click.</div>
       <!-- Step 1: League ID -->
       <div class="df aic" style="gap:10px;margin-bottom:16px">
         <div class="fs11 fw7 df aic fsh0" style="width:22px;height:22px;border-radius:50%;background:var(--green);color:#000;justify-content:center">1</div>
-        <div class="f1">
+        <div class="f1" >
           <div class="t1 fs11 fw6" style="margin-bottom:6px">Enter your League ID</div>
-          <input id="espnLeagueId" type="text" placeholder="e.g. 201187" value="201187" class="t1 mono" style="width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:8px 10px;font-size:13px;box-sizing:border-box">
+          <input id="espnLeagueId" type="text" placeholder="e.g. 201187" value="201187"
+     class="t1 mono" style="width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:8px 10px;font-size:13px;box-sizing:border-box">
           <div class="t3 fs10" style="margin-top:4px">Found in your ESPN league URL: fantasy.espn.com/football/league?leagueId=<b>201187</b></div>
         </div>
         <div>
           <div class="t1 fs11 fw6" style="margin-bottom:6px">Scoring Format</div>
           <div class="df" style="gap:6px">
-            <button onclick="setEspnScoring('std')" id="scoringStd" class="t2 fs11 f1" style="padding:7px 4px;border-radius:6px;border:1px solid var(--border2);background:var(--surface2);cursor:pointer;font-family:var(--sans)">
+            <button onclick="setEspnScoring('std')" id="scoringStd"
+      class="t2 fs11 f1" style="padding:7px 4px;border-radius:6px;border:1px solid var(--border2);background:var(--surface2);cursor:pointer;font-family:var(--sans)">
               Standard
             </button>
-            <button onclick="setEspnScoring('half')" id="scoringHalf" class="fs11 fw7 f1" style="padding:7px 4px;border-radius:6px;border:1px solid var(--green);background:rgba(0,210,106,0.1);color:var(--green);cursor:pointer;font-family:var(--sans)">
+            <button onclick="setEspnScoring('half')" id="scoringHalf"
+      class="fs11 fw7 f1" style="padding:7px 4px;border-radius:6px;border:1px solid var(--green);background:rgba(0,210,106,0.1);color:var(--green);cursor:pointer;font-family:var(--sans)">
               Half PPR
             </button>
-            <button onclick="setEspnScoring('ppr')" id="scoringPpr" class="t2 fs11 f1" style="padding:7px 4px;border-radius:6px;border:1px solid var(--border2);background:var(--surface2);cursor:pointer;font-family:var(--sans)">
+            <button onclick="setEspnScoring('ppr')" id="scoringPpr"
+      class="t2 fs11 f1" style="padding:7px 4px;border-radius:6px;border:1px solid var(--border2);background:var(--surface2);cursor:pointer;font-family:var(--sans)">
               Full PPR
             </button>
           </div>
@@ -1622,15 +1628,15 @@ everything here in one click.</div>
       <!-- Step 2: Bookmarklet -->
       <div class="df" style="align-items:flex-start;gap:10px;margin-bottom:16px" id="espnBookmarkletStep">
         <div class="fs11 fw7 df aic fsh0" style="width:22px;height:22px;border-radius:50%;background:var(--green);color:#000;justify-content:center;margin-top:2px">2</div>
-        <div class="f1">
+        <div class="f1" >
           <div class="t1 fs11 fw6" style="margin-bottom:6px">Add the ESPN Sync button to your bookmarks bar</div>
-          <div class="t3 fs10" style="margin-bottom:10px;line-height:1.6">Drag
- the button below to your bookmarks bar. You only do this once. After 
-that, just click it whenever you're on ESPN to sync your league.</div>
+          <div class="t3 fs10" style="margin-bottom:10px;line-height:1.6">Drag the button below to your bookmarks bar. You only do this once. After that, just click it whenever you're on ESPN to sync your league.</div>
 
           <!-- Draggable bookmarklet -->
           <div class="df aic" style="gap:12px;flex-wrap:wrap">
-            <a id="espnBookmarklet" href="" onclick="return false;" draggable="true" class="t1 fw6 aic" style="display:inline-flex;gap:6px;background:var(--surface3);border:2px dashed var(--border2);border-radius:8px;padding:10px 16px;font-size:13px;cursor:grab;text-decoration:none;user-select:none">
+            <a id="espnBookmarklet" href="" onclick="return false;"
+       draggable="true"
+      class="t1 fw6 aic" style="display:inline-flex;gap:6px;background:var(--surface3);border:2px dashed var(--border2);border-radius:8px;padding:10px 16px;font-size:13px;cursor:grab;text-decoration:none;user-select:none">
               🏈 Sync ESPN League
             </a>
             <div class="t3 fs10" style="line-height:1.5">← Drag this to your<br>bookmarks bar</div>
@@ -1650,8 +1656,12 @@ that, just click it whenever you're on ESPN to sync your league.</div>
       <!-- Credentials paste — always visible, auto-imports on paste, button for mobile -->
       <div style="margin-bottom:12px">
         <div class="t3 fs10" style="margin-bottom:5px">Paste your <code>ESPN_SYNC::...</code> credentials</div>
-        <textarea id="espnPayloadInput" rows="2" placeholder="Paste ESPN_SYNC::... here" onpaste="handleEspnPaste(event)" style="width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:6px 6px 0 0;padding:9px 10px;color:var(--text);font-size:11px;font-family:var(--mono);resize:none;box-sizing:border-box;outline:none;border-bottom:none"></textarea>
-        <button onclick="importPastedCredentials()" style="width:100%;background:var(--surface3);border:1px solid var(--border2);border-top:none;border-radius:0 0 6px 6px;padding:8px;color:var(--text2);font-size:11px;cursor:pointer;font-family:var(--sans)">
+        <textarea id="espnPayloadInput" rows="2"
+          placeholder="Paste ESPN_SYNC::... here"
+          onpaste="handleEspnPaste(event)"
+          style="width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:6px 6px 0 0;padding:9px 10px;color:var(--text);font-size:11px;font-family:var(--mono);resize:none;box-sizing:border-box;outline:none;border-bottom:none"></textarea>
+        <button onclick="importPastedCredentials()"
+          style="width:100%;background:var(--surface3);border:1px solid var(--border2);border-top:none;border-radius:0 0 6px 6px;padding:8px;color:var(--text2);font-size:11px;cursor:pointer;font-family:var(--sans)">
           Import →
         </button>
       </div>
@@ -1669,19 +1679,24 @@ that, just click it whenever you're on ESPN to sync your league.</div>
       </div>
 
       <div class="df aic" style="gap:10px;margin-top:4px;flex-wrap:wrap">
-        <button onclick="connectEspn()" id="espnConnectBtn" class="t1 fw6" style="background:var(--surface3);border:1px solid var(--border2);border-radius:8px;padding:10px 18px;font-size:13px;cursor:pointer;font-family:var(--sans)">
+        <button onclick="connectEspn()" id="espnConnectBtn"
+    class="t1 fw6" style="background:var(--surface3);border:1px solid var(--border2);border-radius:8px;padding:10px 18px;font-size:13px;cursor:pointer;font-family:var(--sans)">
           1️⃣ Connect ESPN
         </button>
-        <button onclick="syncEspn()" id="espnSyncBtn" class="fw7" style="background:var(--green);color:#000;border:none;border-radius:8px;padding:10px 18px;font-size:13px;cursor:pointer;font-family:var(--sans);opacity:0.4;pointer-events:none">
+        <button onclick="syncEspn()" id="espnSyncBtn"
+    class="fw7" style="background:var(--green);color:#000;border:none;border-radius:8px;padding:10px 18px;font-size:13px;cursor:pointer;font-family:var(--sans);opacity:0.4;pointer-events:none">
           3️⃣ Sync League
         </button>
-        <button onclick="clearAllEspnCache()" class="t2 fs12" style="background:var(--surface3);border:1px solid var(--border2);border-radius:8px;padding:10px 16px;cursor:pointer;font-family:var(--sans)">
+        <button onclick="clearAllEspnCache()"
+    class="t2 fs12" style="background:var(--surface3);border:1px solid var(--border2);border-radius:8px;padding:10px 16px;cursor:pointer;font-family:var(--sans)">
           🗑 Clear Cache
         </button>
-        <button onclick="localStorage.removeItem('fpProjections');fetchFantasyProsProjections(true).then(()=>renderRosterView());this.textContent='✅ Refreshed'" style="background:var(--surface3);color:var(--text2);border:1px solid var(--border2);border-radius:8px;padding:10px 16px;font-size:12px;cursor:pointer;font-family:var(--sans)">
+        <button onclick="localStorage.removeItem('fpProjections');fetchFantasyProsProjections(true).then(()=>renderRosterView());this.textContent='✅ Refreshed'"
+          style="background:var(--surface3);color:var(--text2);border:1px solid var(--border2);border-radius:8px;padding:10px 16px;font-size:12px;cursor:pointer;font-family:var(--sans)">
           🔄 Refresh Projections
         </button>
-        <button onclick="checkValidationProjections()" class="t2 fs12" style="background:var(--surface3);border:1px solid var(--border2);border-radius:8px;padding:10px 16px;cursor:pointer;font-family:var(--sans)">
+        <button onclick="checkValidationProjections()"
+    class="t2 fs12" style="background:var(--surface3);border:1px solid var(--border2);border-radius:8px;padding:10px 16px;cursor:pointer;font-family:var(--sans)">
           🔬 Check Val Projections
         </button>
       </div>
@@ -1699,7 +1714,7 @@ that, just click it whenever you're on ESPN to sync your league.</div>
     </div>
 
     <!-- Error display -->
-    <div id="espnError" class="fs12" style="display:none;background:var(--red-bg);border:1px solid var(--red);border-radius:8px;padding:12px 16px;margin-bottom:16px;color:var(--red)"></div>
+    <div id="espnError" class="fs12" style="display:none;background:var(--red-bg);border:1px solid var(--red);border-radius:8px;padding:12px 16px;margin-bottom:16px;color:var(--red)" ></div>
 
     <!-- Results: League Info -->
     <div id="espnLeagueInfo" style="display:none;margin-bottom:16px">
@@ -1749,12 +1764,15 @@ that, just click it whenever you're on ESPN to sync your league.</div>
         <!-- Yahoo League ID -->
         <div class="df aic" style="gap:8px;flex-wrap:wrap;margin-bottom:16px">
           <label class="t2 fs11 fw6" for="yahooLeagueId">League ID:</label>
-          <input id="yahooLeagueId" type="text" placeholder="e.g. 95358" style="flex:1;min-width:100px;max-width:180px;padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text1);font-size:13px;font-family:inherit">
+          <input id="yahooLeagueId" type="text" placeholder="e.g. 95358"
+            style="flex:1;min-width:100px;max-width:180px;padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text1);font-size:13px;font-family:inherit"
+          />
         </div>
 
         <!-- Yahoo sync button -->
         <div class="df aic" style="gap:8px">
-          <button onclick="testYahooSync()" id="yahooSyncBtn" style="padding:10px 20px;border-radius:8px;font-size:13px;font-weight:700;background:var(--blue);color:#fff;border:none;cursor:pointer;opacity:0.4;pointer-events:none">
+          <button onclick="testYahooSync()" id="yahooSyncBtn"
+            style="padding:10px 20px;border-radius:8px;font-size:13px;font-weight:700;background:var(--blue);color:#fff;border:none;cursor:pointer;opacity:0.4;pointer-events:none">
             🔄 Test Yahoo Sync
           </button>
           <span id="yahooSyncStatus" class="t3 fs11"></span>
@@ -10622,6 +10640,5 @@ initHitRateEngine();
 // Fetch Sleeper player ADP data independently — much faster than full hit rate engine
 // This populates the ADP table without waiting for 6 years of hit rate data
 </script>
-
-
-</div></body></html>
+</body>
+</html>
