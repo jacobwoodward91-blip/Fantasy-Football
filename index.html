@@ -6782,7 +6782,7 @@ const DEBUG = false;
 function dbg(...args) { if (DEBUG || window.DEBUG) console.log(...args); }
 
 const HIT_RATE_YEARS   = [2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025];
-const HIT_RATE_CACHE_KEY = 'hitRateData_v16'; // bumped — force rebuild with qualified rankings + stronger name cleanup
+const HIT_RATE_CACHE_KEY = 'hitRateData_v17'; // bumped — count Sleeper-known no-stat ADP players as documented busts
 const HIT_RATE_CACHE_TTL  = 7 * 24 * 60 * 60 * 1000; // 7 days in ms
 
 // Sleeper position string → our position key
@@ -7105,6 +7105,29 @@ async function buildYearHitRates(year, playerRes, posLookup) {
   const allPlayerPoints = {}; // pos → { name → pts } — every player with any points at all
   POSITIONS_HR.forEach(pos => { playerPoints[pos] = []; allPlayerPoints[pos] = {}; });
 
+  // Sleeper's yearly stats endpoint omits players who recorded no usable stats,
+  // but /players/nfl can still confirm the player identity. If an ADP-listed
+  // player exists in Sleeper's player database but has no stats that year, that is
+  // a documented zero-point bust, not a name-matching miss.
+  const sleeperKnownByPos = {};
+  const sleeperKnownAny   = new Set();
+  POSITIONS_HR.forEach(pos => { sleeperKnownByPos[pos] = new Set(); });
+  Object.values(playerRes || {}).forEach(p => {
+    if (!p) return;
+    const full = (p.full_name || `${p.first_name || ''} ${p.last_name || ''}`).trim();
+    const name = normalizeName(full);
+    if (!name) return;
+    sleeperKnownAny.add(name);
+
+    const posCandidates = [];
+    if (p.position) posCandidates.push(p.position);
+    if (Array.isArray(p.fantasy_positions)) posCandidates.push(...p.fantasy_positions);
+    posCandidates.forEach(rawPos => {
+      const mapped = SLEEPER_POS_MAP[String(rawPos || '').toUpperCase()];
+      if (mapped && sleeperKnownByPos[mapped]) sleeperKnownByPos[mapped].add(name);
+    });
+  });
+
   Object.entries(statsRes).forEach(([playerId, stats]) => {
     const pos = posLookup[playerId];
     if (!pos) return;
@@ -7163,8 +7186,9 @@ async function buildYearHitRates(year, playerRes, posLookup) {
   Object.entries(adpLookup).forEach(([name, { round, pos, adp }]) => {
     const isRankedStarter = posRanks[pos] && (name in posRanks[pos]);
     const hadAnyPoints    = allPlayerPoints[pos] && (name in allPlayerPoints[pos]);
+    const isKnownSleeperPlayer = !!(sleeperKnownByPos[pos]?.has(name) || sleeperKnownAny.has(name));
 
-    if (!isRankedStarter && !hadAnyPoints) {
+    if (!isRankedStarter && !hadAnyPoints && !isKnownSleeperPlayer) {
       // Truly absent from Sleeper's data this year/position — likely a name mismatch,
       // not a real outcome. Keep excluded; this is what hitRateUnmatchedNames() shows.
       diag.noSleeperPosMatch++;
