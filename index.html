@@ -828,6 +828,124 @@
   .aic{align-items:center}
   .fsh0{flex-shrink:0}
   .f1{flex:1}
+
+/* ── RANKINGS + DRAFT PLANNER (merged from index_2.html) ── */
+  /* ── RANKINGS TAB ── */
+  .rank-tag-btn {
+    background: var(--surface3); border: 1px solid var(--border2);
+    border-radius: 5px; padding: 3px 7px; cursor: pointer;
+    font-size: 14px; line-height: 1; transition: background .15s, border-color .15s;
+  }
+  .rank-tag-btn:hover { background: var(--surface2); }
+  .rank-tag-btn.active-mustget { background: rgba(255,107,53,0.18); border-color: rgba(255,107,53,0.5); }
+  .rank-tag-btn.active-target  { background: rgba(74,144,226,0.18); border-color: rgba(74,144,226,0.5); }
+  .rank-tag-btn.active-avoid   { background: rgba(255,71,87,0.18);  border-color: rgba(255,71,87,0.5); }
+  .rank-summary-chip {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 600;
+    border: 1px solid; cursor: pointer;
+  }
+  .rank-summary-chip.mustget { background: rgba(255,107,53,0.12); border-color: rgba(255,107,53,0.35); color: #FF6B35; }
+  .rank-summary-chip.target  { background: rgba(74,144,226,0.12);  border-color: rgba(74,144,226,0.35); color: #4A90E2; }
+  .rank-summary-chip.avoid   { background: rgba(255,71,87,0.12);   border-color: rgba(255,71,87,0.35);  color: #FF4757; }
+  .rank-threshold-note { font-size: 9px; font-weight: 400; opacity: .7; margin-left: 2px; }
+
+  /* ── DRAFT PLANNER ── */
+  .planner-controls {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 20px 24px;
+    display: flex; align-items: flex-end; gap: 16px; flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  .planner-field { display: flex; flex-direction: column; gap: 6px; }
+  .planner-field label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text3); }
+  .planner-input {
+    background: var(--surface2); border: 1px solid var(--border2);
+    color: var(--text); font-family: var(--mono); font-size: 14px; font-weight: 700;
+    padding: 8px 12px; border-radius: 6px; width: 80px; text-align: center; outline: none;
+  }
+  .planner-input:focus { border-color: var(--blue); }
+  .planner-run-btn {
+    background: var(--green); color: #000; font-family: var(--sans); font-size: 13px;
+    font-weight: 700; padding: 9px 22px; border-radius: 6px; border: none;
+    cursor: pointer; letter-spacing: 0.04em; transition: opacity 0.15s; white-space: nowrap;
+  }
+  .planner-run-btn:hover { opacity: 0.85; }
+  .planner-strategy-name { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
+  .planner-winner-badge {
+    font-family: var(--mono); font-size: 9px; font-weight: 700; letter-spacing: 0.08em;
+    background: var(--green-bg); color: var(--green); border: 1px solid rgba(0,210,106,0.3);
+    padding: 3px 7px; border-radius: 4px; text-transform: uppercase; white-space: nowrap;
+  }
+  .planner-slot-label { font-family: var(--mono); font-size: 9px; font-weight: 700; color: var(--text3); text-transform: uppercase; }
+  .planner-empty { padding: 32px 16px; text-align: center; color: var(--text3); font-size: 12px; }
+
+  .planner-pos-badge {
+    font-family: var(--mono); font-size: 8px; font-weight: 700;
+    padding: 2px 5px; border-radius: 3px; text-align: center; letter-spacing: 0.04em;
+    flex-shrink: 0;
+  }
+
+  /* ── Strategy Editor ── */
+  .strategy-editor { display:none; width:100%; border-top:1px solid var(--border); padding-top:14px; margin-top:6px; }
+  .strategy-editor.open { display:block; }
+  .round-target-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin-bottom:14px; }
+  @media(max-width:600px) { .round-target-grid { grid-template-columns:repeat(2,1fr); } }
+  .round-target-row { display:flex; flex-direction:column; gap:4px; }
+  .round-target-row label { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--text3); }
+  .editor-save-btn { background:var(--green); color:#000; border:none; border-radius:6px; padding:7px 16px; font-family:var(--sans); font-size:12px; font-weight:700; cursor:pointer; transition:opacity .15s; }
+  .editor-save-btn:hover { opacity:.85; }
+  .editor-cancel-btn { background:var(--surface3); border:1px solid var(--border2); color:var(--text2); border-radius:6px; padding:7px 14px; font-family:var(--sans); font-size:12px; font-weight:500; cursor:pointer; transition:all .15s; }
+  .editor-cancel-btn:hover { color:var(--text); border-color:var(--text3); }
+  .editor-delete-btn { background:none; border:1px solid rgba(255,71,87,.3); color:var(--red); border-radius:6px; padding:7px 14px; font-family:var(--sans); font-size:12px; font-weight:500; cursor:pointer; transition:all .15s; margin-left:auto; }
+  .editor-delete-btn:hover { background:var(--red-bg); }
+  .custom-chip-wrap { display:inline-flex; align-items:center; gap:1px; }
+  .chip-edit-btn { background:none; border:1px solid var(--border2); border-left:none; color:var(--text3); font-size:11px; cursor:pointer; padding:3px 6px; border-radius:0 4px 4px 0; line-height:1.2; transition:color .15s,background .15s; height:100%; }
+  .chip-edit-btn:hover { color:var(--blue); background:var(--blue-bg); }
+
+  /* horizontal comparison table */
+  .pt-wrap {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; overflow-x: auto;
+  }
+  .pt-table { width: 100%; border-collapse: collapse; }
+  .pt-th-label { width: 72px; }
+  .pt-th {
+    padding: 14px 16px 12px; text-align: left;
+    border-left: 1px solid var(--border); border-bottom: 2px solid var(--border);
+    min-width: 140px;
+  }
+  .pt-th-best { border-left-color: var(--green); border-bottom-color: var(--green); }
+  .pt-row-label {
+    padding: 6px 10px; vertical-align: middle;
+    display: flex; flex-direction: column; align-items: flex-start; gap: 1px;
+  }
+  .pt-round-num  { font-family: var(--mono); font-size: 10px; font-weight: 700; color: var(--text2); }
+  .pt-round-pick { font-family: var(--mono); font-size: 9px; color: var(--text3); }
+  .pt-cell {
+    padding: 5px 12px; border-left: 1px solid var(--border);
+    border-bottom: 1px solid rgba(37,53,72,0.5); vertical-align: middle;
+  }
+  .pt-cell.pt-empty { color: var(--text3); text-align: center; font-size: 11px; }
+  .pt-cell-inner { display: flex; align-items: center; gap: 7px; }
+  .pt-name  { font-size: 12px; font-weight: 500; color: var(--text); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pt-proj  { font-family: var(--mono); font-size: 10px; color: var(--text3); white-space: nowrap; }
+  .pt-round-row:hover td { background: rgba(255,255,255,0.02); }
+  .pt-section-header td { padding: 0; }
+  .pt-section-label {
+    padding: 6px 12px 4px; font-size: 9px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.1em; color: var(--text3);
+    background: var(--surface2); border-top: 2px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .pt-lineup-row td { border-bottom: 1px solid rgba(37,53,72,0.4); }
+  .pt-total-row td, .pt-total-row th { border-top: 2px solid var(--border); padding: 10px 14px; vertical-align: middle; }
+  .pt-total-cell { border-left: 1px solid var(--border); }
+  .pt-total-cell.pt-best { border-left-color: var(--green); background: rgba(0,210,106,0.04); }
+  .pt-total-num { font-family: var(--mono); font-size: 24px; font-weight: 700; color: var(--text2); }
+  .pt-total-cell.pt-best .pt-total-num { color: var(--green); }
+  .pt-total-label { font-family: var(--mono); font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text3); }
+
 </style>
 <body>
 
@@ -1423,13 +1541,21 @@
       </div>
     </div>
 
-    <!-- ── ADP Table ─────────────────────────────────────────── -->
+    <!-- ── ADP / Rankings Table ─────────────────────────────────── -->
     <div style="margin-top:28px">
-      <div style="margin-bottom:12px">
-        <div class="t1 fw6" style="font-size:13px;margin-bottom:4px">2026 Consensus ADP</div>
-        <div class="t2 fs11" style="line-height:1.5">Average Draft Position by player — sourced from Sleeper consensus. Toggle scoring format or search by name.</div>
+      <div style="margin-bottom:12px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap">
+        <div>
+          <div class="t1 fw6" style="font-size:13px;margin-bottom:4px" id="adpSourceTitle">2026 Consensus ADP</div>
+          <div class="t2 fs11" style="line-height:1.5" id="adpSourceDesc">Average Draft Position by player — sourced from Sleeper consensus. Toggle scoring format or search by name.</div>
+        </div>
+        <div class="team-btns" style="flex-shrink:0">
+          <button class="team-btn active" data-adpsource="adp" onclick="setAdpSource('adp')">ADP</button>
+          <button class="team-btn" data-adpsource="rankings" onclick="setAdpSource('rankings')">Draft Sharks Rankings</button>
+        </div>
       </div>
-      <div class="df aic" style="gap:10px;flex-wrap:wrap;margin-bottom:12px">
+
+      <!-- ADP controls (shown when source = adp) -->
+      <div id="adpControlsRow" class="df aic" style="gap:10px;flex-wrap:wrap;margin-bottom:12px">
         <div class="team-btns">
           <button class="team-btn" data-adp="std"  onclick="setAdpScoring('std')">STD</button>
           <button class="team-btn active" data-adp="half" onclick="setAdpScoring('half')">HALF</button>
@@ -1445,12 +1571,92 @@
         <input id="adpSearch" type="text" placeholder="Search player..." oninput="renderAdpTable()"
           style="background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:6px 10px;color:var(--text1);font-size:11px;width:160px;outline:none">
       </div>
-      <div style="overflow-x:auto">
+      <div style="overflow-x:auto" id="adpTableWrap">
         <table id="adpTable" style="width:100%;border-collapse:collapse;font-size:11px"></table>
+      </div>
+
+      <!-- Rankings controls (shown when source = rankings) -->
+      <div id="rankControlsRow" class="df aic" style="gap:10px;flex-wrap:wrap;margin-bottom:12px;display:none">
+        <div class="team-btns">
+          <button class="team-btn active" data-rankpos="ALL" onclick="setRankPos('ALL')">All</button>
+          <button class="team-btn" data-rankpos="QB"  onclick="setRankPos('QB')">QB</button>
+          <button class="team-btn" data-rankpos="RB"  onclick="setRankPos('RB')">RB</button>
+          <button class="team-btn" data-rankpos="WR"  onclick="setRankPos('WR')">WR</button>
+          <button class="team-btn" data-rankpos="TE"  onclick="setRankPos('TE')">TE</button>
+        </div>
+        <div class="team-btns">
+          <button class="team-btn active" data-ranktag="ALL"     onclick="setRankTagFilter('ALL')">All</button>
+          <button class="team-btn"        data-ranktag="tagged"  onclick="setRankTagFilter('tagged')">Tagged</button>
+          <button class="team-btn"        data-ranktag="mustget" onclick="setRankTagFilter('mustget')">🔥</button>
+          <button class="team-btn"        data-ranktag="target"  onclick="setRankTagFilter('target')">🎯</button>
+          <button class="team-btn"        data-ranktag="avoid"   onclick="setRankTagFilter('avoid')">🚫</button>
+        </div>
+        <input id="rankSearch" type="text" placeholder="Search player..." oninput="renderRankingsTable()"
+          style="background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:6px 10px;color:var(--text1);font-size:11px;width:160px;outline:none">
+        <button onclick="clearAllRankTags()" style="background:none;border:1px solid var(--border2);border-radius:6px;padding:5px 10px;color:var(--text3);font-size:10px;cursor:pointer;margin-left:auto" title="Remove all tags">Clear Tags</button>
+      </div>
+      <div id="rankTagSummary" style="display:none;gap:8px;flex-wrap:wrap;margin-bottom:12px;min-height:28px"></div>
+      <div style="overflow-x:auto;display:none" id="rankTableWrap">
+        <table id="rankTable" style="width:100%;border-collapse:collapse;font-size:11px"></table>
+      </div>
+    </div>
+
+    <!-- ── Draft Strategy Planner (collapsible) ──────────────────── -->
+    <div style="margin-top:28px">
+      <button onclick="togglePlannerCard()" id="plannerCardToggle"
+        style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;cursor:pointer;text-align:left">
+        <span>
+          <span class="t1 fw7" style="font-size:13px">🎯 Draft Strategy Planner</span>
+          <span class="t3 fs11" style="margin-left:8px">Simulate your draft pick across multiple strategies — defaults to Balanced</span>
+        </span>
+        <span class="t3 fs12" id="plannerCardChevron">▾</span>
+      </button>
+
+      <div id="plannerCardBody" style="display:none;margin-top:14px">
+        <div class="planner-controls">
+          <div class="df aic" style="gap:16px;flex-wrap:wrap;width:100%">
+            <div class="planner-field">
+              <label>Your Draft Pick</label>
+              <input class="planner-input" id="plannerPick" type="number" min="1" max="20" value="1">
+            </div>
+            <div class="planner-field">
+              <label>League Size</label>
+              <input class="planner-input" id="plannerLeague" type="number" min="8" max="20" value="14">
+            </div>
+            <button class="planner-run-btn" style="margin-left:auto" onclick="runDraftPlanner()">Analyze →</button>
+          </div>
+          <div style="width:100%;border-top:1px solid var(--border);padding-top:12px;margin-top:4px">
+            <div class="df aic" style="gap:8px;flex-wrap:wrap">
+              <span class="t3 fs10 fw6 caps" style="letter-spacing:.08em;flex-shrink:0">Strategies:</span>
+              <div id="strategyChips" class="df" style="gap:6px;flex-wrap:wrap;flex:1"></div>
+              <div class="df" style="gap:6px;flex-shrink:0">
+                <button class="preset-btn" onclick="setAllStrategies(true)">All</button>
+                <button class="preset-btn" onclick="setAllStrategies(false)">Balanced Only</button>
+                <button class="preset-btn" onclick="openStrategyEditor()" style="color:var(--green);border-color:rgba(0,210,106,.35)">+ New</button>
+              </div>
+            </div>
+          </div>
+          <div class="strategy-editor" id="strategyEditor">
+            <div class="df aic" style="gap:10px;margin-bottom:12px;flex-wrap:wrap">
+              <span class="t3 fs10 fw6 caps" style="letter-spacing:.08em;flex-shrink:0">Strategy Name</span>
+              <input type="text" id="strategyNameInput" placeholder="e.g. My Hybrid Strategy" style="max-width:240px;flex:1">
+            </div>
+            <div class="round-target-grid" id="roundTargetGrid"></div>
+            <div class="df aic" style="gap:8px">
+              <button class="editor-save-btn" onclick="saveCustomStrategy()">Save</button>
+              <button class="editor-cancel-btn" onclick="closeStrategyEditor()">Cancel</button>
+              <button class="editor-delete-btn" id="editorDeleteBtn" style="display:none" onclick="deleteCustomStrategy()">Delete Strategy</button>
+            </div>
+          </div>
+        </div>
+        <div id="plannerResults">
+          <div class="planner-empty">Enter your draft pick and click Analyze to compare strategies.</div>
+        </div>
       </div>
     </div>
 
 </div>
+
 
 <!-- ── TRADE SUGGESTIONS PANEL ─────────────────────────────── -->
 <div class="tab-panel" id="panel-suggest">
@@ -1773,7 +1979,7 @@
         <div class="df aic" style="gap:8px">
           <button onclick="testYahooSync()" id="yahooSyncBtn"
             style="padding:10px 20px;border-radius:8px;font-size:13px;font-weight:700;background:var(--blue);color:#fff;border:none;cursor:pointer;opacity:0.4;pointer-events:none">
-            🔄 Test Yahoo Sync
+            🔄 Sync League
           </button>
           <span id="yahooSyncStatus" class="t3 fs11"></span>
         </div>
@@ -3389,7 +3595,7 @@ function switchTab(name) {
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
   document.getElementById(`tab-${name}`).classList.add('active');
   document.getElementById(`panel-${name}`).classList.add('active');
-  if (name === 'map') { renderHeatmap(); renderAdpTable(); }
+  if (name === 'map') { renderHeatmap(); renderAdpTable(); initPlannerTab(); }
   if (name === 'season' && !seasonDataLoaded) initSeasonTab();
   if (name === 'espn') initEspnTab();
   if (name === 'suggest') initSuggestTab();
@@ -5487,6 +5693,41 @@ function setAdpPos(p) {
   adpPos = p;
   document.querySelectorAll('[data-adppos]').forEach(b => b.classList.toggle('active', b.dataset.adppos === p));
   renderAdpTable();
+}
+
+// ── ADP vs Draft Sharks Rankings source toggle (Draft Map tab) ─────────────
+let adpSource = 'adp';
+function setAdpSource(mode) {
+  adpSource = mode;
+  document.querySelectorAll('[data-adpsource]').forEach(b => b.classList.toggle('active', b.dataset.adpsource === mode));
+
+  const isAdp = mode === 'adp';
+  document.getElementById('adpControlsRow').style.display = isAdp ? 'flex' : 'none';
+  document.getElementById('adpTableWrap').style.display    = isAdp ? '' : 'none';
+  document.getElementById('rankControlsRow').style.display = isAdp ? 'none' : 'flex';
+  document.getElementById('rankTagSummary').style.display  = isAdp ? 'none' : 'flex';
+  document.getElementById('rankTableWrap').style.display   = isAdp ? 'none' : '';
+
+  const titleEl = document.getElementById('adpSourceTitle');
+  const descEl  = document.getElementById('adpSourceDesc');
+  if (isAdp) {
+    titleEl.textContent = '2026 Consensus ADP';
+    descEl.textContent  = 'Average Draft Position by player — sourced from Sleeper consensus. Toggle scoring format or search by name.';
+    renderAdpTable();
+  } else {
+    titleEl.textContent = '2026 Draft Sharks Rankings — Half-PPR';
+    descEl.textContent  = 'Floor/ceiling projections, injury risk, and strength of schedule. Tag players to guide your Draft Planner simulations.';
+    renderRankingsTable();
+  }
+}
+
+// ── Draft Planner collapsible card ──────────────────────────────────────────
+function togglePlannerCard() {
+  const body    = document.getElementById('plannerCardBody');
+  const chevron = document.getElementById('plannerCardChevron');
+  const isOpen  = body.style.display !== 'none';
+  body.style.display = isOpen ? 'none' : 'block';
+  chevron.textContent = isOpen ? '▾' : '▴';
 }
 
 async function loadAdpData(scoring) {
@@ -8896,9 +9137,15 @@ function checkYahooHashCredentials() {
       if (el) el.value = leagueId;
     }
 
-    // Auto-switch to the Yahoo platform and the League Sync tab
+    // Auto-switch to the Yahoo platform and auto-sync — the extension already
+    // confirmed valid credentials, so there's no reason to make the user
+    // click again. A brief status message bridges the gap before the sync
+    // button's own "Syncing…" state takes over.
     switchTab('espn');
     setPlatform('yahoo');
+    const yStatusEl = document.getElementById('yahooSyncStatus');
+    if (yStatusEl) yStatusEl.textContent = '✅ Connected — syncing automatically…';
+    if (leagueId) setTimeout(() => testYahooSync(), 400);
   } catch(e) {
     showEspnError('Error reading Yahoo credentials from URL: ' + e.message);
   }
@@ -9296,9 +9543,15 @@ function checkEspnHashCredentials() {
       if (el) el.value = espnLeague;
     }
 
-    // Auto-switch to the League Sync tab
+    // Auto-switch to the League Sync tab and sync immediately — the extension
+    // already confirmed valid credentials, so there's no reason to make the
+    // user click again. A brief status message bridges the gap before the
+    // sync button's own "Syncing…" state takes over.
     switchTab('espn');
     setPlatform('espn');
+    const eStatusEl = document.getElementById('espnSyncStatus');
+    if (eStatusEl) eStatusEl.textContent = '✅ Connected — syncing automatically…';
+    setTimeout(() => syncEspn(), 400);
   } catch(e) {
 
     showEspnError('Error reading credentials from URL: ' + e.message);
@@ -10743,6 +10996,1034 @@ initHitRateEngine();
 
 // Fetch Sleeper player ADP data independently — much faster than full hit rate engine
 // This populates the ADP table without waiting for 6 years of hit rate data
+
+// ══════════════════════════════════════════════════════════════════════
+// RANKINGS + DRAFT PLANNER ENGINE (merged from index_2.html)
+// ══════════════════════════════════════════════════════════════════════
+const DS_RANKINGS = [{"rank":1,"team":"LAR","name":"Puka Nacua","pos":"WR","games":17,"adp":1.04,"bye":11,"sos":-3.1,"injRisk":83.0,"floor":240.6,"consensus":263.0,"dsProj":293.0,"ceiling":322.8,"value3d":100.0},{"rank":2,"team":"DET","name":"Jahmyr Gibbs","pos":"RB","games":17,"adp":1.02,"bye":6,"sos":0.9,"injRisk":70.0,"floor":259.5,"consensus":303.0,"dsProj":313.0,"ceiling":368.9,"value3d":98.4},{"rank":3,"team":"ATL","name":"Bijan Robinson","pos":"RB","games":17,"adp":1.01,"bye":11,"sos":-3.2,"injRisk":39.0,"floor":264.9,"consensus":309.0,"dsProj":312.0,"ceiling":364.7,"value3d":98.0},{"rank":4,"team":"CIN","name":"Ja'Marr Chase","pos":"WR","games":17,"adp":1.03,"bye":6,"sos":4.0,"injRisk":48.0,"floor":244.0,"consensus":254.0,"dsProj":277.0,"ceiling":327.2,"value3d":95.5},{"rank":5,"team":"SF","name":"Christian McCaffrey","pos":"RB","games":17,"adp":1.07,"bye":8,"sos":0.7,"injRisk":52.0,"floor":243.1,"consensus":274.0,"dsProj":293.0,"ceiling":366.2,"value3d":88.9},{"rank":6,"team":"SEA","name":"Jaxon Smith-Njigba","pos":"WR","games":17,"adp":1.06,"bye":11,"sos":-0.1,"injRisk":79.0,"floor":242.4,"consensus":249.0,"dsProj":266.0,"ceiling":311.7,"value3d":88.6},{"rank":7,"team":"DET","name":"Amon-Ra St. Brown","pos":"WR","games":17,"adp":1.09,"bye":6,"sos":-1.0,"injRisk":35.0,"floor":235.8,"consensus":237.0,"dsProj":262.0,"ceiling":290.8,"value3d":82.3},{"rank":8,"team":"IND","name":"Jonathan Taylor","pos":"RB","games":17,"adp":1.05,"bye":13,"sos":1.7,"injRisk":83.0,"floor":246.2,"consensus":282.0,"dsProj":286.0,"ceiling":337.8,"value3d":81.7},{"rank":9,"team":"DAL","name":"CeeDee Lamb","pos":"WR","games":17,"adp":1.1,"bye":14,"sos":-0.7,"injRisk":66.0,"floor":218.8,"consensus":216.0,"dsProj":249.0,"ceiling":298.4,"value3d":76.9},{"rank":10,"team":"MIN","name":"Justin Jefferson","pos":"WR","games":17,"adp":2.02,"bye":6,"sos":4.9,"injRisk":53.0,"floor":208.9,"consensus":209.0,"dsProj":240.0,"ceiling":314.6,"value3d":75.5},{"rank":11,"team":"BUF","name":"James Cook","pos":"RB","games":17,"adp":1.08,"bye":7,"sos":-4.2,"injRisk":73.0,"floor":235.5,"consensus":248.0,"dsProj":268.0,"ceiling":329.1,"value3d":72.1},{"rank":12,"team":"LVR","name":"Ashton Jeanty","pos":"RB","games":17,"adp":1.11,"bye":13,"sos":-3.1,"injRisk":63.0,"floor":233.3,"consensus":239.0,"dsProj":262.0,"ceiling":335.6,"value3d":71.1},{"rank":13,"team":"PHI","name":"Saquon Barkley","pos":"RB","games":17,"adp":2.04,"bye":10,"sos":4.4,"injRisk":43.0,"floor":225.6,"consensus":236.0,"dsProj":248.0,"ceiling":344.5,"value3d":66.7},{"rank":14,"team":"HOU","name":"Nico Collins","pos":"WR","games":17,"adp":2.11,"bye":8,"sos":4.4,"injRisk":92.0,"floor":206.8,"consensus":196.0,"dsProj":232.0,"ceiling":276.5,"value3d":65.6},{"rank":15,"team":"NE","name":"A.J. Brown","pos":"WR","games":17,"adp":3.05,"bye":11,"sos":-2.5,"injRisk":76.0,"floor":197.7,"consensus":203.0,"dsProj":227.0,"ceiling":286.4,"value3d":64.4},{"rank":16,"team":"ATL","name":"Drake London","pos":"WR","games":17,"adp":2.05,"bye":11,"sos":0.4,"injRisk":76.0,"floor":209.3,"consensus":216.0,"dsProj":227.0,"ceiling":273.0,"value3d":63.4},{"rank":17,"team":"BAL","name":"Derrick Henry","pos":"RB","games":17,"adp":3.03,"bye":13,"sos":-0.1,"injRisk":37.0,"floor":218.4,"consensus":248.0,"dsProj":251.0,"ceiling":318.9,"value3d":62.2},{"rank":18,"team":"KC","name":"Rashee Rice","pos":"WR","games":17,"adp":3.09,"bye":5,"sos":-2.6,"injRisk":88.0,"floor":169.7,"consensus":187.0,"dsProj":236.0,"ceiling":271.1,"value3d":61.1},{"rank":19,"team":"MIA","name":"De'Von Achane","pos":"RB","games":17,"adp":2.01,"bye":6,"sos":0.8,"injRisk":90.0,"floor":221.9,"consensus":251.0,"dsProj":247.0,"ceiling":315.5,"value3d":60.3},{"rank":20,"team":"DAL","name":"George Pickens","pos":"WR","games":17,"adp":3.02,"bye":14,"sos":-0.7,"injRisk":47.0,"floor":197.4,"consensus":200.0,"dsProj":219.0,"ceiling":274.1,"value3d":59.2},{"rank":21,"team":"KC","name":"Kenneth Walker III","pos":"RB","games":17,"adp":1.12,"bye":5,"sos":0.6,"injRisk":43.0,"floor":212.6,"consensus":218.0,"dsProj":239.0,"ceiling":324.9,"value3d":58.3},{"rank":22,"team":"BUF","name":"Josh Allen","pos":"QB","games":17,"adp":2.1,"bye":7,"sos":-3.4,"injRisk":22.0,"floor":306.9,"consensus":360.0,"dsProj":379.0,"ceiling":439.5,"value3d":57.0},{"rank":23,"team":"LAC","name":"Omarion Hampton","pos":"RB","games":17,"adp":2.03,"bye":7,"sos":0.6,"injRisk":94.0,"floor":207.8,"consensus":228.0,"dsProj":236.0,"ceiling":325.9,"value3d":56.8},{"rank":24,"team":"ARI","name":"Jeremiyah Love","pos":"RB","games":17,"adp":2.06,"bye":14,"sos":0.1,"injRisk":0.0,"floor":204.4,"consensus":218.0,"dsProj":230.0,"ceiling":323.8,"value3d":53.8},{"rank":25,"team":"LVR","name":"Brock Bowers","pos":"TE","games":17,"adp":2.12,"bye":13,"sos":-1.0,"injRisk":75.0,"floor":189.6,"consensus":185.0,"dsProj":204.0,"ceiling":246.7,"value3d":51.3},{"rank":26,"team":"CIN","name":"Chase Brown","pos":"RB","games":17,"adp":2.07,"bye":6,"sos":-4.0,"injRisk":81.0,"floor":196.9,"consensus":227.0,"dsProj":234.0,"ceiling":304.8,"value3d":51.0},{"rank":27,"team":"ARI","name":"Trey McBride","pos":"TE","games":17,"adp":2.08,"bye":14,"sos":-3.6,"injRisk":53.0,"floor":188.5,"consensus":196.0,"dsProj":203.0,"ceiling":237.1,"value3d":49.7},{"rank":28,"team":"CIN","name":"Tee Higgins","pos":"WR","games":17,"adp":3.11,"bye":6,"sos":4.0,"injRisk":88.0,"floor":182.5,"consensus":181.0,"dsProj":205.0,"ceiling":254.2,"value3d":48.7},{"rank":29,"team":"BAL","name":"Zay Flowers","pos":"WR","games":17,"adp":4.09,"bye":13,"sos":-0.3,"injRisk":85.0,"floor":183.7,"consensus":186.0,"dsProj":209.0,"ceiling":242.2,"value3d":47.9},{"rank":30,"team":"GB","name":"Josh Jacobs","pos":"RB","games":16,"adp":3.01,"bye":11,"sos":-2.2,"injRisk":69.0,"floor":173.0,"consensus":226.0,"dsProj":240.0,"ceiling":290.8,"value3d":47.6},{"rank":31,"team":"NO","name":"Chris Olave","pos":"WR","games":17,"adp":3.04,"bye":8,"sos":0.9,"injRisk":76.0,"floor":178.2,"consensus":196.0,"dsProj":207.0,"ceiling":246.6,"value3d":47.5},{"rank":32,"team":"NYG","name":"Malik Nabers","pos":"WR","games":15,"adp":2.09,"bye":8,"sos":3.7,"injRisk":66.0,"floor":158.0,"consensus":186.0,"dsProj":197.0,"ceiling":274.5,"value3d":46.7},{"rank":33,"team":"PHI","name":"DeVonta Smith","pos":"WR","games":17,"adp":4.12,"bye":10,"sos":6.6,"injRisk":94.0,"floor":182.7,"consensus":186.0,"dsProj":199.0,"ceiling":250.2,"value3d":45.7},{"rank":34,"team":"CHI","name":"Colston Loveland","pos":"TE","games":17,"adp":4.06,"bye":10,"sos":-3.6,"injRisk":33.0,"floor":162.2,"consensus":180.0,"dsProj":198.0,"ceiling":233.5,"value3d":45.7},{"rank":35,"team":"NYJ","name":"Garrett Wilson","pos":"WR","games":17,"adp":4.03,"bye":13,"sos":-1.0,"injRisk":36.0,"floor":176.9,"consensus":183.0,"dsProj":197.0,"ceiling":241.7,"value3d":42.6},{"rank":36,"team":"DAL","name":"Javonte Williams","pos":"RB","games":17,"adp":4.02,"bye":14,"sos":2.9,"injRisk":73.0,"floor":192.8,"consensus":206.0,"dsProj":224.0,"ceiling":280.3,"value3d":42.3},{"rank":37,"team":"NYJ","name":"Breece Hall","pos":"RB","games":17,"adp":3.08,"bye":13,"sos":-2.5,"injRisk":85.0,"floor":192.4,"consensus":216.0,"dsProj":221.0,"ceiling":285.3,"value3d":42.1},{"rank":38,"team":"LAR","name":"Kyren Williams","pos":"RB","games":17,"adp":3.07,"bye":11,"sos":6.4,"injRisk":85.0,"floor":201.3,"consensus":208.0,"dsProj":219.0,"ceiling":280.1,"value3d":41.5},{"rank":39,"team":"LAR","name":"Davante Adams","pos":"WR","games":17,"adp":4.11,"bye":11,"sos":-3.1,"injRisk":82.0,"floor":169.8,"consensus":172.0,"dsProj":193.0,"ceiling":243.1,"value3d":40.8},{"rank":40,"team":"NO","name":"Travis Etienne","pos":"RB","games":17,"adp":3.12,"bye":8,"sos":1.8,"injRisk":69.0,"floor":194.6,"consensus":202.0,"dsProj":211.0,"ceiling":287.6,"value3d":39.4},{"rank":41,"team":"IND","name":"Tyler Warren","pos":"TE","games":17,"adp":5.06,"bye":13,"sos":1.5,"injRisk":60.0,"floor":152.9,"consensus":158.0,"dsProj":184.0,"ceiling":213.6,"value3d":38.8},{"rank":42,"team":"DEN","name":"Jaylen Waddle","pos":"WR","games":17,"adp":4.08,"bye":10,"sos":-2.5,"injRisk":93.0,"floor":163.7,"consensus":161.0,"dsProj":188.0,"ceiling":240.9,"value3d":37.9},{"rank":43,"team":"GB","name":"Christian Watson","pos":"WR","games":17,"adp":6.06,"bye":11,"sos":1.3,"injRisk":52.0,"floor":162.4,"consensus":158.0,"dsProj":189.0,"ceiling":239.9,"value3d":37.8},{"rank":44,"team":"CAR","name":"Tetairoa McMillan","pos":"WR","games":17,"adp":3.1,"bye":5,"sos":-1.3,"injRisk":45.0,"floor":167.8,"consensus":181.0,"dsProj":184.0,"ceiling":239.8,"value3d":36.9},{"rank":45,"team":"WAS","name":"Terry McLaurin","pos":"WR","games":17,"adp":5.1,"bye":7,"sos":-2.4,"injRisk":93.0,"floor":166.0,"consensus":169.0,"dsProj":184.0,"ceiling":237.9,"value3d":36.4},{"rank":46,"team":"CHI","name":"Luther Burden III","pos":"WR","games":17,"adp":4.07,"bye":10,"sos":-2.5,"injRisk":39.0,"floor":157.7,"consensus":164.0,"dsProj":183.0,"ceiling":243.9,"value3d":36.0},{"rank":47,"team":"BAL","name":"Lamar Jackson","pos":"QB","games":17,"adp":4.01,"bye":13,"sos":1.1,"injRisk":45.0,"floor":298.8,"consensus":320.0,"dsProj":340.0,"ceiling":438.1,"value3d":35.6},{"rank":48,"team":"LAC","name":"Ladd McConkey","pos":"WR","games":17,"adp":4.05,"bye":7,"sos":-2.6,"injRisk":86.0,"floor":159.9,"consensus":174.0,"dsProj":182.0,"ceiling":243.5,"value3d":35.6},{"rank":49,"team":"TB","name":"Emeka Egbuka","pos":"WR","games":17,"adp":5.02,"bye":10,"sos":2.6,"injRisk":38.0,"floor":158.4,"consensus":163.0,"dsProj":182.0,"ceiling":240.3,"value3d":35.0},{"rank":50,"team":"DET","name":"Jameson Williams","pos":"WR","games":17,"adp":5.01,"bye":6,"sos":-1.0,"injRisk":68.0,"floor":161.6,"consensus":166.0,"dsProj":180.0,"ceiling":237.0,"value3d":33.8},{"rank":51,"team":"NYG","name":"Cameron Skattebo","pos":"RB","games":17,"adp":4.1,"bye":8,"sos":2.2,"injRisk":52.0,"floor":178.2,"consensus":200.0,"dsProj":207.0,"ceiling":275.6,"value3d":33.6},{"rank":52,"team":"NE","name":"Drake Maye","pos":"QB","games":17,"adp":5.03,"bye":11,"sos":-2.8,"injRisk":65.0,"floor":296.2,"consensus":315.0,"dsProj":341.0,"ceiling":429.0,"value3d":33.2},{"rank":53,"team":"GB","name":"Tucker Kraft","pos":"TE","games":17,"adp":6.09,"bye":11,"sos":-3.3,"injRisk":49.0,"floor":139.7,"consensus":150.0,"dsProj":166.0,"ceiling":211.2,"value3d":32.8},{"rank":54,"team":"CIN","name":"Joe Burrow","pos":"QB","games":17,"adp":5.07,"bye":6,"sos":3.2,"injRisk":26.0,"floor":296.0,"consensus":306.0,"dsProj":340.0,"ceiling":425.3,"value3d":32.1},{"rank":55,"team":"CHI","name":"D'Andre Swift","pos":"RB","games":17,"adp":5.08,"bye":10,"sos":-3.6,"injRisk":73.0,"floor":182.6,"consensus":193.0,"dsProj":205.0,"ceiling":266.7,"value3d":32.0},{"rank":56,"team":"SF","name":"Mike Evans","pos":"WR","games":17,"adp":6.01,"bye":8,"sos":-3.2,"injRisk":93.0,"floor":151.6,"consensus":163.0,"dsProj":176.0,"ceiling":236.3,"value3d":31.4},{"rank":57,"team":"DET","name":"Sam LaPorta","pos":"TE","games":17,"adp":7.09,"bye":6,"sos":-2.0,"injRisk":84.0,"floor":146.0,"consensus":154.0,"dsProj":162.0,"ceiling":206.0,"value3d":31.4},{"rank":58,"team":"CHI","name":"Rome Odunze","pos":"WR","games":17,"adp":6.04,"bye":10,"sos":-2.5,"injRisk":79.0,"floor":151.2,"consensus":159.0,"dsProj":172.0,"ceiling":242.3,"value3d":30.9},{"rank":59,"team":"WAS","name":"Jayden Daniels","pos":"QB","games":17,"adp":6.03,"bye":7,"sos":-0.4,"injRisk":71.0,"floor":286.0,"consensus":313.0,"dsProj":333.0,"ceiling":432.4,"value3d":30.4},{"rank":60,"team":"PHI","name":"Jalen Hurts","pos":"QB","games":17,"adp":6.08,"bye":10,"sos":8.8,"injRisk":43.0,"floor":290.5,"consensus":308.0,"dsProj":330.0,"ceiling":429.1,"value3d":29.7},{"rank":61,"team":"TB","name":"Bucky Irving","pos":"RB","games":17,"adp":3.06,"bye":10,"sos":-2.2,"injRisk":83.0,"floor":169.5,"consensus":189.0,"dsProj":188.0,"ceiling":271.2,"value3d":29.2},{"rank":62,"team":"CLE","name":"Harold Fannin Jr.","pos":"TE","games":17,"adp":6.07,"bye":11,"sos":3.4,"injRisk":68.0,"floor":143.1,"consensus":149.0,"dsProj":159.0,"ceiling":200.3,"value3d":28.7},{"rank":63,"team":"NE","name":"TreVeyon Henderson","pos":"RB","games":17,"adp":4.04,"bye":11,"sos":-1.9,"injRisk":37.0,"floor":162.2,"consensus":170.0,"dsProj":180.0,"ceiling":282.9,"value3d":28.6},{"rank":64,"team":"CLE","name":"Quinshon Judkins","pos":"RB","games":17,"adp":5.04,"bye":11,"sos":0.6,"injRisk":45.0,"floor":168.8,"consensus":186.0,"dsProj":186.0,"ceiling":267.1,"value3d":28.5},{"rank":65,"team":"HOU","name":"David Montgomery","pos":"RB","games":17,"adp":5.11,"bye":8,"sos":2.0,"injRisk":94.0,"floor":160.5,"consensus":171.0,"dsProj":191.0,"ceiling":259.9,"value3d":28.3},{"rank":66,"team":"PIT","name":"D.K. Metcalf","pos":"WR","games":17,"adp":7.04,"bye":9,"sos":-2.6,"injRisk":69.0,"floor":148.9,"consensus":156.0,"dsProj":177.0,"ceiling":218.1,"value3d":28.3},{"rank":67,"team":"JAC","name":"Trevor Lawrence","pos":"QB","games":17,"adp":9.01,"bye":7,"sos":4.5,"injRisk":35.0,"floor":283.7,"consensus":304.0,"dsProj":334.0,"ceiling":413.9,"value3d":28.2},{"rank":68,"team":"JAC","name":"Parker Washington","pos":"WR","games":17,"adp":8.07,"bye":7,"sos":4.0,"injRisk":0.0,"floor":145.7,"consensus":151.0,"dsProj":173.0,"ceiling":223.7,"value3d":27.6},{"rank":69,"team":"CHI","name":"Caleb Williams","pos":"QB","games":17,"adp":8.02,"bye":10,"sos":-3.5,"injRisk":24.0,"floor":283.8,"consensus":294.0,"dsProj":326.0,"ceiling":417.6,"value3d":26.8},{"rank":70,"team":"LAC","name":"Justin Herbert","pos":"QB","games":17,"adp":8.04,"bye":7,"sos":-2.8,"injRisk":36.0,"floor":285.4,"consensus":297.0,"dsProj":324.0,"ceiling":418.4,"value3d":26.6},{"rank":71,"team":"SF","name":"Brock Purdy","pos":"QB","games":17,"adp":9.1,"bye":8,"sos":-4.0,"injRisk":24.0,"floor":284.5,"consensus":298.0,"dsProj":327.0,"ceiling":408.8,"value3d":26.0},{"rank":72,"team":"JAC","name":"Bhayshul Tuten","pos":"RB","games":17,"adp":5.09,"bye":7,"sos":0.9,"injRisk":16.0,"floor":141.2,"consensus":169.0,"dsProj":164.0,"ceiling":282.5,"value3d":25.1},{"rank":73,"team":"NYG","name":"Jaxson Dart","pos":"QB","games":17,"adp":7.12,"bye":8,"sos":4.8,"injRisk":33.0,"floor":280.0,"consensus":298.0,"dsProj":318.0,"ceiling":416.8,"value3d":24.5},{"rank":74,"team":"IND","name":"Alec Pierce","pos":"WR","games":17,"adp":8.01,"bye":13,"sos":-0.8,"injRisk":94.0,"floor":142.4,"consensus":162.0,"dsProj":166.0,"ceiling":223.5,"value3d":24.5},{"rank":75,"team":"ARI","name":"Marvin Harrison Jr.","pos":"WR","games":17,"adp":7.08,"bye":14,"sos":-0.8,"injRisk":90.0,"floor":144.0,"consensus":149.0,"dsProj":164.0,"ceiling":225.8,"value3d":24.5},{"rank":76,"team":"BUF","name":"D.J. Moore","pos":"WR","games":17,"adp":6.02,"bye":7,"sos":0.7,"injRisk":71.0,"floor":144.8,"consensus":152.0,"dsProj":165.0,"ceiling":222.2,"value3d":24.4},{"rank":77,"team":"DAL","name":"Dak Prescott","pos":"QB","games":17,"adp":8.08,"bye":14,"sos":0.5,"injRisk":27.0,"floor":282.7,"consensus":299.0,"dsProj":325.0,"ceiling":399.7,"value3d":24.2},{"rank":78,"team":"DEN","name":"Courtland Sutton","pos":"WR","games":17,"adp":7.06,"bye":10,"sos":-2.5,"injRisk":80.0,"floor":143.4,"consensus":149.0,"dsProj":167.0,"ceiling":215.1,"value3d":23.7},{"rank":79,"team":"TEN","name":"Tony Pollard","pos":"RB","games":17,"adp":7.1,"bye":9,"sos":2.9,"injRisk":51.0,"floor":147.4,"consensus":159.0,"dsProj":167.0,"ceiling":252.8,"value3d":23.6},{"rank":80,"team":"PIT","name":"Jaylen Warren","pos":"RB","games":17,"adp":6.05,"bye":9,"sos":-2.1,"injRisk":91.0,"floor":150.4,"consensus":161.0,"dsProj":177.0,"ceiling":230.1,"value3d":23.4},{"rank":81,"team":"SEA","name":"Jadarian Price","pos":"RB","games":17,"adp":9.05,"bye":11,"sos":5.6,"injRisk":0.0,"floor":133.8,"consensus":168.0,"dsProj":157.0,"ceiling":277.0,"value3d":23.3},{"rank":82,"team":"GB","name":"Jayden Reed","pos":"WR","games":17,"adp":10.1,"bye":11,"sos":1.3,"injRisk":12.0,"floor":139.7,"consensus":135.0,"dsProj":164.0,"ceiling":218.6,"value3d":23.1},{"rank":83,"team":"NE","name":"Rhamondre Stevenson","pos":"RB","games":17,"adp":6.11,"bye":11,"sos":-1.9,"injRisk":93.0,"floor":148.3,"consensus":161.0,"dsProj":167.0,"ceiling":246.6,"value3d":23.0},{"rank":84,"team":"CAR","name":"Chuba Hubbard","pos":"RB","games":17,"adp":7.05,"bye":5,"sos":-6.0,"injRisk":82.0,"floor":141.4,"consensus":156.0,"dsProj":163.0,"ceiling":258.4,"value3d":23.0},{"rank":85,"team":"JAC","name":"Brian Thomas Jr.","pos":"WR","games":17,"adp":7.01,"bye":7,"sos":4.0,"injRisk":46.0,"floor":137.5,"consensus":146.0,"dsProj":156.0,"ceiling":234.3,"value3d":22.9},{"rank":86,"team":"NO","name":"Jordyn Tyson","pos":"WR","games":17,"adp":6.1,"bye":8,"sos":0.9,"injRisk":0.0,"floor":132.2,"consensus":141.0,"dsProj":161.0,"ceiling":227.2,"value3d":22.7},{"rank":87,"team":"TEN","name":"Carnell Tate","pos":"WR","games":17,"adp":5.12,"bye":9,"sos":5.0,"injRisk":0.0,"floor":133.9,"consensus":147.0,"dsProj":161.0,"ceiling":225.9,"value3d":22.6},{"rank":88,"team":"DEN","name":"J.K. Dobbins","pos":"RB","games":17,"adp":8.12,"bye":10,"sos":0.1,"injRisk":47.0,"floor":137.0,"consensus":151.0,"dsProj":161.0,"ceiling":254.6,"value3d":22.3},{"rank":89,"team":"SF","name":"George Kittle","pos":"TE","games":15,"adp":10.02,"bye":8,"sos":-3.6,"injRisk":53.0,"floor":89.4,"consensus":152.0,"dsProj":149.0,"ceiling":221.9,"value3d":22.2},{"rank":90,"team":"MIN","name":"Jordan Addison","pos":"WR","games":17,"adp":9.04,"bye":6,"sos":4.9,"injRisk":77.0,"floor":138.4,"consensus":132.0,"dsProj":163.0,"ceiling":216.6,"value3d":22.0},{"rank":91,"team":"KC","name":"Patrick Mahomes","pos":"QB","games":17,"adp":9.02,"bye":5,"sos":-3.2,"injRisk":23.0,"floor":274.2,"consensus":289.0,"dsProj":308.0,"ceiling":419.0,"value3d":21.9},{"rank":92,"team":"DEN","name":"Bo Nix","pos":"QB","games":17,"adp":9.12,"bye":10,"sos":-3.7,"injRisk":21.0,"floor":280.9,"consensus":292.0,"dsProj":312.0,"ceiling":405.7,"value3d":21.7},{"rank":93,"team":"MIN","name":"Kyler Murray","pos":"QB","games":15,"adp":12.1,"bye":6,"sos":4.0,"injRisk":23.0,"floor":271.7,"consensus":286.0,"dsProj":309.0,"ceiling":416.7,"value3d":21.5},{"rank":94,"team":"JAC","name":"Jakobi Meyers","pos":"WR","games":17,"adp":8.05,"bye":7,"sos":4.0,"injRisk":77.0,"floor":142.7,"consensus":137.0,"dsProj":162.0,"ceiling":206.0,"value3d":20.5},{"rank":95,"team":"SF","name":"Ricky Pearsall","pos":"WR","games":17,"adp":8.06,"bye":8,"sos":-3.2,"injRisk":46.0,"floor":129.0,"consensus":131.0,"dsProj":159.0,"ceiling":219.8,"value3d":20.4},{"rank":96,"team":"PIT","name":"Rico Dowdle","pos":"RB","games":17,"adp":7.11,"bye":9,"sos":-2.1,"injRisk":48.0,"floor":135.4,"consensus":158.0,"dsProj":154.0,"ceiling":244.6,"value3d":20.3},{"rank":97,"team":"PIT","name":"Michael Pittman Jr.","pos":"WR","games":17,"adp":9.06,"bye":9,"sos":-2.6,"injRisk":94.0,"floor":140.9,"consensus":139.0,"dsProj":162.0,"ceiling":205.8,"value3d":20.2},{"rank":98,"team":"ATL","name":"Kyle Pitts","pos":"TE","games":17,"adp":6.12,"bye":11,"sos":4.8,"injRisk":85.0,"floor":134.0,"consensus":140.0,"dsProj":141.0,"ceiling":190.4,"value3d":19.0},{"rank":99,"team":"KC","name":"Xavier Worthy","pos":"WR","games":17,"adp":11.02,"bye":5,"sos":-2.6,"injRisk":75.0,"floor":127.8,"consensus":126.0,"dsProj":152.0,"ceiling":225.2,"value3d":18.9},{"rank":100,"team":"DET","name":"Jared Goff","pos":"QB","games":17,"adp":11.06,"bye":6,"sos":-0.9,"injRisk":30.0,"floor":279.0,"consensus":279.0,"dsProj":303.0,"ceiling":400.4,"value3d":18.8},{"rank":101,"team":"CAR","name":"Jonathon Brooks","pos":"RB","games":17,"adp":13.12,"bye":5,"sos":-6.0,"injRisk":44.0,"floor":113.7,"consensus":94.0,"dsProj":135.0,"ceiling":266.6,"value3d":18.2},{"rank":102,"team":"LAR","name":"Matthew Stafford","pos":"QB","games":17,"adp":9.09,"bye":11,"sos":-0.0,"injRisk":37.0,"floor":277.8,"consensus":282.0,"dsProj":299.0,"ceiling":403.3,"value3d":18.0},{"rank":103,"team":"DEN","name":"RJ Harvey","pos":"RB","games":17,"adp":5.05,"bye":10,"sos":0.1,"injRisk":41.0,"floor":121.7,"consensus":141.0,"dsProj":145.0,"ceiling":240.4,"value3d":18.0},{"rank":104,"team":"LAC","name":"Quentin Johnston","pos":"WR","games":17,"adp":9.11,"bye":7,"sos":-2.6,"injRisk":86.0,"floor":124.1,"consensus":134.0,"dsProj":153.0,"ceiling":219.0,"value3d":17.7},{"rank":105,"team":"CHI","name":"Kyle Monangai","pos":"RB","games":17,"adp":7.03,"bye":10,"sos":-3.6,"injRisk":0.0,"floor":126.5,"consensus":139.0,"dsProj":139.0,"ceiling":243.3,"value3d":17.6},{"rank":106,"team":"NO","name":"Tyler Shough","pos":"QB","games":17,"adp":12.04,"bye":8,"sos":0.5,"injRisk":5.0,"floor":274.1,"consensus":265.0,"dsProj":298.0,"ceiling":402.3,"value3d":17.4},{"rank":107,"team":"LAR","name":"Blake Corum","pos":"RB","games":17,"adp":8.03,"bye":11,"sos":6.4,"injRisk":32.0,"floor":123.9,"consensus":128.0,"dsProj":130.0,"ceiling":255.6,"value3d":17.2},{"rank":108,"team":"MIN","name":"Jordan Mason","pos":"RB","games":17,"adp":11.09,"bye":6,"sos":-0.1,"injRisk":88.0,"floor":119.4,"consensus":121.0,"dsProj":142.0,"ceiling":235.9,"value3d":17.1},{"rank":109,"team":"KC","name":"Travis Kelce","pos":"TE","games":17,"adp":10.08,"bye":5,"sos":1.9,"injRisk":65.0,"floor":125.1,"consensus":137.0,"dsProj":145.0,"ceiling":174.5,"value3d":16.4},{"rank":110,"team":"WAS","name":"Rachaad White","pos":"RB","games":17,"adp":13.01,"bye":7,"sos":4.2,"injRisk":86.0,"floor":104.2,"consensus":129.0,"dsProj":141.0,"ceiling":235.1,"value3d":16.1},{"rank":111,"team":"TB","name":"Baker Mayfield","pos":"QB","games":17,"adp":12.05,"bye":10,"sos":-0.8,"injRisk":26.0,"floor":278.1,"consensus":272.0,"dsProj":290.0,"ceiling":402.6,"value3d":15.8},{"rank":112,"team":"WAS","name":"Jacory Croskey-Merritt","pos":"RB","games":17,"adp":10.05,"bye":7,"sos":4.2,"injRisk":44.0,"floor":107.6,"consensus":124.0,"dsProj":122.0,"ceiling":262.8,"value3d":15.7},{"rank":113,"team":"GB","name":"Jordan Love","pos":"QB","games":17,"adp":11.08,"bye":11,"sos":-0.3,"injRisk":42.0,"floor":276.0,"consensus":275.0,"dsProj":288.0,"ceiling":399.7,"value3d":14.8},{"rank":114,"team":"DAL","name":"Brandon Aubrey","pos":"K","games":17,"adp":50.01,"bye":14,"sos":-3.5,"injRisk":6.0,"floor":157.4,"consensus":175.0,"dsProj":177.0,"ceiling":190.9,"value3d":14.4},{"rank":115,"team":"MIN","name":"Aaron Jones","pos":"RB","games":17,"adp":10.01,"bye":6,"sos":-0.1,"injRisk":65.0,"floor":105.4,"consensus":140.0,"dsProj":135.0,"ceiling":217.6,"value3d":13.9},{"rank":116,"team":"NE","name":"Romeo Doubs","pos":"WR","games":17,"adp":10.11,"bye":11,"sos":-2.5,"injRisk":90.0,"floor":122.8,"consensus":133.0,"dsProj":148.0,"ceiling":207.1,"value3d":13.8},{"rank":117,"team":"PHI","name":"Makai Lemon","pos":"WR","games":17,"adp":7.02,"bye":10,"sos":6.6,"injRisk":0.0,"floor":119.5,"consensus":127.0,"dsProj":141.0,"ceiling":222.1,"value3d":13.6},{"rank":118,"team":"TB","name":"Kenneth Gainwell","pos":"RB","games":17,"adp":9.07,"bye":10,"sos":-2.2,"injRisk":52.0,"floor":115.4,"consensus":129.0,"dsProj":133.0,"ceiling":210.8,"value3d":13.6},{"rank":119,"team":"ARI","name":"Michael Wilson","pos":"WR","games":17,"adp":7.07,"bye":14,"sos":-0.8,"injRisk":58.0,"floor":119.3,"consensus":135.0,"dsProj":145.0,"ceiling":212.4,"value3d":13.5},{"rank":120,"team":"TB","name":"Chris Godwin","pos":"WR","games":17,"adp":8.09,"bye":10,"sos":2.6,"injRisk":94.0,"floor":123.8,"consensus":140.0,"dsProj":146.0,"ceiling":206.9,"value3d":13.1},{"rank":121,"team":"CLE","name":"KC Concepcion","pos":"WR","games":17,"adp":11.05,"bye":11,"sos":4.3,"injRisk":0.0,"floor":117.3,"consensus":117.0,"dsProj":145.0,"ceiling":210.1,"value3d":12.7},{"rank":122,"team":"BAL","name":"Mark Andrews","pos":"TE","games":17,"adp":10.06,"bye":13,"sos":3.6,"injRisk":49.0,"floor":122.8,"consensus":124.0,"dsProj":133.0,"ceiling":177.5,"value3d":12.2},{"rank":123,"team":"HOU","name":"Jayden Higgins","pos":"WR","games":17,"adp":11.11,"bye":8,"sos":4.4,"injRisk":16.0,"floor":119.7,"consensus":127.0,"dsProj":139.0,"ceiling":215.8,"value3d":12.1},{"rank":124,"team":"IND","name":"Josh Downs","pos":"WR","games":17,"adp":12.02,"bye":13,"sos":-0.8,"injRisk":91.0,"floor":120.2,"consensus":128.0,"dsProj":141.0,"ceiling":207.8,"value3d":11.5},{"rank":125,"team":"DET","name":"Isiah Pacheco","pos":"RB","games":17,"adp":15.06,"bye":6,"sos":0.9,"injRisk":75.0,"floor":100.3,"consensus":95.0,"dsProj":113.0,"ceiling":231.1,"value3d":11.5},{"rank":126,"team":"TEN","name":"Tyjae Spears","pos":"RB","games":17,"adp":13.08,"bye":9,"sos":2.9,"injRisk":44.0,"floor":106.8,"consensus":110.0,"dsProj":126.0,"ceiling":202.3,"value3d":11.4},{"rank":127,"team":"UNS","name":"Brandon Aiyuk","pos":"WR","games":17,"adp":16.06,"bye":18,"sos":null,"injRisk":44.0,"floor":100.3,"consensus":112.0,"dsProj":143.0,"ceiling":216.4,"value3d":11.3},{"rank":128,"team":"UNS","name":"Stefon Diggs","pos":"WR","games":17,"adp":12.08,"bye":18,"sos":null,"injRisk":47.0,"floor":107.1,"consensus":137.0,"dsProj":149.0,"ceiling":200.8,"value3d":11.2},{"rank":129,"team":"BUF","name":"Dalton Kincaid","pos":"TE","games":17,"adp":8.1,"bye":7,"sos":-1.4,"injRisk":77.0,"floor":121.9,"consensus":129.0,"dsProj":131.0,"ceiling":176.9,"value3d":11.1},{"rank":130,"team":"SEA","name":"Zach Charbonnet","pos":"RB","games":6,"adp":11.03,"bye":11,"sos":5.6,"injRisk":62.0,"floor":43.0,"consensus":85.0,"dsProj":54.0,"ceiling":120.9,"value3d":11.1},{"rank":131,"team":"HOU","name":"C.J. Stroud","pos":"QB","games":17,"adp":14.06,"bye":8,"sos":4.4,"injRisk":30.0,"floor":269.3,"consensus":249.0,"dsProj":281.0,"ceiling":387.2,"value3d":11.0},{"rank":132,"team":"JAC","name":"Chris Rodriguez","pos":"RB","games":17,"adp":13.11,"bye":7,"sos":0.9,"injRisk":17.0,"floor":94.9,"consensus":101.0,"dsProj":103.0,"ceiling":245.6,"value3d":11.0},{"rank":133,"team":"LAC","name":"Cameron Dicker","pos":"K","games":17,"adp":24.08,"bye":7,"sos":-3.1,"injRisk":6.0,"floor":151.3,"consensus":170.0,"dsProj":170.0,"ceiling":181.9,"value3d":10.7},{"rank":134,"team":"MIA","name":"Malik Willis","pos":"QB","games":17,"adp":13.02,"bye":6,"sos":-2.0,"injRisk":5.0,"floor":264.4,"consensus":252.0,"dsProj":270.0,"ceiling":404.6,"value3d":10.3},{"rank":135,"team":"SEA","name":"Seattle Seahawks","pos":"DEF","games":17,"adp":21.04,"bye":11,"sos":-4.2,"injRisk":0.0,"floor":120.4,"consensus":109.0,"dsProj":120.0,"ceiling":120.4,"value3d":10.1},{"rank":136,"team":"IND","name":"Daniel Jones","pos":"QB","games":17,"adp":15.09,"bye":13,"sos":1.6,"injRisk":36.0,"floor":259.5,"consensus":250.0,"dsProj":276.0,"ceiling":394.8,"value3d":10.0},{"rank":137,"team":"GB","name":"Matthew Golden","pos":"WR","games":17,"adp":13.06,"bye":11,"sos":1.3,"injRisk":91.0,"floor":118.1,"consensus":122.0,"dsProj":130.0,"ceiling":221.8,"value3d":9.9},{"rank":138,"team":"HOU","name":"Woody Marks","pos":"RB","games":17,"adp":11.1,"bye":8,"sos":2.0,"injRisk":0.0,"floor":99.5,"consensus":96.0,"dsProj":111.0,"ceiling":213.3,"value3d":9.7},{"rank":139,"team":"TEN","name":"Wan'Dale Robinson","pos":"WR","games":17,"adp":9.08,"bye":9,"sos":5.0,"injRisk":45.0,"floor":121.5,"consensus":130.0,"dsProj":137.0,"ceiling":199.3,"value3d":8.6},{"rank":140,"team":"DEN","name":"Denver Broncos","pos":"DEF","games":17,"adp":65.08,"bye":10,"sos":6.2,"injRisk":0.0,"floor":118.0,"consensus":105.0,"dsProj":118.0,"ceiling":118.0,"value3d":8.5},{"rank":141,"team":"NYG","name":"Tyrone Tracy Jr.","pos":"RB","games":17,"adp":12.01,"bye":8,"sos":2.2,"injRisk":69.0,"floor":89.4,"consensus":95.0,"dsProj":98.0,"ceiling":226.0,"value3d":8.5},{"rank":142,"team":"PHI","name":"Dallas Goedert","pos":"TE","games":17,"adp":10.03,"bye":10,"sos":7.1,"injRisk":70.0,"floor":117.7,"consensus":128.0,"dsProj":129.0,"ceiling":168.2,"value3d":8.3},{"rank":143,"team":"NE","name":"New England Patriots","pos":"DEF","games":17,"adp":22.01,"bye":11,"sos":0.2,"injRisk":0.0,"floor":113.3,"consensus":94.0,"dsProj":113.0,"ceiling":113.3,"value3d":8.1},{"rank":144,"team":"CLE","name":"Dylan Sampson","pos":"RB","games":17,"adp":13.1,"bye":11,"sos":0.6,"injRisk":35.0,"floor":93.5,"consensus":76.0,"dsProj":107.0,"ceiling":195.5,"value3d":7.6},{"rank":145,"team":"UNS","name":"Deebo Samuel","pos":"WR","games":17,"adp":15.04,"bye":18,"sos":null,"injRisk":95.0,"floor":106.1,"consensus":108.0,"dsProj":136.0,"ceiling":204.0,"value3d":7.4},{"rank":146,"team":"BUF","name":"Khalil Shakir","pos":"WR","games":17,"adp":12.03,"bye":7,"sos":0.7,"injRisk":88.0,"floor":120.6,"consensus":127.0,"dsProj":137.0,"ceiling":191.8,"value3d":7.3},{"rank":147,"team":"HOU","name":"Houston Texans","pos":"DEF","games":17,"adp":38.01,"bye":8,"sos":-4.0,"injRisk":0.0,"floor":115.0,"consensus":108.0,"dsProj":115.0,"ceiling":115.0,"value3d":7.0},{"rank":148,"team":"NO","name":"Alvin Kamara","pos":"RB","games":17,"adp":13.05,"bye":8,"sos":1.8,"injRisk":93.0,"floor":86.0,"consensus":81.0,"dsProj":96.0,"ceiling":215.0,"value3d":7.0},{"rank":149,"team":"HOU","name":"Ka'imi Fairbairn","pos":"K","games":17,"adp":31.01,"bye":8,"sos":0.6,"injRisk":0.0,"floor":148.6,"consensus":165.0,"dsProj":160.0,"ceiling":177.4,"value3d":6.9},{"rank":150,"team":"TEN","name":"Cameron Ward","pos":"QB","games":17,"adp":14.1,"bye":9,"sos":6.3,"injRisk":26.0,"floor":256.4,"consensus":229.0,"dsProj":262.0,"ceiling":397.7,"value3d":6.7},{"rank":151,"team":"SEA","name":"Rashid Shaheed","pos":"WR","games":17,"adp":14.03,"bye":11,"sos":-0.1,"injRisk":82.0,"floor":111.5,"consensus":110.0,"dsProj":127.0,"ceiling":212.8,"value3d":6.6},{"rank":152,"team":"WAS","name":"Kaytron Allen","pos":"RB","games":17,"adp":16.05,"bye":7,"sos":4.2,"injRisk":0.0,"floor":75.7,"consensus":31.0,"dsProj":82.0,"ceiling":238.6,"value3d":6.6},{"rank":153,"team":"TEN","name":"Calvin Ridley","pos":"WR","games":17,"adp":18.04,"bye":9,"sos":5.0,"injRisk":65.0,"floor":112.3,"consensus":86.0,"dsProj":131.0,"ceiling":203.7,"value3d":6.4},{"rank":154,"team":"DAL","name":"Jake Ferguson","pos":"TE","games":17,"adp":9.03,"bye":14,"sos":-2.5,"injRisk":83.0,"floor":122.5,"consensus":128.0,"dsProj":129.0,"ceiling":156.1,"value3d":6.4},{"rank":155,"team":"TB","name":"Jalen McMillan","pos":"WR","games":17,"adp":14.11,"bye":10,"sos":2.6,"injRisk":52.0,"floor":107.2,"consensus":97.0,"dsProj":126.0,"ceiling":214.4,"value3d":6.2},{"rank":156,"team":"SEA","name":"Sam Darnold","pos":"QB","games":17,"adp":14.01,"bye":11,"sos":0.4,"injRisk":25.0,"floor":258.1,"consensus":254.0,"dsProj":261.0,"ceiling":391.1,"value3d":5.9},{"rank":157,"team":"GB","name":"Green Bay Packers","pos":"DEF","games":17,"adp":23.04,"bye":11,"sos":-2.2,"injRisk":0.0,"floor":112.8,"consensus":94.0,"dsProj":113.0,"ceiling":112.8,"value3d":5.9},{"rank":158,"team":"JAC","name":"Cam Little","pos":"K","games":17,"adp":47.06,"bye":7,"sos":-0.7,"injRisk":0.0,"floor":146.9,"consensus":147.0,"dsProj":153.0,"ceiling":180.5,"value3d":5.2},{"rank":159,"team":"NE","name":"Hunter Henry","pos":"TE","games":17,"adp":10.09,"bye":11,"sos":-3.5,"injRisk":64.0,"floor":116.0,"consensus":121.0,"dsProj":125.0,"ceiling":162.2,"value3d":5.1},{"rank":160,"team":"NYJ","name":"Omar Cooper Jr.","pos":"WR","games":17,"adp":13.09,"bye":13,"sos":-1.0,"injRisk":0.0,"floor":109.6,"consensus":108.0,"dsProj":120.0,"ceiling":216.8,"value3d":5.1},{"rank":161,"team":"JAC","name":"Jacksonville Jaguars","pos":"DEF","games":17,"adp":23.01,"bye":7,"sos":-2.7,"injRisk":0.0,"floor":106.6,"consensus":94.0,"dsProj":107.0,"ceiling":106.6,"value3d":4.8},{"rank":162,"team":"PIT","name":"Aaron Rodgers","pos":"QB","games":17,"adp":18.03,"bye":9,"sos":-2.1,"injRisk":39.0,"floor":254.3,"consensus":200.0,"dsProj":259.0,"ceiling":386.6,"value3d":4.7},{"rank":163,"team":"BAL","name":"Tyler Loop","pos":"K","games":17,"adp":44.11,"bye":13,"sos":-1.6,"injRisk":0.0,"floor":143.6,"consensus":150.0,"dsProj":153.0,"ceiling":178.8,"value3d":4.6},{"rank":164,"team":"NYG","name":"Isaiah Likely","pos":"TE","games":17,"adp":11.04,"bye":8,"sos":3.2,"injRisk":16.0,"floor":115.2,"consensus":125.0,"dsProj":123.0,"ceiling":164.2,"value3d":4.6},{"rank":165,"team":"BUF","name":"Buffalo Bills","pos":"DEF","games":17,"adp":24.02,"bye":7,"sos":0.4,"injRisk":0.0,"floor":106.5,"consensus":94.0,"dsProj":107.0,"ceiling":106.5,"value3d":4.3},{"rank":166,"team":"ARI","name":"Tyler Allgeier","pos":"RB","games":17,"adp":10.04,"bye":14,"sos":0.1,"injRisk":37.0,"floor":77.9,"consensus":79.0,"dsProj":95.0,"ceiling":187.0,"value3d":4.3},{"rank":167,"team":"ATL","name":"Brian Robinson Jr.","pos":"RB","games":17,"adp":10.07,"bye":11,"sos":-3.2,"injRisk":37.0,"floor":77.3,"consensus":86.0,"dsProj":94.0,"ceiling":188.6,"value3d":4.3},{"rank":168,"team":"LAC","name":"Keaton Mitchell","pos":"RB","games":17,"adp":15.08,"bye":7,"sos":0.6,"injRisk":15.0,"floor":80.5,"consensus":68.0,"dsProj":89.0,"ceiling":192.3,"value3d":4.1},{"rank":169,"team":"JAC","name":"Brenton Strange","pos":"TE","games":17,"adp":11.01,"bye":7,"sos":2.5,"injRisk":39.0,"floor":113.7,"consensus":119.0,"dsProj":125.0,"ceiling":157.4,"value3d":4.0},{"rank":170,"team":"NYJ","name":"Kenyon Sadiq","pos":"TE","games":17,"adp":10.12,"bye":13,"sos":-1.5,"injRisk":0.0,"floor":108.9,"consensus":113.0,"dsProj":120.0,"ceiling":169.9,"value3d":3.8},{"rank":171,"team":"BAL","name":"Baltimore Ravens","pos":"DEF","games":17,"adp":24.03,"bye":13,"sos":13.1,"injRisk":0.0,"floor":107.1,"consensus":100.0,"dsProj":107.0,"ceiling":107.1,"value3d":3.6},{"rank":172,"team":"LVR","name":"Tre Tucker","pos":"WR","games":18,"adp":17.04,"bye":13,"sos":-5.0,"injRisk":0.0,"floor":112.6,"consensus":102.0,"dsProj":128.0,"ceiling":212.5,"value3d":3.4},{"rank":173,"team":"CLE","name":"Denzel Boston","pos":"WR","games":17,"adp":13.07,"bye":11,"sos":4.3,"injRisk":0.0,"floor":102.3,"consensus":107.0,"dsProj":119.0,"ceiling":214.2,"value3d":3.4},{"rank":174,"team":"CHI","name":"Cairo Santos","pos":"K","games":17,"adp":40.03,"bye":10,"sos":-1.1,"injRisk":0.0,"floor":142.5,"consensus":146.0,"dsProj":152.0,"ceiling":174.3,"value3d":3.2},{"rank":175,"team":"DET","name":"Jake Bates","pos":"K","games":17,"adp":54.03,"bye":6,"sos":4.2,"injRisk":6.0,"floor":146.6,"consensus":154.0,"dsProj":150.0,"ceiling":175.0,"value3d":3.1},{"rank":176,"team":"SF","name":"Eddy Pineiro","pos":"K","games":17,"adp":29.08,"bye":8,"sos":2.0,"injRisk":0.0,"floor":143.7,"consensus":160.0,"dsProj":151.0,"ceiling":172.5,"value3d":2.8},{"rank":177,"team":"LAR","name":"Harrison Mevis","pos":"K","games":17,"adp":52.03,"bye":11,"sos":0.7,"injRisk":0.0,"floor":145.1,"consensus":157.0,"dsProj":150.0,"ceiling":175.0,"value3d":2.8},{"rank":178,"team":"GB","name":"MarShawn Lloyd","pos":"RB","games":17,"adp":49.11,"bye":11,"sos":-2.2,"injRisk":88.0,"floor":55.3,"consensus":34.0,"dsProj":71.0,"ceiling":219.9,"value3d":2.5},{"rank":179,"team":"NO","name":"Juwan Johnson","pos":"TE","games":17,"adp":11.07,"bye":8,"sos":-0.1,"injRisk":79.0,"floor":111.4,"consensus":117.0,"dsProj":122.0,"ceiling":155.4,"value3d":2.4},{"rank":180,"team":"PIT","name":"Pittsburgh Steelers","pos":"DEF","games":17,"adp":21.06,"bye":9,"sos":12.2,"injRisk":0.0,"floor":105.6,"consensus":102.0,"dsProj":106.0,"ceiling":105.6,"value3d":2.2},{"rank":181,"team":"GB","name":"Trey Smack","pos":"K","games":17,"adp":null,"bye":11,"sos":0.6,"injRisk":0.0,"floor":143.3,"consensus":null,"dsProj":149.0,"ceiling":174.7,"value3d":2.1},{"rank":182,"team":"DEN","name":"Jonah Coleman","pos":"RB","games":17,"adp":12.07,"bye":10,"sos":0.1,"injRisk":0.0,"floor":62.7,"consensus":31.0,"dsProj":70.0,"ceiling":210.5,"value3d":1.9},{"rank":183,"team":"MIN","name":"Minnesota Vikings","pos":"DEF","games":17,"adp":22.02,"bye":6,"sos":-12.4,"injRisk":0.0,"floor":108.2,"consensus":100.0,"dsProj":108.0,"ceiling":108.2,"value3d":1.8},{"rank":184,"team":"KC","name":"Kansas City Chiefs","pos":"DEF","games":17,"adp":22.11,"bye":5,"sos":2.1,"injRisk":0.0,"floor":104.2,"consensus":88.0,"dsProj":104.0,"ceiling":104.2,"value3d":0.9},{"rank":185,"team":"DEN","name":"Wil Lutz","pos":"K","games":17,"adp":36.12,"bye":10,"sos":-3.5,"injRisk":0.0,"floor":144.9,"consensus":145.0,"dsProj":148.0,"ceiling":171.6,"value3d":0.7},{"rank":186,"team":"CAR","name":"Jalen Coker","pos":"WR","games":17,"adp":12.11,"bye":5,"sos":-1.3,"injRisk":6.0,"floor":106.5,"consensus":121.0,"dsProj":118.0,"ceiling":197.6,"value3d":0.6},{"rank":187,"team":"UNS","name":"Tyreek Hill","pos":"WR","games":10,"adp":15.03,"bye":18,"sos":null,"injRisk":41.0,"floor":64.7,"consensus":126.0,"dsProj":118.0,"ceiling":225.8,"value3d":0.5},{"rank":188,"team":"LAC","name":"Los Angeles Chargers","pos":"DEF","games":17,"adp":22.08,"bye":7,"sos":0.4,"injRisk":0.0,"floor":103.7,"consensus":93.0,"dsProj":104.0,"ceiling":103.7,"value3d":0.4},{"rank":189,"team":"ARI","name":"Jacoby Brissett","pos":"QB","games":13,"adp":17.03,"bye":14,"sos":-1.2,"injRisk":6.0,"floor":235.8,"consensus":235.0,"dsProj":248.0,"ceiling":384.8,"value3d":0.2},{"rank":190,"team":"KC","name":"Harrison Butker","pos":"K","games":17,"adp":34.05,"bye":5,"sos":0.1,"injRisk":0.0,"floor":144.9,"consensus":159.0,"dsProj":148.0,"ceiling":170.1,"value3d":0.2},{"rank":191,"team":"NYJ","name":"Braelon Allen","pos":"RB","games":17,"adp":15.02,"bye":13,"sos":-2.5,"injRisk":53.0,"floor":62.5,"consensus":69.0,"dsProj":66.0,"ceiling":194.0,"value3d":0.1},{"rank":192,"team":"TEN","name":"Nicholas Singleton","pos":"RB","games":17,"adp":16.04,"bye":9,"sos":2.9,"injRisk":0.0,"floor":49.4,"consensus":28.0,"dsProj":58.0,"ceiling":215.1,"value3d":0.1},{"rank":193,"team":"CAR","name":"Bryce Young","pos":"QB","games":17,"adp":15.05,"bye":5,"sos":-0.8,"injRisk":20.0,"floor":240.1,"consensus":233.0,"dsProj":243.0,"ceiling":390.5,"value3d":0.0},{"rank":194,"team":"NO","name":"Charlie Smyth","pos":"K","games":17,"adp":null,"bye":8,"sos":4.4,"injRisk":0.0,"floor":143.5,"consensus":null,"dsProj":148.0,"ceiling":170.1,"value3d":0.0},{"rank":195,"team":"LAR","name":"Los Angeles Rams","pos":"DEF","games":17,"adp":22.07,"bye":11,"sos":-5.0,"injRisk":0.0,"floor":105.3,"consensus":104.0,"dsProj":105.0,"ceiling":105.3,"value3d":0.0},{"rank":196,"team":"LVR","name":"Mike Washington Jr.","pos":"RB","games":17,"adp":15.01,"bye":13,"sos":-3.1,"injRisk":0.0,"floor":55.0,"consensus":61.0,"dsProj":66.0,"ceiling":196.5,"value3d":-0.2},{"rank":197,"team":"NYJ","name":"Adonai Mitchell","pos":"WR","games":17,"adp":16.09,"bye":13,"sos":-1.0,"injRisk":12.0,"floor":100.4,"consensus":73.0,"dsProj":109.0,"ceiling":212.8,"value3d":-0.3},{"rank":198,"team":"KC","name":"Emmett Johnson","pos":"RB","games":17,"adp":12.12,"bye":5,"sos":0.6,"injRisk":0.0,"floor":56.0,"consensus":33.0,"dsProj":67.0,"ceiling":190.1,"value3d":-0.5},{"rank":199,"team":"TB","name":"Sean Tucker","pos":"RB","games":17,"adp":16.1,"bye":10,"sos":-2.2,"injRisk":18.0,"floor":60.7,"consensus":39.0,"dsProj":66.0,"ceiling":188.0,"value3d":-0.5},{"rank":200,"team":"UNS","name":"Keenan Allen","pos":"WR","games":17,"adp":21.12,"bye":18,"sos":null,"injRisk":94.0,"floor":91.2,"consensus":76.0,"dsProj":123.0,"ceiling":191.0,"value3d":-0.6},{"rank":201,"team":"UNS","name":"Joe Mixon","pos":"RB","games":17,"adp":19.02,"bye":18,"sos":null,"injRisk":67.0,"floor":46.9,"consensus":25.0,"dsProj":78.0,"ceiling":176.0,"value3d":-0.6},{"rank":202,"team":"CLE","name":"Deshaun Watson","pos":"QB","games":9,"adp":23.08,"bye":11,"sos":5.4,"injRisk":9.0,"floor":129.2,"consensus":73.0,"dsProj":136.0,"ceiling":272.0,"value3d":-0.8},{"rank":203,"team":"BAL","name":"Justice Hill","pos":"RB","games":17,"adp":28.01,"bye":13,"sos":-0.1,"injRisk":36.0,"floor":70.1,"consensus":75.0,"dsProj":78.0,"ceiling":155.7,"value3d":-1.0},{"rank":204,"team":"NYJ","name":"Geno Smith","pos":"QB","games":16,"adp":21.08,"bye":13,"sos":-4.4,"injRisk":64.0,"floor":231.4,"consensus":238.0,"dsProj":241.0,"ceiling":390.6,"value3d":-1.1},{"rank":205,"team":"UNS","name":"Najee Harris","pos":"RB","games":17,"adp":19.09,"bye":18,"sos":null,"injRisk":27.0,"floor":49.8,"consensus":48.0,"dsProj":77.0,"ceiling":168.7,"value3d":-1.2},{"rank":206,"team":"PIT","name":"Chris Boswell","pos":"K","games":17,"adp":33.12,"bye":9,"sos":-2.9,"injRisk":0.0,"floor":142.9,"consensus":139.0,"dsProj":146.0,"ceiling":170.6,"value3d":-1.3},{"rank":207,"team":"SF","name":"San Francisco 49ers","pos":"DEF","games":17,"adp":21.03,"bye":8,"sos":1.7,"injRisk":0.0,"floor":100.8,"consensus":83.0,"dsProj":101.0,"ceiling":100.8,"value3d":-1.4},{"rank":208,"team":"LVR","name":"Fernando Mendoza","pos":"QB","games":13,"adp":14.12,"bye":13,"sos":-6.2,"injRisk":0.0,"floor":233.0,"consensus":247.0,"dsProj":238.0,"ceiling":392.3,"value3d":-1.5},{"rank":209,"team":"MIN","name":"Jauan Jennings","pos":"WR","games":17,"adp":12.09,"bye":6,"sos":4.9,"injRisk":85.0,"floor":95.2,"consensus":105.0,"dsProj":108.0,"ceiling":210.9,"value3d":-1.5},{"rank":210,"team":"LAC","name":"Oronde Gadsden II","pos":"TE","games":17,"adp":8.11,"bye":7,"sos":-2.6,"injRisk":0.0,"floor":103.0,"consensus":103.0,"dsProj":107.0,"ceiling":169.5,"value3d":-1.5},{"rank":211,"team":"ARI","name":"James Conner","pos":"RB","games":17,"adp":11.12,"bye":14,"sos":0.1,"injRisk":88.0,"floor":64.1,"consensus":44.0,"dsProj":77.0,"ceiling":154.4,"value3d":-1.5},{"rank":212,"team":"HOU","name":"Dalton Schultz","pos":"TE","games":17,"adp":12.06,"bye":8,"sos":0.5,"injRisk":82.0,"floor":108.2,"consensus":107.0,"dsProj":118.0,"ceiling":144.7,"value3d":-1.9},{"rank":213,"team":"WAS","name":"Chigoziem Okonkwo","pos":"TE","games":17,"adp":14.02,"bye":7,"sos":-3.0,"injRisk":34.0,"floor":106.4,"consensus":95.0,"dsProj":111.0,"ceiling":158.5,"value3d":-1.9},{"rank":214,"team":"NE","name":"Andres Borregales","pos":"K","games":17,"adp":48.11,"bye":11,"sos":0.2,"injRisk":0.0,"floor":141.8,"consensus":137.0,"dsProj":146.0,"ceiling":168.1,"value3d":-2.0},{"rank":215,"team":"DAL","name":"Jaydon Blue","pos":"RB","games":17,"adp":19.1,"bye":14,"sos":2.9,"injRisk":29.0,"floor":52.5,"consensus":32.0,"dsProj":62.0,"ceiling":182.0,"value3d":-2.0},{"rank":216,"team":"PIT","name":"Germie Bernard","pos":"WR","games":17,"adp":19.01,"bye":9,"sos":-2.6,"injRisk":0.0,"floor":97.4,"consensus":82.0,"dsProj":111.0,"ceiling":201.4,"value3d":-2.1},{"rank":217,"team":"UNS","name":"Nick Chubb","pos":"RB","games":17,"adp":32.04,"bye":18,"sos":null,"injRisk":61.0,"floor":51.5,"consensus":25.0,"dsProj":74.0,"ceiling":161.9,"value3d":-2.1},{"rank":218,"team":"MIN","name":"T.J. Hockenson","pos":"TE","games":17,"adp":13.03,"bye":6,"sos":2.0,"injRisk":57.0,"floor":106.1,"consensus":107.0,"dsProj":115.0,"ceiling":148.7,"value3d":-2.2},{"rank":219,"team":"CLE","name":"Jerry Jeudy","pos":"WR","games":17,"adp":15.07,"bye":11,"sos":4.3,"injRisk":55.0,"floor":95.8,"consensus":96.0,"dsProj":111.0,"ceiling":200.5,"value3d":-2.2},{"rank":220,"team":"CIN","name":"Samaje Perine","pos":"RB","games":17,"adp":32.02,"bye":6,"sos":-4.0,"injRisk":14.0,"floor":65.0,"consensus":64.0,"dsProj":77.0,"ceiling":145.4,"value3d":-2.3},{"rank":221,"team":"ARI","name":"Trey Benson","pos":"RB","games":17,"adp":14.04,"bye":14,"sos":0.1,"injRisk":45.0,"floor":54.8,"consensus":6.0,"dsProj":64.0,"ceiling":162.4,"value3d":-3.2},{"rank":222,"team":"TB","name":"Chase McLaughlin","pos":"K","games":17,"adp":27.1,"bye":10,"sos":5.0,"injRisk":0.0,"floor":140.2,"consensus":158.0,"dsProj":145.0,"ceiling":167.6,"value3d":-3.6},{"rank":223,"team":"CHI","name":"Chicago Bears","pos":"DEF","games":17,"adp":23.12,"bye":10,"sos":-4.8,"injRisk":0.0,"floor":101.4,"consensus":92.0,"dsProj":101.0,"ceiling":101.4,"value3d":-3.8},{"rank":224,"team":"SEA","name":"Jason Myers","pos":"K","games":17,"adp":31.11,"bye":11,"sos":1.0,"injRisk":0.0,"floor":141.4,"consensus":174.0,"dsProj":144.0,"ceiling":165.9,"value3d":-3.9},{"rank":225,"team":"DET","name":"Detroit Lions","pos":"DEF","games":17,"adp":23.06,"bye":6,"sos":10.7,"injRisk":0.0,"floor":102.1,"consensus":101.0,"dsProj":102.0,"ceiling":102.1,"value3d":-4.0},{"rank":226,"team":"TB","name":"Tampa Bay Buccaneers","pos":"DEF","games":17,"adp":21.02,"bye":10,"sos":5.5,"injRisk":0.0,"floor":99.1,"consensus":85.0,"dsProj":99.0,"ceiling":99.1,"value3d":-4.0},{"rank":227,"team":"UNS","name":"Kareem Hunt","pos":"RB","games":17,"adp":39.06,"bye":18,"sos":null,"injRisk":42.0,"floor":48.0,"consensus":23.0,"dsProj":69.0,"ceiling":147.3,"value3d":-4.1},{"rank":228,"team":"NYJ","name":"Isaiah Davis","pos":"RB","games":17,"adp":52.06,"bye":13,"sos":-2.5,"injRisk":0.0,"floor":59.5,"consensus":37.0,"dsProj":63.0,"ceiling":147.3,"value3d":-4.3},{"rank":229,"team":"KC","name":"Brashard Smith","pos":"RB","games":17,"adp":20.09,"bye":5,"sos":0.6,"injRisk":23.0,"floor":49.6,"consensus":26.0,"dsProj":61.0,"ceiling":157.3,"value3d":-4.3},{"rank":230,"team":"MIN","name":"Will Reichard","pos":"K","games":17,"adp":48.08,"bye":6,"sos":1.0,"injRisk":0.0,"floor":139.9,"consensus":157.0,"dsProj":143.0,"ceiling":168.5,"value3d":-4.4},{"rank":231,"team":"HOU","name":"Jaylin Noel","pos":"WR","games":17,"adp":19.11,"bye":8,"sos":4.4,"injRisk":11.0,"floor":92.0,"consensus":65.0,"dsProj":102.0,"ceiling":206.4,"value3d":-4.6},{"rank":232,"team":"BUF","name":"Ty Johnson","pos":"RB","games":17,"adp":28.12,"bye":7,"sos":-4.2,"injRisk":25.0,"floor":59.8,"consensus":64.0,"dsProj":70.0,"ceiling":130.2,"value3d":-4.6},{"rank":233,"team":"PHI","name":"Tank Bigsby","pos":"RB","games":17,"adp":16.01,"bye":10,"sos":4.4,"injRisk":17.0,"floor":45.2,"consensus":57.0,"dsProj":48.0,"ceiling":176.1,"value3d":-4.6},{"rank":234,"team":"MIA","name":"Jaylen Wright","pos":"RB","games":17,"adp":18.11,"bye":6,"sos":0.8,"injRisk":7.0,"floor":43.8,"consensus":41.0,"dsProj":52.0,"ceiling":167.4,"value3d":-5.0},{"rank":235,"team":"SEA","name":"Emanuel Wilson","pos":"RB","games":17,"adp":16.11,"bye":11,"sos":5.6,"injRisk":0.0,"floor":45.8,"consensus":42.0,"dsProj":57.0,"ceiling":154.6,"value3d":-5.2},{"rank":236,"team":"PHI","name":"Philadelphia Eagles","pos":"DEF","games":17,"adp":21.07,"bye":10,"sos":-14.5,"injRisk":0.0,"floor":100.8,"consensus":93.0,"dsProj":101.0,"ceiling":100.8,"value3d":-5.3},{"rank":237,"team":"SF","name":"Jordan James","pos":"RB","games":17,"adp":44.08,"bye":8,"sos":0.7,"injRisk":0.0,"floor":43.3,"consensus":60.0,"dsProj":48.0,"ceiling":168.4,"value3d":-5.3},{"rank":238,"team":"GB","name":"Christopher Brooks","pos":"RB","games":17,"adp":50.08,"bye":11,"sos":-2.2,"injRisk":0.0,"floor":45.3,"consensus":51.0,"dsProj":50.0,"ceiling":163.5,"value3d":-5.4},{"rank":239,"team":"UNS","name":"Austin Ekeler","pos":"RB","games":17,"adp":38.11,"bye":18,"sos":null,"injRisk":84.0,"floor":44.5,"consensus":29.0,"dsProj":59.0,"ceiling":148.3,"value3d":-5.5},{"rank":240,"team":"NYG","name":"New York Giants","pos":"DEF","games":17,"adp":21.11,"bye":8,"sos":-7.9,"injRisk":0.0,"floor":100.4,"consensus":84.0,"dsProj":100.0,"ceiling":100.4,"value3d":-5.7},{"rank":241,"team":"JAC","name":"LeQuint Allen","pos":"RB","games":17,"adp":44.06,"bye":7,"sos":0.9,"injRisk":17.0,"floor":53.8,"consensus":30.0,"dsProj":58.0,"ceiling":140.4,"value3d":-5.8},{"rank":242,"team":"BUF","name":"Tyler Bass","pos":"K","games":17,"adp":29.02,"bye":7,"sos":-1.6,"injRisk":0.0,"floor":138.5,"consensus":141.0,"dsProj":143.0,"ceiling":164.2,"value3d":-5.9},{"rank":243,"team":"WAS","name":"Jake Moody","pos":"K","games":17,"adp":61.01,"bye":7,"sos":-1.4,"injRisk":0.0,"floor":138.3,"consensus":143.0,"dsProj":141.0,"ceiling":167.9,"value3d":-5.9},{"rank":244,"team":"WAS","name":"Antonio Williams","pos":"WR","games":17,"adp":14.08,"bye":7,"sos":-2.4,"injRisk":0.0,"floor":89.0,"consensus":83.0,"dsProj":97.0,"ceiling":210.9,"value3d":-5.9},{"rank":245,"team":"SF","name":"Kaelon Black","pos":"RB","games":17,"adp":34.12,"bye":8,"sos":0.7,"injRisk":0.0,"floor":40.7,"consensus":50.0,"dsProj":45.0,"ceiling":167.3,"value3d":-5.9},{"rank":246,"team":"PHI","name":"Jake Elliott","pos":"K","games":17,"adp":36.09,"bye":10,"sos":-0.9,"injRisk":0.0,"floor":138.5,"consensus":136.0,"dsProj":143.0,"ceiling":162.8,"value3d":-6.4},{"rank":247,"team":"NO","name":"New Orleans Saints","pos":"DEF","games":17,"adp":66.01,"bye":8,"sos":13.3,"injRisk":0.0,"floor":92.4,"consensus":89.0,"dsProj":92.0,"ceiling":92.4,"value3d":-6.6},{"rank":248,"team":"SEA","name":"George Holani","pos":"RB","games":17,"adp":48.05,"bye":11,"sos":5.6,"injRisk":0.0,"floor":47.6,"consensus":30.0,"dsProj":57.0,"ceiling":155.8,"value3d":0.0},{"rank":249,"team":"UNS","name":"Antonio Gibson","pos":"RB","games":17,"adp":42.05,"bye":18,"sos":null,"injRisk":22.0,"floor":41.5,"consensus":3.0,"dsProj":64.0,"ceiling":127.8,"value3d":-6.7},{"rank":250,"team":"NO","name":"Kendre Miller","pos":"RB","games":17,"adp":21.09,"bye":8,"sos":1.8,"injRisk":43.0,"floor":36.0,"consensus":26.0,"dsProj":45.0,"ceiling":157.7,"value3d":-6.9},{"rank":251,"team":"MIA","name":"Ollie Gordon II","pos":"RB","games":17,"adp":45.09,"bye":6,"sos":0.8,"injRisk":0.0,"floor":40.1,"consensus":27.0,"dsProj":42.0,"ceiling":160.2,"value3d":-6.9},{"rank":252,"team":"LVR","name":"Jalen Nailor","pos":"WR","games":17,"adp":16.08,"bye":13,"sos":-5.0,"injRisk":0.0,"floor":91.3,"consensus":101.0,"dsProj":104.0,"ceiling":189.8,"value3d":-7.1},{"rank":253,"team":"SEA","name":"AJ Barner","pos":"TE","games":17,"adp":13.04,"bye":11,"sos":-0.1,"injRisk":36.0,"floor":98.2,"consensus":93.0,"dsProj":102.0,"ceiling":153.5,"value3d":-7.1},{"rank":254,"team":"LAC","name":"Tre Harris","pos":"WR","games":17,"adp":17.01,"bye":7,"sos":-2.6,"injRisk":49.0,"floor":85.2,"consensus":81.0,"dsProj":95.0,"ceiling":208.3,"value3d":-7.4},{"rank":255,"team":"LAC","name":"Kimani Vidal","pos":"RB","games":17,"adp":15.11,"bye":7,"sos":0.6,"injRisk":0.0,"floor":46.6,"consensus":43.0,"dsProj":51.0,"ceiling":136.8,"value3d":-7.4},{"rank":256,"team":"CLE","name":"Cleveland Browns","pos":"DEF","games":17,"adp":23.09,"bye":11,"sos":8.0,"injRisk":0.0,"floor":95.4,"consensus":86.0,"dsProj":95.0,"ceiling":95.4,"value3d":-7.6},{"rank":257,"team":"NYG","name":"Darnell Mooney","pos":"WR","games":17,"adp":19.06,"bye":8,"sos":3.7,"injRisk":94.0,"floor":90.7,"consensus":56.0,"dsProj":101.0,"ceiling":191.5,"value3d":-7.8},{"rank":258,"team":"TB","name":"Cade Otton","pos":"TE","games":17,"adp":15.12,"bye":10,"sos":-2.8,"injRisk":69.0,"floor":101.3,"consensus":94.0,"dsProj":106.0,"ceiling":140.4,"value3d":-8.1},{"rank":259,"team":"MIN","name":"Demond Claiborne","pos":"RB","games":17,"adp":18.05,"bye":6,"sos":-0.1,"injRisk":0.0,"floor":33.7,"consensus":18.0,"dsProj":40.0,"ceiling":150.7,"value3d":-8.3},{"rank":260,"team":"NYG","name":"Darius Slayton","pos":"WR","games":17,"adp":26.02,"bye":8,"sos":3.7,"injRisk":77.0,"floor":87.9,"consensus":73.0,"dsProj":98.0,"ceiling":195.3,"value3d":-8.4},{"rank":261,"team":"DAL","name":"Malik Davis","pos":"RB","games":17,"adp":24.12,"bye":14,"sos":2.9,"injRisk":0.0,"floor":37.0,"consensus":49.0,"dsProj":41.0,"ceiling":144.0,"value3d":-8.5},{"rank":262,"team":"NYG","name":"Devin Singletary","pos":"RB","games":17,"adp":32.11,"bye":8,"sos":2.2,"injRisk":34.0,"floor":40.4,"consensus":24.0,"dsProj":45.0,"ceiling":134.6,"value3d":-8.7},{"rank":263,"team":"SEA","name":"Cooper Kupp","pos":"WR","games":17,"adp":20.08,"bye":11,"sos":-0.1,"injRisk":94.0,"floor":85.7,"consensus":74.0,"dsProj":97.0,"ceiling":194.8,"value3d":-8.8},{"rank":264,"team":"DAL","name":"Dallas Cowboys","pos":"DEF","games":17,"adp":23.07,"bye":14,"sos":-12.8,"injRisk":0.0,"floor":93.0,"consensus":82.0,"dsProj":93.0,"ceiling":93.0,"value3d":-9.0},{"rank":265,"team":"TEN","name":"Tennessee Titans","pos":"DEF","games":17,"adp":21.01,"bye":9,"sos":-0.2,"injRisk":0.0,"floor":94.7,"consensus":83.0,"dsProj":95.0,"ceiling":94.7,"value3d":-9.2},{"rank":266,"team":"BUF","name":"Ray Davis","pos":"RB","games":17,"adp":17.1,"bye":7,"sos":-4.2,"injRisk":15.0,"floor":29.8,"consensus":39.0,"dsProj":40.0,"ceiling":143.2,"value3d":-9.2},{"rank":267,"team":"PIT","name":"Pat Freiermuth","pos":"TE","games":17,"adp":23.11,"bye":9,"sos":3.0,"injRisk":46.0,"floor":93.1,"consensus":103.0,"dsProj":101.0,"ceiling":147.7,"value3d":-9.3},{"rank":268,"team":"LVR","name":"Jack Bech","pos":"WR","games":17,"adp":20.01,"bye":13,"sos":-5.0,"injRisk":23.0,"floor":82.4,"consensus":69.0,"dsProj":94.0,"ceiling":201.3,"value3d":-9.3},{"rank":269,"team":"BAL","name":"Adam Randall","pos":"RB","games":17,"adp":null,"bye":13,"sos":-0.1,"injRisk":0.0,"floor":32.5,"consensus":null,"dsProj":38.0,"ceiling":141.5,"value3d":-9.3},{"rank":270,"team":"PIT","name":"Kaleb Johnson","pos":"RB","games":17,"adp":18.12,"bye":9,"sos":-2.1,"injRisk":9.0,"floor":30.7,"consensus":12.0,"dsProj":35.0,"ceiling":142.9,"value3d":-9.6},{"rank":271,"team":"CAR","name":"Ryan Fitzgerald","pos":"K","games":17,"adp":null,"bye":5,"sos":3.2,"injRisk":0.0,"floor":133.8,"consensus":null,"dsProj":139.0,"ceiling":161.7,"value3d":-9.7},{"rank":272,"team":"UNS","name":"Alexander Mattison","pos":"RB","games":17,"adp":47.02,"bye":18,"sos":null,"injRisk":8.0,"floor":40.3,"consensus":null,"dsProj":47.0,"ceiling":118.6,"value3d":-9.7},{"rank":273,"team":"TEN","name":"Gunnar Helm","pos":"TE","games":17,"adp":15.1,"bye":9,"sos":4.1,"injRisk":0.0,"floor":93.6,"consensus":90.0,"dsProj":101.0,"ceiling":145.9,"value3d":-9.8},{"rank":274,"team":"CIN","name":"Evan McPherson","pos":"K","games":17,"adp":25.04,"bye":6,"sos":0.7,"injRisk":0.0,"floor":135.0,"consensus":149.0,"dsProj":136.0,"ceiling":166.4,"value3d":-9.9},{"rank":275,"team":"IND","name":"DJ Giddens","pos":"RB","games":17,"adp":47.07,"bye":13,"sos":1.7,"injRisk":13.0,"floor":34.9,"consensus":32.0,"dsProj":39.0,"ceiling":131.8,"value3d":-9.9},{"rank":276,"team":"UNS","name":"Miles Sanders","pos":"RB","games":17,"adp":45.05,"bye":18,"sos":null,"injRisk":66.0,"floor":40.7,"consensus":null,"dsProj":46.0,"ceiling":114.2,"value3d":-10.2},{"rank":277,"team":"WAS","name":"Jerome Ford","pos":"RB","games":17,"adp":28.04,"bye":7,"sos":4.2,"injRisk":46.0,"floor":33.2,"consensus":21.0,"dsProj":40.0,"ceiling":127.8,"value3d":-10.2},{"rank":278,"team":"ATL","name":"Michael Penix Jr.","pos":"QB","games":9,"adp":18.1,"bye":11,"sos":1.7,"injRisk":20.0,"floor":124.7,"consensus":105.0,"dsProj":127.0,"ceiling":230.4,"value3d":-10.4},{"rank":279,"team":"ATL","name":"Tua Tagovailoa","pos":"QB","games":8,"adp":18.07,"bye":11,"sos":1.7,"injRisk":28.0,"floor":109.7,"consensus":133.0,"dsProj":113.0,"ceiling":212.7,"value3d":-10.7},{"rank":280,"team":"NYG","name":"Ben Sauls","pos":"K","games":17,"adp":null,"bye":8,"sos":0.2,"injRisk":0.0,"floor":130.9,"consensus":null,"dsProj":138.0,"ceiling":162.6,"value3d":-11.1},{"rank":281,"team":"ATL","name":"Zachariah Branch","pos":"WR","games":17,"adp":17.11,"bye":11,"sos":0.4,"injRisk":0.0,"floor":78.3,"consensus":63.0,"dsProj":91.0,"ceiling":198.4,"value3d":-11.1},{"rank":282,"team":"JAC","name":"Travis Hunter","pos":"WR","games":17,"adp":14.07,"bye":7,"sos":4.0,"injRisk":44.0,"floor":70.5,"consensus":77.0,"dsProj":77.0,"ceiling":226.9,"value3d":-11.2},{"rank":283,"team":"BAL","name":"Rashod Bateman","pos":"WR","games":17,"adp":20.1,"bye":13,"sos":-0.3,"injRisk":43.0,"floor":81.1,"consensus":81.0,"dsProj":92.0,"ceiling":193.5,"value3d":-11.3},{"rank":284,"team":"LAC","name":"David Njoku","pos":"TE","games":17,"adp":14.05,"bye":7,"sos":-2.6,"injRisk":86.0,"floor":87.8,"consensus":76.0,"dsProj":91.0,"ceiling":157.3,"value3d":-11.5},{"rank":285,"team":"ATL","name":"Nick Folk","pos":"K","games":17,"adp":30.06,"bye":11,"sos":1.8,"injRisk":0.0,"floor":133.2,"consensus":157.0,"dsProj":136.0,"ceiling":161.7,"value3d":-11.9},{"rank":286,"team":"MIA","name":"Miami Dolphins","pos":"DEF","games":17,"adp":22.05,"bye":6,"sos":-0.5,"injRisk":0.0,"floor":91.7,"consensus":78.0,"dsProj":92.0,"ceiling":91.7,"value3d":-12.1},{"rank":287,"team":"WAS","name":"Jeremy McNichols","pos":"RB","games":17,"adp":50.06,"bye":7,"sos":4.2,"injRisk":0.0,"floor":34.7,"consensus":16.0,"dsProj":39.0,"ceiling":106.1,"value3d":-12.2},{"rank":288,"team":"ARI","name":"Arizona Cardinals","pos":"DEF","games":17,"adp":24.05,"bye":14,"sos":-6.1,"injRisk":0.0,"floor":92.4,"consensus":77.0,"dsProj":92.0,"ceiling":92.4,"value3d":-12.4},{"rank":289,"team":"IND","name":"Seth McGowan","pos":"RB","games":17,"adp":43.07,"bye":13,"sos":1.7,"injRisk":0.0,"floor":25.6,"consensus":23.0,"dsProj":30.0,"ceiling":120.4,"value3d":-12.4},{"rank":290,"team":"IND","name":"Indianapolis Colts","pos":"DEF","games":17,"adp":23.03,"bye":13,"sos":10.2,"injRisk":0.0,"floor":91.3,"consensus":85.0,"dsProj":91.0,"ceiling":91.3,"value3d":-12.5},{"rank":291,"team":"SF","name":"Kyle Juszczyk","pos":"RB","games":17,"adp":54.11,"bye":8,"sos":0.7,"injRisk":0.0,"floor":40.2,"consensus":33.0,"dsProj":45.0,"ceiling":89.4,"value3d":-12.5},{"rank":292,"team":"NE","name":"Kayshon Boutte","pos":"WR","games":17,"adp":16.07,"bye":11,"sos":-2.5,"injRisk":0.0,"floor":77.1,"consensus":74.0,"dsProj":89.0,"ceiling":194.9,"value3d":-12.6},{"rank":293,"team":"PIT","name":"Eli Heidenreich","pos":"RB","games":17,"adp":null,"bye":9,"sos":-2.1,"injRisk":0.0,"floor":27.2,"consensus":null,"dsProj":32.0,"ceiling":111.9,"value3d":-12.7},{"rank":294,"team":"LAR","name":"Jarquez Hunter","pos":"RB","games":17,"adp":22.1,"bye":11,"sos":6.4,"injRisk":0.0,"floor":22.3,"consensus":13.0,"dsProj":26.0,"ceiling":123.0,"value3d":-12.7},{"rank":295,"team":"CAR","name":"Trevor Etienne","pos":"RB","games":17,"adp":53.01,"bye":5,"sos":-6.0,"injRisk":13.0,"floor":31.2,"consensus":20.0,"dsProj":35.0,"ceiling":105.8,"value3d":-12.8},{"rank":296,"team":"CAR","name":"Carolina Panthers","pos":"DEF","games":17,"adp":24.01,"bye":5,"sos":3.4,"injRisk":0.0,"floor":90.7,"consensus":81.0,"dsProj":91.0,"ceiling":90.7,"value3d":-13.1},{"rank":297,"team":"DAL","name":"Ryan Flournoy","pos":"WR","games":17,"adp":18.09,"bye":14,"sos":-0.7,"injRisk":0.0,"floor":79.2,"consensus":80.0,"dsProj":93.0,"ceiling":181.7,"value3d":-13.3},{"rank":298,"team":"NYJ","name":"New York Jets","pos":"DEF","games":17,"adp":21.1,"bye":13,"sos":11.1,"injRisk":0.0,"floor":88.5,"consensus":80.0,"dsProj":89.0,"ceiling":88.5,"value3d":-13.3},{"rank":299,"team":"CIN","name":"Cincinnati Bengals","pos":"DEF","games":17,"adp":54.05,"bye":6,"sos":4.2,"injRisk":0.0,"floor":88.4,"consensus":93.0,"dsProj":88.0,"ceiling":88.4,"value3d":-13.4},{"rank":300,"team":"CLE","name":"Shedeur Sanders","pos":"QB","games":6,"adp":20.06,"bye":11,"sos":5.4,"injRisk":18.0,"floor":77.4,"consensus":85.0,"dsProj":81.0,"ceiling":163.0,"value3d":-13.6},{"rank":301,"team":"PHI","name":"Will Shipley","pos":"RB","games":17,"adp":58.11,"bye":10,"sos":4.4,"injRisk":8.0,"floor":27.5,"consensus":19.0,"dsProj":29.0,"ceiling":106.9,"value3d":-13.6},{"rank":302,"team":"SF","name":"De'Zhaun Stribling","pos":"WR","games":17,"adp":18.08,"bye":8,"sos":-3.2,"injRisk":0.0,"floor":74.8,"consensus":71.0,"dsProj":84.0,"ceiling":197.4,"value3d":-13.8},{"rank":303,"team":"DAL","name":"Phil Mafah","pos":"RB","games":17,"adp":49.05,"bye":14,"sos":2.9,"injRisk":0.0,"floor":24.6,"consensus":25.0,"dsProj":27.0,"ceiling":106.8,"value3d":-13.9},{"rank":304,"team":"NE","name":"Jamarion Miller","pos":"RB","games":17,"adp":47.05,"bye":11,"sos":-1.9,"injRisk":0.0,"floor":23.0,"consensus":23.0,"dsProj":26.0,"ceiling":108.6,"value3d":-13.9},{"rank":305,"team":"DEN","name":"Pat Bryant","pos":"WR","games":17,"adp":17.05,"bye":10,"sos":-2.5,"injRisk":0.0,"floor":77.8,"consensus":65.0,"dsProj":87.0,"ceiling":187.8,"value3d":-14.1},{"rank":306,"team":"SF","name":"Isaac Guerendo","pos":"RB","games":17,"adp":56.08,"bye":8,"sos":0.7,"injRisk":50.0,"floor":25.0,"consensus":13.0,"dsProj":28.0,"ceiling":99.4,"value3d":-14.4},{"rank":307,"team":"TEN","name":"Joey Slye","pos":"K","games":17,"adp":31.03,"bye":9,"sos":1.6,"injRisk":0.0,"floor":130.3,"consensus":135.0,"dsProj":134.0,"ceiling":158.5,"value3d":-14.5},{"rank":308,"team":"KC","name":"Emari Demercado","pos":"RB","games":17,"adp":61.06,"bye":5,"sos":0.6,"injRisk":17.0,"floor":27.7,"consensus":48.0,"dsProj":33.0,"ceiling":91.4,"value3d":-14.5},{"rank":309,"team":"LVR","name":"Las Vegas Raiders","pos":"DEF","games":17,"adp":22.06,"bye":13,"sos":7.0,"injRisk":0.0,"floor":90.1,"consensus":78.0,"dsProj":90.0,"ceiling":90.1,"value3d":-14.6},{"rank":310,"team":"KC","name":"Tyquan Thornton","pos":"WR","games":17,"adp":24.09,"bye":5,"sos":-2.6,"injRisk":35.0,"floor":72.3,"consensus":62.0,"dsProj":84.0,"ceiling":193.4,"value3d":-14.8},{"rank":311,"team":"NO","name":"Ty Chandler","pos":"RB","games":17,"adp":33.08,"bye":8,"sos":1.8,"injRisk":8.0,"floor":27.0,"consensus":19.0,"dsProj":34.0,"ceiling":84.5,"value3d":-15.0},{"rank":312,"team":"NO","name":"Devin Neal","pos":"RB","games":17,"adp":19.04,"bye":8,"sos":1.8,"injRisk":0.0,"floor":28.3,"consensus":23.0,"dsProj":34.0,"ceiling":84.2,"value3d":-15.0},{"rank":313,"team":"ARI","name":"Carson Beck","pos":"QB","games":4,"adp":25.07,"bye":14,"sos":-1.2,"injRisk":0.0,"floor":53.1,"consensus":34.0,"dsProj":55.0,"ceiling":112.2,"value3d":-15.1},{"rank":314,"team":"KC","name":"Jaydn Ott","pos":"RB","games":17,"adp":57.08,"bye":5,"sos":0.6,"injRisk":0.0,"floor":17.5,"consensus":10.0,"dsProj":22.0,"ceiling":102.7,"value3d":-15.1},{"rank":315,"team":"CLE","name":"Raheim Sanders","pos":"RB","games":17,"adp":68.12,"bye":11,"sos":0.6,"injRisk":0.0,"floor":18.0,"consensus":13.0,"dsProj":20.0,"ceiling":102.1,"value3d":-15.2},{"rank":316,"team":"SEA","name":"Kenny McIntosh","pos":"RB","games":17,"adp":77.07,"bye":11,"sos":5.6,"injRisk":0.0,"floor":20.5,"consensus":4.0,"dsProj":23.0,"ceiling":91.1,"value3d":-15.9},{"rank":317,"team":"CHI","name":"Roschon Johnson","pos":"RB","games":17,"adp":65.06,"bye":10,"sos":-3.6,"injRisk":6.0,"floor":15.6,"consensus":20.0,"dsProj":17.0,"ceiling":95.4,"value3d":-16.1},{"rank":318,"team":"PHI","name":"Dontayvion Wicks","pos":"WR","games":17,"adp":22.12,"bye":10,"sos":6.6,"injRisk":64.0,"floor":72.3,"consensus":57.0,"dsProj":82.0,"ceiling":188.9,"value3d":-16.2},{"rank":319,"team":"NO","name":"Audric Estime","pos":"RB","games":17,"adp":22.04,"bye":8,"sos":1.8,"injRisk":25.0,"floor":24.5,"consensus":22.0,"dsProj":28.0,"ceiling":80.9,"value3d":-16.2},{"rank":320,"team":"ATL","name":"Tyler Goodson","pos":"RB","games":17,"adp":36.02,"bye":11,"sos":-3.2,"injRisk":0.0,"floor":16.3,"consensus":10.0,"dsProj":19.0,"ceiling":92.7,"value3d":-16.3},{"rank":321,"team":"NO","name":"Devaughn Vele","pos":"WR","games":17,"adp":22.03,"bye":8,"sos":0.9,"injRisk":0.0,"floor":79.2,"consensus":68.0,"dsProj":92.0,"ceiling":165.9,"value3d":-16.4},{"rank":322,"team":"CLE","name":"Andre Szmyt","pos":"K","games":17,"adp":null,"bye":11,"sos":4.5,"injRisk":0.0,"floor":128.6,"consensus":null,"dsProj":133.0,"ceiling":156.5,"value3d":-16.5},{"rank":323,"team":"CIN","name":"Tahj Brooks","pos":"RB","games":17,"adp":48.03,"bye":6,"sos":-4.0,"injRisk":0.0,"floor":16.4,"consensus":15.0,"dsProj":18.0,"ceiling":91.0,"value3d":-16.5},{"rank":324,"team":"LVR","name":"Matt Gay","pos":"K","games":17,"adp":30.1,"bye":13,"sos":-0.3,"injRisk":0.0,"floor":129.9,"consensus":135.0,"dsProj":133.0,"ceiling":155.1,"value3d":-16.6},{"rank":325,"team":"BUF","name":"Keon Coleman","pos":"WR","games":17,"adp":20.04,"bye":7,"sos":0.7,"injRisk":85.0,"floor":67.9,"consensus":35.0,"dsProj":80.0,"ceiling":191.8,"value3d":-16.9},{"rank":326,"team":"NYJ","name":"Cade York","pos":"K","games":17,"adp":26.03,"bye":13,"sos":-1.2,"injRisk":0.0,"floor":129.6,"consensus":29.0,"dsProj":132.0,"ceiling":154.7,"value3d":-17.1},{"rank":327,"team":"LVR","name":"Kirk Cousins","pos":"QB","games":4,"adp":25.11,"bye":13,"sos":-6.2,"injRisk":9.0,"floor":52.0,"consensus":40.0,"dsProj":53.0,"ceiling":106.2,"value3d":-17.2},{"rank":328,"team":"LAR","name":"Colby Parkinson","pos":"TE","games":17,"adp":16.02,"bye":11,"sos":-2.2,"injRisk":0.0,"floor":76.1,"consensus":71.0,"dsProj":86.0,"ceiling":147.1,"value3d":-17.3},{"rank":329,"team":"WAS","name":"Robert Henry Jr.","pos":"RB","games":17,"adp":null,"bye":7,"sos":4.2,"injRisk":0.0,"floor":13.5,"consensus":null,"dsProj":19.0,"ceiling":83.8,"value3d":-17.3},{"rank":330,"team":"MIA","name":"Greg Dulcich","pos":"TE","games":17,"adp":23.05,"bye":6,"sos":-3.2,"injRisk":6.0,"floor":78.1,"consensus":86.0,"dsProj":84.0,"ceiling":147.8,"value3d":-17.4},{"rank":331,"team":"DEN","name":"Troy Franklin","pos":"WR","games":17,"adp":17.06,"bye":10,"sos":-2.5,"injRisk":56.0,"floor":71.6,"consensus":74.0,"dsProj":80.0,"ceiling":187.0,"value3d":-17.4},{"rank":332,"team":"LVR","name":"Roman Hemby","pos":"RB","games":17,"adp":55.06,"bye":13,"sos":-3.1,"injRisk":0.0,"floor":15.2,"consensus":null,"dsProj":19.0,"ceiling":80.9,"value3d":-17.5},{"rank":333,"team":"JAC","name":"J'Mari Taylor","pos":"RB","games":17,"adp":46.05,"bye":7,"sos":0.9,"injRisk":0.0,"floor":15.2,"consensus":28.0,"dsProj":19.0,"ceiling":80.0,"value3d":-17.6},{"rank":334,"team":"TEN","name":"Michael Carter","pos":"RB","games":17,"adp":31.06,"bye":9,"sos":2.9,"injRisk":46.0,"floor":24.7,"consensus":6.0,"dsProj":28.0,"ceiling":62.5,"value3d":-17.7},{"rank":335,"team":"HOU","name":"Jawhar Jordan","pos":"RB","games":17,"adp":60.09,"bye":8,"sos":2.0,"injRisk":0.0,"floor":21.0,"consensus":37.0,"dsProj":23.0,"ceiling":69.9,"value3d":-17.8},{"rank":336,"team":"DET","name":"Isaac TeSlaa","pos":"WR","games":17,"adp":16.12,"bye":6,"sos":-1.0,"injRisk":0.0,"floor":69.1,"consensus":82.0,"dsProj":79.0,"ceiling":184.6,"value3d":-18.5},{"rank":337,"team":"HOU","name":"Noah Whittington","pos":"RB","games":17,"adp":48.06,"bye":8,"sos":2.0,"injRisk":0.0,"floor":14.3,"consensus":null,"dsProj":18.0,"ceiling":70.5,"value3d":-18.6},{"rank":338,"team":"BAL","name":"Rasheen Ali","pos":"RB","games":17,"adp":52.11,"bye":13,"sos":-0.1,"injRisk":0.0,"floor":13.2,"consensus":16.0,"dsProj":15.0,"ceiling":73.1,"value3d":-18.6},{"rank":339,"team":"CIN","name":"Mike Gesicki","pos":"TE","games":17,"adp":25.08,"bye":6,"sos":3.5,"injRisk":37.0,"floor":73.6,"consensus":81.0,"dsProj":87.0,"ceiling":139.3,"value3d":-18.8},{"rank":340,"team":"DEN","name":"Tyler Badie","pos":"RB","games":17,"adp":35.05,"bye":10,"sos":0.1,"injRisk":0.0,"floor":16.8,"consensus":14.0,"dsProj":19.0,"ceiling":65.5,"value3d":-18.9},{"rank":341,"team":"BAL","name":"Ja'Kobi Lane","pos":"WR","games":17,"adp":17.09,"bye":13,"sos":-0.3,"injRisk":0.0,"floor":67.0,"consensus":73.0,"dsProj":76.0,"ceiling":186.6,"value3d":-19.1},{"rank":342,"team":"TEN","name":"Kalel Mullings","pos":"RB","games":17,"adp":67.01,"bye":9,"sos":2.9,"injRisk":0.0,"floor":12.4,"consensus":5.0,"dsProj":15.0,"ceiling":65.8,"value3d":-19.3},{"rank":343,"team":"LAR","name":"Terrance Ferguson","pos":"TE","games":17,"adp":16.03,"bye":11,"sos":-2.2,"injRisk":0.0,"floor":69.3,"consensus":74.0,"dsProj":77.0,"ceiling":156.3,"value3d":-19.4},{"rank":344,"team":"CAR","name":"Chris Brazzell II","pos":"WR","games":17,"adp":19.12,"bye":5,"sos":-1.3,"injRisk":0.0,"floor":64.3,"consensus":58.0,"dsProj":73.0,"ceiling":190.1,"value3d":-19.7},{"rank":345,"team":"DEN","name":"Evan Engram","pos":"TE","games":17,"adp":27.02,"bye":10,"sos":-1.0,"injRisk":67.0,"floor":76.2,"consensus":67.0,"dsProj":83.0,"ceiling":139.1,"value3d":-19.9},{"rank":346,"team":"ARI","name":"Kendrick Bourne","pos":"WR","games":17,"adp":34.01,"bye":14,"sos":-0.8,"injRisk":43.0,"floor":69.3,"consensus":49.0,"dsProj":82.0,"ceiling":171.3,"value3d":-19.9},{"rank":347,"team":"PIT","name":"Darnell Washington","pos":"TE","games":17,"adp":23.1,"bye":9,"sos":3.0,"injRisk":26.0,"floor":70.6,"consensus":69.0,"dsProj":80.0,"ceiling":146.8,"value3d":-19.9},{"rank":348,"team":"BUF","name":"Desmond Reid","pos":"RB","games":17,"adp":46.01,"bye":7,"sos":-4.2,"injRisk":0.0,"floor":11.2,"consensus":23.0,"dsProj":12.0,"ceiling":61.4,"value3d":-19.9},{"rank":349,"team":"HOU","name":"Nathaniel Dell","pos":"WR","games":17,"adp":17.07,"bye":8,"sos":4.4,"injRisk":15.0,"floor":50.1,"consensus":81.0,"dsProj":72.0,"ceiling":200.4,"value3d":-20.0},{"rank":350,"team":"NO","name":"CJ Donaldson","pos":"RB","games":17,"adp":49.02,"bye":8,"sos":1.8,"injRisk":0.0,"floor":9.8,"consensus":null,"dsProj":11.0,"ceiling":59.8,"value3d":-20.1},{"rank":351,"team":"WAS","name":"Washington Commanders","pos":"DEF","games":17,"adp":20.12,"bye":7,"sos":-3.7,"injRisk":0.0,"floor":84.1,"consensus":84.0,"dsProj":84.0,"ceiling":84.1,"value3d":-20.4},{"rank":352,"team":"DAL","name":"KaVontae Turpin","pos":"WR","games":17,"adp":25.01,"bye":14,"sos":-0.7,"injRisk":0.0,"floor":71.4,"consensus":52.0,"dsProj":80.0,"ceiling":168.5,"value3d":-20.6},{"rank":353,"team":"BAL","name":"Elijah Sarratt","pos":"WR","games":17,"adp":19.07,"bye":13,"sos":-0.3,"injRisk":0.0,"floor":64.6,"consensus":59.0,"dsProj":72.0,"ceiling":186.5,"value3d":-20.7},{"rank":354,"team":"CIN","name":"Jamal Haynes","pos":"RB","games":17,"adp":null,"bye":6,"sos":-4.0,"injRisk":0.0,"floor":8.2,"consensus":null,"dsProj":10.0,"ceiling":53.3,"value3d":-20.8},{"rank":355,"team":"DEN","name":"Jaleel McLaughlin","pos":"RB","games":17,"adp":75.01,"bye":10,"sos":0.1,"injRisk":17.0,"floor":14.4,"consensus":8.0,"dsProj":15.0,"ceiling":45.4,"value3d":-21.2},{"rank":356,"team":"MIA","name":"Zane Gonzalez","pos":"K","games":17,"adp":38.05,"bye":6,"sos":1.6,"injRisk":0.0,"floor":126.1,"consensus":121.0,"dsProj":127.0,"ceiling":152.9,"value3d":-21.3},{"rank":357,"team":"NYJ","name":"Chip Trayanum","pos":"RB","games":17,"adp":null,"bye":13,"sos":-2.5,"injRisk":0.0,"floor":8.6,"consensus":9.0,"dsProj":10.0,"ceiling":47.5,"value3d":-21.5},{"rank":358,"team":"DEN","name":"Marvin Mims Jr.","pos":"WR","games":17,"adp":20.02,"bye":10,"sos":-2.5,"injRisk":45.0,"floor":70.1,"consensus":51.0,"dsProj":78.0,"ceiling":165.1,"value3d":-22.0},{"rank":359,"team":"MIA","name":"Malik Washington","pos":"WR","games":17,"adp":32.1,"bye":6,"sos":-1.2,"injRisk":0.0,"floor":70.6,"consensus":74.0,"dsProj":75.0,"ceiling":169.1,"value3d":-22.1},{"rank":360,"team":"ATL","name":"Jahan Dotson","pos":"WR","games":17,"adp":25.06,"bye":11,"sos":0.4,"injRisk":20.0,"floor":67.3,"consensus":53.0,"dsProj":78.0,"ceiling":164.3,"value3d":-22.4},{"rank":361,"team":"BUF","name":"Joshua Palmer","pos":"WR","games":17,"adp":58.06,"bye":7,"sos":0.7,"injRisk":74.0,"floor":66.6,"consensus":39.0,"dsProj":72.0,"ceiling":173.8,"value3d":-22.6},{"rank":362,"team":"LAC","name":"Jaret Patterson","pos":"RB","games":17,"adp":42.04,"bye":7,"sos":0.6,"injRisk":35.0,"floor":7.2,"consensus":12.0,"dsProj":8.0,"ceiling":36.7,"value3d":-22.7},{"rank":363,"team":"CIN","name":"Andrei Iosivas","pos":"WR","games":17,"adp":43.03,"bye":6,"sos":4.0,"injRisk":14.0,"floor":66.5,"consensus":69.0,"dsProj":74.0,"ceiling":166.3,"value3d":-23.5},{"rank":364,"team":"UNS","name":"Darren Waller","pos":"TE","games":17,"adp":37.05,"bye":18,"sos":null,"injRisk":64.0,"floor":51.1,"consensus":70.0,"dsProj":79.0,"ceiling":141.4,"value3d":-24.3},{"rank":365,"team":"MIA","name":"Chris Bell","pos":"WR","games":15,"adp":19.08,"bye":6,"sos":-1.2,"injRisk":0.0,"floor":51.9,"consensus":86.0,"dsProj":61.0,"ceiling":192.2,"value3d":-24.4},{"rank":366,"team":"SF","name":"Christian Kirk","pos":"WR","games":17,"adp":20.07,"bye":8,"sos":-3.2,"injRisk":94.0,"floor":60.9,"consensus":64.0,"dsProj":69.0,"ceiling":166.2,"value3d":-25.5},{"rank":367,"team":"ATL","name":"Olamide Zaccheaus","pos":"WR","games":17,"adp":31.02,"bye":11,"sos":0.4,"injRisk":19.0,"floor":62.9,"consensus":56.0,"dsProj":73.0,"ceiling":158.1,"value3d":-25.6},{"rank":368,"team":"LVR","name":"Michael Mayer","pos":"TE","games":17,"adp":21.05,"bye":13,"sos":-1.0,"injRisk":36.0,"floor":62.8,"consensus":59.0,"dsProj":68.0,"ceiling":143.3,"value3d":-25.9},{"rank":369,"team":"NE","name":"Kyle Williams","pos":"WR","games":17,"adp":20.05,"bye":11,"sos":-2.5,"injRisk":5.0,"floor":52.4,"consensus":18.0,"dsProj":58.0,"ceiling":187.3,"value3d":-26.1},{"rank":370,"team":"ATL","name":"Atlanta Falcons","pos":"DEF","games":17,"adp":24.04,"bye":11,"sos":6.6,"injRisk":0.0,"floor":74.9,"consensus":92.0,"dsProj":75.0,"ceiling":74.9,"value3d":-26.4},{"rank":371,"team":"PHI","name":"Eli Stowers","pos":"TE","games":17,"adp":14.09,"bye":10,"sos":7.1,"injRisk":0.0,"floor":55.7,"consensus":43.0,"dsProj":62.0,"ceiling":153.5,"value3d":-27.0},{"rank":372,"team":"PHI","name":"Marquise Brown","pos":"WR","games":17,"adp":27.12,"bye":10,"sos":6.6,"injRisk":94.0,"floor":53.5,"consensus":59.0,"dsProj":58.0,"ceiling":174.4,"value3d":-28.2},{"rank":373,"team":"UNS","name":"Jonnu Smith","pos":"TE","games":17,"adp":29.05,"bye":18,"sos":null,"injRisk":60.0,"floor":51.5,"consensus":49.0,"dsProj":69.0,"ceiling":137.4,"value3d":-28.4},{"rank":374,"team":"UNS","name":"DeAndre Hopkins","pos":"WR","games":17,"adp":73.11,"bye":18,"sos":null,"injRisk":28.0,"floor":54.4,"consensus":2.0,"dsProj":68.0,"ceiling":156.4,"value3d":-28.5},{"rank":375,"team":"MIA","name":"Caleb Douglas","pos":"WR","games":17,"adp":null,"bye":6,"sos":-1.2,"injRisk":0.0,"floor":54.8,"consensus":null,"dsProj":61.0,"ceiling":167.4,"value3d":-28.5},{"rank":376,"team":"SEA","name":"Elijah Arroyo","pos":"TE","games":17,"adp":34.08,"bye":11,"sos":-0.1,"injRisk":35.0,"floor":54.4,"consensus":39.0,"dsProj":59.0,"ceiling":147.9,"value3d":-29.1},{"rank":377,"team":"TB","name":"Ted Hurst","pos":"WR","games":17,"adp":18.02,"bye":10,"sos":2.6,"injRisk":0.0,"floor":50.9,"consensus":64.0,"dsProj":60.0,"ceiling":167.6,"value3d":-29.3},{"rank":378,"team":"SEA","name":"Tory Horton","pos":"WR","games":17,"adp":19.05,"bye":11,"sos":-0.1,"injRisk":84.0,"floor":55.3,"consensus":72.0,"dsProj":64.0,"ceiling":147.8,"value3d":-31.0},{"rank":379,"team":"IND","name":"Ashton Dulin","pos":"WR","games":17,"adp":67.11,"bye":13,"sos":-0.8,"injRisk":0.0,"floor":46.6,"consensus":24.0,"dsProj":58.0,"ceiling":163.3,"value3d":-31.0},{"rank":380,"team":"UNS","name":"Curtis Samuel","pos":"WR","games":17,"adp":62.11,"bye":18,"sos":null,"injRisk":44.0,"floor":53.2,"consensus":4.0,"dsProj":66.0,"ceiling":142.9,"value3d":-31.5},{"rank":381,"team":"MIA","name":"Tutu Atwell","pos":"WR","games":17,"adp":26.09,"bye":6,"sos":-1.2,"injRisk":15.0,"floor":52.8,"consensus":30.0,"dsProj":57.0,"ceiling":157.7,"value3d":-31.5},{"rank":382,"team":"WAS","name":"Dyami Brown","pos":"WR","games":17,"adp":32.01,"bye":7,"sos":-2.4,"injRisk":59.0,"floor":48.0,"consensus":32.0,"dsProj":56.0,"ceiling":161.7,"value3d":-31.8},{"rank":383,"team":"CHI","name":"Zavion Thomas","pos":"WR","games":17,"adp":33.02,"bye":10,"sos":-2.5,"injRisk":0.0,"floor":46.9,"consensus":30.0,"dsProj":55.0,"ceiling":162.8,"value3d":-31.9},{"rank":384,"team":"NYG","name":"Malachi Fields","pos":"WR","games":17,"adp":18.06,"bye":8,"sos":3.7,"injRisk":0.0,"floor":43.7,"consensus":51.0,"dsProj":51.0,"ceiling":167.1,"value3d":-32.6},{"rank":385,"team":"WAS","name":"Luke McCaffrey","pos":"WR","games":17,"adp":77.12,"bye":7,"sos":-2.4,"injRisk":8.0,"floor":49.6,"consensus":24.0,"dsProj":52.0,"ceiling":159.2,"value3d":-33.1},{"rank":386,"team":"CHI","name":"Kalif Raymond","pos":"WR","games":17,"adp":39.11,"bye":10,"sos":-2.5,"injRisk":6.0,"floor":53.3,"consensus":34.0,"dsProj":58.0,"ceiling":144.9,"value3d":-33.6},{"rank":387,"team":"CHI","name":"Cole Kmet","pos":"TE","games":17,"adp":26.11,"bye":10,"sos":-3.6,"injRisk":35.0,"floor":53.2,"consensus":53.0,"dsProj":56.0,"ceiling":131.6,"value3d":-33.7},{"rank":388,"team":"CAR","name":"Xavier Legette","pos":"WR","games":17,"adp":41.1,"bye":5,"sos":-1.3,"injRisk":82.0,"floor":49.4,"consensus":43.0,"dsProj":52.0,"ceiling":156.1,"value3d":-33.8},{"rank":389,"team":"WAS","name":"Jaylin Lane","pos":"WR","games":17,"adp":42.1,"bye":7,"sos":-2.4,"injRisk":0.0,"floor":46.5,"consensus":43.0,"dsProj":52.0,"ceiling":157.6,"value3d":-33.9},{"rank":390,"team":"BUF","name":"Dawson Knox","pos":"TE","games":17,"adp":27.08,"bye":7,"sos":-1.4,"injRisk":25.0,"floor":53.5,"consensus":59.0,"dsProj":56.0,"ceiling":129.4,"value3d":-34.0},{"rank":391,"team":"NO","name":"Bryce Lance","pos":"WR","games":17,"adp":30.09,"bye":8,"sos":0.9,"injRisk":0.0,"floor":43.5,"consensus":24.0,"dsProj":48.0,"ceiling":161.7,"value3d":-34.4},{"rank":392,"team":"UNS","name":"Noah Brown","pos":"WR","games":17,"adp":38.09,"bye":18,"sos":null,"injRisk":0.0,"floor":48.6,"consensus":18.0,"dsProj":57.0,"ceiling":142.8,"value3d":-34.9},{"rank":393,"team":"WAS","name":"Treylon Burks","pos":"WR","games":17,"adp":29.06,"bye":7,"sos":-2.4,"injRisk":29.0,"floor":45.8,"consensus":34.0,"dsProj":50.0,"ceiling":154.4,"value3d":-35.1},{"rank":394,"team":"MIA","name":"Jalen Tolbert","pos":"WR","games":17,"adp":25.03,"bye":6,"sos":-1.2,"injRisk":0.0,"floor":46.6,"consensus":40.0,"dsProj":52.0,"ceiling":150.2,"value3d":-35.2},{"rank":395,"team":"LAC","name":"Brenen Thompson","pos":"WR","games":17,"adp":31.07,"bye":7,"sos":-2.6,"injRisk":0.0,"floor":43.9,"consensus":24.0,"dsProj":49.0,"ceiling":156.1,"value3d":-35.3},{"rank":396,"team":"KC","name":"Jalen Royals","pos":"WR","games":17,"adp":42.02,"bye":5,"sos":-2.6,"injRisk":34.0,"floor":39.6,"consensus":34.0,"dsProj":44.0,"ceiling":162.6,"value3d":-35.9},{"rank":397,"team":"NYJ","name":"Mason Taylor","pos":"TE","games":17,"adp":17.02,"bye":13,"sos":-1.5,"injRisk":72.0,"floor":50.8,"consensus":73.0,"dsProj":53.0,"ceiling":125.4,"value3d":-36.4},{"rank":398,"team":"NYG","name":"Calvin Austin III","pos":"WR","games":17,"adp":30.08,"bye":8,"sos":3.7,"injRisk":76.0,"floor":45.0,"consensus":36.0,"dsProj":47.0,"ceiling":151.5,"value3d":-36.5},{"rank":399,"team":"UNS","name":"Sterling Shepard","pos":"WR","games":17,"adp":64.03,"bye":18,"sos":null,"injRisk":82.0,"floor":47.8,"consensus":1.0,"dsProj":56.0,"ceiling":135.0,"value3d":-36.6},{"rank":400,"team":"CAR","name":"Ja'Tavion Sanders","pos":"TE","games":17,"adp":40.09,"bye":5,"sos":0.3,"injRisk":76.0,"floor":49.2,"consensus":42.0,"dsProj":52.0,"ceiling":125.7,"value3d":-36.6},{"rank":401,"team":"CIN","name":"Erick All","pos":"TE","games":17,"adp":49.08,"bye":6,"sos":3.5,"injRisk":0.0,"floor":43.8,"consensus":32.0,"dsProj":52.0,"ceiling":128.8,"value3d":-37.1},{"rank":402,"team":"UNS","name":"Tyler Lockett","pos":"WR","games":17,"adp":36.1,"bye":18,"sos":null,"injRisk":37.0,"floor":43.1,"consensus":23.0,"dsProj":54.0,"ceiling":137.4,"value3d":-37.5},{"rank":403,"team":"LAR","name":"Jordan Whittington","pos":"WR","games":17,"adp":45.06,"bye":11,"sos":-3.1,"injRisk":0.0,"floor":43.3,"consensus":27.0,"dsProj":46.0,"ceiling":145.8,"value3d":-38.1},{"rank":404,"team":"TEN","name":"Chimere Dike","pos":"WR","games":17,"adp":18.01,"bye":9,"sos":5.0,"injRisk":0.0,"floor":42.1,"consensus":62.0,"dsProj":46.0,"ceiling":146.3,"value3d":-38.2},{"rank":405,"team":"LAR","name":"Max Klare","pos":"TE","games":17,"adp":20.03,"bye":11,"sos":-2.2,"injRisk":0.0,"floor":46.1,"consensus":33.0,"dsProj":50.0,"ceiling":122.9,"value3d":-38.4},{"rank":406,"team":"UNS","name":"Taysom Hill","pos":"TE","games":17,"adp":42.07,"bye":18,"sos":null,"injRisk":30.0,"floor":37.1,"consensus":8.0,"dsProj":46.0,"ceiling":134.6,"value3d":-38.4},{"rank":407,"team":"CAR","name":"Jimmy Horn Jr.","pos":"WR","games":17,"adp":38.02,"bye":5,"sos":-1.3,"injRisk":0.0,"floor":43.0,"consensus":13.0,"dsProj":45.0,"ceiling":144.7,"value3d":-38.5},{"rank":408,"team":"NE","name":"Mack Hollins","pos":"WR","games":17,"adp":29.03,"bye":11,"sos":-2.5,"injRisk":6.0,"floor":45.6,"consensus":38.0,"dsProj":51.0,"ceiling":134.2,"value3d":-38.6},{"rank":409,"team":"IND","name":"Nick Westbrook-Ikhine","pos":"WR","games":17,"adp":62.04,"bye":13,"sos":-0.8,"injRisk":0.0,"floor":41.6,"consensus":39.0,"dsProj":47.0,"ceiling":141.8,"value3d":-38.6},{"rank":410,"team":"TEN","name":"Elic Ayomanor","pos":"WR","games":17,"adp":19.03,"bye":9,"sos":5.0,"injRisk":56.0,"floor":42.8,"consensus":49.0,"dsProj":45.0,"ceiling":144.2,"value3d":-38.6},{"rank":411,"team":"LAR","name":"Tyler Higbee","pos":"TE","games":17,"adp":29.1,"bye":11,"sos":-2.2,"injRisk":78.0,"floor":42.8,"consensus":52.0,"dsProj":48.0,"ceiling":126.1,"value3d":-39.1},{"rank":412,"team":"KC","name":"Noah Gray","pos":"TE","games":17,"adp":25.09,"bye":5,"sos":1.9,"injRisk":0.0,"floor":50.8,"consensus":40.0,"dsProj":51.0,"ceiling":111.7,"value3d":-39.9},{"rank":413,"team":"NO","name":"Noah Fant","pos":"TE","games":17,"adp":36.05,"bye":8,"sos":-0.1,"injRisk":59.0,"floor":43.3,"consensus":42.0,"dsProj":47.0,"ceiling":122.4,"value3d":-39.9},{"rank":414,"team":"NYG","name":"Theo Johnson","pos":"TE","games":17,"adp":17.08,"bye":8,"sos":3.2,"injRisk":42.0,"floor":44.9,"consensus":57.0,"dsProj":48.0,"ceiling":119.5,"value3d":-40.0},{"rank":415,"team":"ARI","name":"Chad Ryland","pos":"K","games":13,"adp":78.04,"bye":14,"sos":1.9,"injRisk":0.0,"floor":103.4,"consensus":136.0,"dsProj":107.0,"ceiling":147.1,"value3d":-40.3},{"rank":416,"team":"CLE","name":"Isaiah Bond","pos":"WR","games":17,"adp":38.07,"bye":11,"sos":4.3,"injRisk":34.0,"floor":39.9,"consensus":18.0,"dsProj":44.0,"ceiling":133.1,"value3d":-41.2},{"rank":417,"team":"BUF","name":"Skyler Bell","pos":"WR","games":17,"adp":28.1,"bye":7,"sos":0.7,"injRisk":0.0,"floor":33.6,"consensus":54.0,"dsProj":37.0,"ceiling":142.5,"value3d":-42.1},{"rank":418,"team":"CAR","name":"Mitchell Evans","pos":"TE","games":17,"adp":48.04,"bye":5,"sos":0.3,"injRisk":0.0,"floor":40.0,"consensus":29.0,"dsProj":43.0,"ceiling":119.0,"value3d":-42.5},{"rank":419,"team":"HOU","name":"Xavier Hutchinson","pos":"WR","games":17,"adp":82.08,"bye":8,"sos":4.4,"injRisk":0.0,"floor":34.7,"consensus":38.0,"dsProj":35.0,"ceiling":141.4,"value3d":-42.5},{"rank":420,"team":"TB","name":"Tez Johnson","pos":"WR","games":17,"adp":38.04,"bye":10,"sos":2.6,"injRisk":0.0,"floor":34.4,"consensus":30.0,"dsProj":36.0,"ceiling":139.9,"value3d":-42.8},{"rank":421,"team":"GB","name":"Savion Williams","pos":"WR","games":17,"adp":40.05,"bye":11,"sos":1.3,"injRisk":0.0,"floor":36.8,"consensus":25.0,"dsProj":41.0,"ceiling":130.9,"value3d":-43.0},{"rank":422,"team":"NO","name":"Oscar Delp","pos":"TE","games":17,"adp":31.09,"bye":8,"sos":-0.1,"injRisk":0.0,"floor":34.1,"consensus":16.0,"dsProj":40.0,"ceiling":124.4,"value3d":-43.0},{"rank":423,"team":"UNS","name":"Hunter Renfrow","pos":"WR","games":17,"adp":58.05,"bye":18,"sos":null,"injRisk":82.0,"floor":35.6,"consensus":null,"dsProj":45.0,"ceiling":124.7,"value3d":-43.4},{"rank":424,"team":"WAS","name":"Ben Sinnott","pos":"TE","games":17,"adp":50.02,"bye":7,"sos":-3.0,"injRisk":11.0,"floor":32.6,"consensus":24.0,"dsProj":36.0,"ceiling":126.7,"value3d":-43.8},{"rank":425,"team":"DEN","name":"Justin Joly","pos":"TE","games":17,"adp":31.04,"bye":10,"sos":-1.0,"injRisk":0.0,"floor":31.2,"consensus":26.0,"dsProj":37.0,"ceiling":126.7,"value3d":-43.9},{"rank":426,"team":"ATL","name":"Austin Hooper","pos":"TE","games":17,"adp":30.04,"bye":11,"sos":4.8,"injRisk":14.0,"floor":41.9,"consensus":40.0,"dsProj":46.0,"ceiling":104.8,"value3d":-44.2},{"rank":427,"team":"PIT","name":"Roman Wilson","pos":"WR","games":17,"adp":80.05,"bye":9,"sos":-2.6,"injRisk":9.0,"floor":35.2,"consensus":26.0,"dsProj":39.0,"ceiling":125.1,"value3d":-44.7},{"rank":428,"team":"DAL","name":"DJ Rogers","pos":"TE","games":16,"adp":null,"bye":14,"sos":-2.5,"injRisk":0.0,"floor":34.2,"consensus":null,"dsProj":40.0,"ceiling":112.6,"value3d":-45.4},{"rank":429,"team":"CLE","name":"Cedric Tillman","pos":"WR","games":17,"adp":52.09,"bye":11,"sos":4.3,"injRisk":79.0,"floor":38.7,"consensus":16.0,"dsProj":41.0,"ceiling":116.0,"value3d":-45.7},{"rank":430,"team":"DET","name":"Greg Dortch","pos":"WR","games":17,"adp":73.04,"bye":6,"sos":-1.0,"injRisk":14.0,"floor":34.8,"consensus":18.0,"dsProj":37.0,"ceiling":119.7,"value3d":-46.3},{"rank":431,"team":"SF","name":"Demarcus Robinson","pos":"WR","games":17,"adp":63.05,"bye":8,"sos":-3.2,"injRisk":0.0,"floor":34.0,"consensus":32.0,"dsProj":40.0,"ceiling":115.9,"value3d":-46.4},{"rank":432,"team":"JAC","name":"Nate Boerkircher","pos":"TE","games":17,"adp":null,"bye":7,"sos":2.5,"injRisk":0.0,"floor":30.9,"consensus":null,"dsProj":36.0,"ceiling":114.6,"value3d":-46.5},{"rank":433,"team":"CAR","name":"Tommy Tremble","pos":"TE","games":17,"adp":41.02,"bye":5,"sos":0.3,"injRisk":0.0,"floor":32.0,"consensus":37.0,"dsProj":36.0,"ceiling":114.4,"value3d":-46.7},{"rank":434,"team":"HOU","name":"Cade Stover","pos":"TE","games":17,"adp":49.07,"bye":8,"sos":0.5,"injRisk":76.0,"floor":33.2,"consensus":17.0,"dsProj":37.0,"ceiling":110.7,"value3d":-46.9},{"rank":435,"team":"ARI","name":"Elijah Higgins","pos":"TE","games":17,"adp":51.1,"bye":14,"sos":-3.6,"injRisk":0.0,"floor":36.0,"consensus":30.0,"dsProj":38.0,"ceiling":106.2,"value3d":-47.2},{"rank":436,"team":"NE","name":"Eli Raridon","pos":"TE","games":17,"adp":null,"bye":11,"sos":-3.5,"injRisk":0.0,"floor":31.4,"consensus":null,"dsProj":37.0,"ceiling":110.7,"value3d":-47.2},{"rank":437,"team":"LAC","name":"KeAndre Lambert-Smith","pos":"WR","games":17,"adp":36.11,"bye":7,"sos":-2.6,"injRisk":0.0,"floor":28.3,"consensus":18.0,"dsProj":31.0,"ceiling":125.8,"value3d":-47.2},{"rank":438,"team":"ARI","name":"Reggie Virgil","pos":"WR","games":17,"adp":76.01,"bye":14,"sos":-0.8,"injRisk":0.0,"floor":28.1,"consensus":5.0,"dsProj":33.0,"ceiling":124.4,"value3d":-47.3},{"rank":439,"team":"NE","name":"Demario Douglas","pos":"WR","games":17,"adp":24.06,"bye":11,"sos":-2.5,"injRisk":30.0,"floor":36.8,"consensus":42.0,"dsProj":39.0,"ceiling":108.5,"value3d":-47.7},{"rank":440,"team":"UNS","name":"Will Dissly","pos":"TE","games":17,"adp":41.05,"bye":18,"sos":null,"injRisk":6.0,"floor":33.5,"consensus":22.0,"dsProj":36.0,"ceiling":108.1,"value3d":-47.8},{"rank":441,"team":"LVR","name":"Dont'e Thornton Jr.","pos":"WR","games":17,"adp":45.01,"bye":13,"sos":-5.0,"injRisk":0.0,"floor":27.6,"consensus":23.0,"dsProj":31.0,"ceiling":122.8,"value3d":-48.1},{"rank":442,"team":"WAS","name":"Van Jefferson","pos":"WR","games":17,"adp":68.01,"bye":7,"sos":-2.4,"injRisk":22.0,"floor":32.6,"consensus":39.0,"dsProj":36.0,"ceiling":112.3,"value3d":-48.2},{"rank":443,"team":"CIN","name":"Colbie Young","pos":"WR","games":17,"adp":33.03,"bye":6,"sos":4.0,"injRisk":0.0,"floor":26.0,"consensus":20.0,"dsProj":31.0,"ceiling":122.4,"value3d":-48.4},{"rank":444,"team":"JAC","name":"Tanner Koziol","pos":"TE","games":17,"adp":null,"bye":7,"sos":2.5,"injRisk":0.0,"floor":24.7,"consensus":null,"dsProj":29.0,"ceiling":119.2,"value3d":-48.4},{"rank":445,"team":"GB","name":"Luke Musgrave","pos":"TE","games":17,"adp":26.01,"bye":11,"sos":-3.3,"injRisk":12.0,"floor":28.5,"consensus":37.0,"dsProj":30.0,"ceiling":115.5,"value3d":-48.5},{"rank":446,"team":"KC","name":"Cyrus Allen","pos":"WR","games":17,"adp":35.08,"bye":5,"sos":-2.6,"injRisk":0.0,"floor":23.6,"consensus":18.0,"dsProj":28.0,"ceiling":125.1,"value3d":-48.7},{"rank":447,"team":"LAC","name":"Charlie Kolar","pos":"TE","games":17,"adp":30.07,"bye":7,"sos":-2.6,"injRisk":8.0,"floor":37.3,"consensus":33.0,"dsProj":44.0,"ceiling":87.7,"value3d":-49.0},{"rank":448,"team":"CAR","name":"John Metchie","pos":"WR","games":17,"adp":30.05,"bye":5,"sos":-1.3,"injRisk":8.0,"floor":32.7,"consensus":57.0,"dsProj":34.0,"ceiling":111.1,"value3d":-49.0},{"rank":449,"team":"TEN","name":"Daniel Bellinger","pos":"TE","games":17,"adp":28.07,"bye":9,"sos":4.1,"injRisk":30.0,"floor":32.5,"consensus":32.0,"dsProj":35.0,"ceiling":102.5,"value3d":-49.1},{"rank":450,"team":"SF","name":"Jordan Watkins","pos":"WR","games":17,"adp":47.01,"bye":8,"sos":-3.2,"injRisk":0.0,"floor":22.8,"consensus":3.0,"dsProj":25.0,"ceiling":121.5,"value3d":-50.0},{"rank":451,"team":"BUF","name":"Jackson Hawes","pos":"TE","games":17,"adp":51.08,"bye":7,"sos":-1.4,"injRisk":0.0,"floor":21.4,"consensus":26.0,"dsProj":24.0,"ceiling":119.0,"value3d":-50.1},{"rank":452,"team":"RK","name":"Eric McAlister","pos":"WR","games":17,"adp":63.08,"bye":18,"sos":null,"injRisk":0.0,"floor":21.9,"consensus":25.0,"dsProj":24.0,"ceiling":121.6,"value3d":-50.2},{"rank":453,"team":"CIN","name":"Tanner Hudson","pos":"TE","games":17,"adp":40.07,"bye":6,"sos":3.5,"injRisk":0.0,"floor":30.1,"consensus":25.0,"dsProj":33.0,"ceiling":100.5,"value3d":-50.5},{"rank":454,"team":"DAL","name":"Marquez Valdes-Scantling","pos":"WR","games":17,"adp":68.06,"bye":14,"sos":-0.7,"injRisk":22.0,"floor":24.4,"consensus":16.0,"dsProj":32.0,"ceiling":110.4,"value3d":-50.5},{"rank":455,"team":"NYG","name":"JuJu Smith-Schuster","pos":"WR","games":17,"adp":64.07,"bye":8,"sos":3.7,"injRisk":94.0,"floor":22.8,"consensus":13.0,"dsProj":30.0,"ceiling":111.1,"value3d":-51.1},{"rank":456,"team":"BAL","name":"Devontez Walker","pos":"WR","games":17,"adp":45.08,"bye":13,"sos":-0.3,"injRisk":6.0,"floor":23.6,"consensus":24.0,"dsProj":27.0,"ceiling":112.8,"value3d":-51.3},{"rank":457,"team":"MIN","name":"Tai Felton","pos":"WR","games":17,"adp":40.11,"bye":6,"sos":4.9,"injRisk":0.0,"floor":31.3,"consensus":14.0,"dsProj":33.0,"ceiling":98.7,"value3d":-51.9},{"rank":458,"team":"DAL","name":"Luke Schoonmaker","pos":"TE","games":17,"adp":61.07,"bye":14,"sos":-2.5,"injRisk":10.0,"floor":27.5,"consensus":19.0,"dsProj":29.0,"ceiling":101.2,"value3d":-52.0},{"rank":459,"team":"NYG","name":"Odell Beckham Jr.","pos":"WR","games":17,"adp":32.03,"bye":8,"sos":3.7,"injRisk":27.0,"floor":20.8,"consensus":25.0,"dsProj":26.0,"ceiling":111.8,"value3d":-52.1},{"rank":460,"team":"CIN","name":"Mitchell Tinsley","pos":"WR","games":17,"adp":80.07,"bye":6,"sos":4.0,"injRisk":0.0,"floor":20.3,"consensus":26.0,"dsProj":23.0,"ceiling":113.0,"value3d":-52.4},{"rank":461,"team":"MIA","name":"Kevin Coleman Jr.","pos":"WR","games":17,"adp":38.12,"bye":6,"sos":-1.2,"injRisk":0.0,"floor":23.1,"consensus":23.0,"dsProj":26.0,"ceiling":107.8,"value3d":-52.6},{"rank":462,"team":"NYJ","name":"Arian Smith","pos":"WR","games":17,"adp":74.06,"bye":13,"sos":-1.0,"injRisk":9.0,"floor":20.2,"consensus":5.0,"dsProj":22.0,"ceiling":112.5,"value3d":-52.6},{"rank":463,"team":"CHI","name":"Sam Roush","pos":"TE","games":17,"adp":35.09,"bye":10,"sos":-3.6,"injRisk":0.0,"floor":27.4,"consensus":11.0,"dsProj":31.0,"ceiling":95.4,"value3d":-52.8},{"rank":464,"team":"DAL","name":"Jonathan Mingo","pos":"WR","games":17,"adp":79.1,"bye":14,"sos":-0.7,"injRisk":8.0,"floor":23.4,"consensus":5.0,"dsProj":27.0,"ceiling":102.1,"value3d":-53.5},{"rank":465,"team":"SF","name":"Jake Tonges","pos":"TE","games":17,"adp":null,"bye":8,"sos":-3.6,"injRisk":0.0,"floor":32.6,"consensus":null,"dsProj":37.0,"ceiling":77.8,"value3d":-53.9},{"rank":466,"team":"LAR","name":"Konata Mumpfield","pos":"WR","games":17,"adp":43.04,"bye":11,"sos":-3.1,"injRisk":0.0,"floor":20.2,"consensus":30.0,"dsProj":21.0,"ceiling":106.3,"value3d":-53.9},{"rank":467,"team":"MIN","name":"Josh Oliver","pos":"TE","games":17,"adp":28.08,"bye":6,"sos":2.0,"injRisk":6.0,"floor":25.7,"consensus":39.0,"dsProj":27.0,"ceiling":94.6,"value3d":-54.2},{"rank":468,"team":"LVR","name":"Malik Benson","pos":"WR","games":17,"adp":null,"bye":13,"sos":-5.0,"injRisk":0.0,"floor":21.3,"consensus":null,"dsProj":25.0,"ceiling":100.2,"value3d":-54.5},{"rank":469,"team":"LAC","name":"Derius Davis","pos":"WR","games":17,"adp":83.01,"bye":7,"sos":-2.6,"injRisk":0.0,"floor":23.4,"consensus":4.0,"dsProj":25.0,"ceiling":98.6,"value3d":-54.6},{"rank":470,"team":"NYG","name":"Jalin Hyatt","pos":"WR","games":17,"adp":26.12,"bye":8,"sos":3.7,"injRisk":27.0,"floor":17.1,"consensus":null,"dsProj":19.0,"ceiling":104.3,"value3d":-55.0},{"rank":471,"team":"NO","name":"Ja'Lynn Polk","pos":"WR","games":17,"adp":49.06,"bye":8,"sos":0.9,"injRisk":36.0,"floor":19.7,"consensus":null,"dsProj":25.0,"ceiling":98.6,"value3d":-55.1},{"rank":472,"team":"MIA","name":"Theo Wease Jr.","pos":"WR","games":17,"adp":43.1,"bye":6,"sos":-1.2,"injRisk":0.0,"floor":17.5,"consensus":76.0,"dsProj":21.0,"ceiling":102.9,"value3d":-55.1},{"rank":473,"team":"BAL","name":"Matthew Hibner","pos":"TE","games":17,"adp":null,"bye":13,"sos":3.6,"injRisk":0.0,"floor":19.8,"consensus":null,"dsProj":23.0,"ceiling":93.2,"value3d":-56.2},{"rank":474,"team":"DET","name":"Tyler Conklin","pos":"TE","games":17,"adp":37.03,"bye":6,"sos":-2.0,"injRisk":8.0,"floor":25.8,"consensus":5.0,"dsProj":27.0,"ceiling":84.3,"value3d":-56.4},{"rank":475,"team":"DEN","name":"Adam Trautman","pos":"TE","games":17,"adp":43.05,"bye":10,"sos":-1.0,"injRisk":13.0,"floor":25.2,"consensus":29.0,"dsProj":31.0,"ceiling":78.6,"value3d":-56.5},{"rank":476,"team":"LAR","name":"Davis Allen","pos":"TE","games":17,"adp":56.01,"bye":11,"sos":-2.2,"injRisk":0.0,"floor":21.6,"consensus":26.0,"dsProj":24.0,"ceiling":89.9,"value3d":-56.6},{"rank":477,"team":"MIA","name":"Will Kacmarek","pos":"TE","games":17,"adp":null,"bye":6,"sos":-3.2,"injRisk":0.0,"floor":22.0,"consensus":null,"dsProj":23.0,"ceiling":90.2,"value3d":-56.7},{"rank":478,"team":"CIN","name":"Drew Sample","pos":"TE","games":17,"adp":28.02,"bye":6,"sos":3.5,"injRisk":11.0,"floor":21.5,"consensus":27.0,"dsProj":23.0,"ceiling":90.4,"value3d":-56.8},{"rank":479,"team":"HOU","name":"Marlin Klein","pos":"TE","games":17,"adp":null,"bye":8,"sos":0.5,"injRisk":0.0,"floor":24.2,"consensus":null,"dsProj":28.0,"ceiling":82.6,"value3d":-57.0},{"rank":480,"team":"SF","name":"Jacob Cowing","pos":"WR","games":17,"adp":82.04,"bye":8,"sos":-3.2,"injRisk":0.0,"floor":18.6,"consensus":0.0,"dsProj":20.0,"ceiling":91.8,"value3d":-57.5},{"rank":481,"team":"CLE","name":"Joe Royer","pos":"TE","games":17,"adp":32.12,"bye":11,"sos":3.4,"injRisk":0.0,"floor":18.9,"consensus":16.0,"dsProj":22.0,"ceiling":89.0,"value3d":-57.6},{"rank":482,"team":"NYJ","name":"Isaiah Williams","pos":"WR","games":17,"adp":80.1,"bye":13,"sos":-1.0,"injRisk":0.0,"floor":19.1,"consensus":19.0,"dsProj":20.0,"ceiling":90.4,"value3d":-57.6},{"rank":483,"team":"TEN","name":"K.J. Osborn","pos":"WR","games":17,"adp":60.05,"bye":9,"sos":5.0,"injRisk":13.0,"floor":23.3,"consensus":null,"dsProj":28.0,"ceiling":79.5,"value3d":-57.7},{"rank":484,"team":"LAR","name":"CJ Daniels","pos":"WR","games":17,"adp":41.06,"bye":11,"sos":-3.1,"injRisk":0.0,"floor":17.7,"consensus":19.0,"dsProj":20.0,"ceiling":90.3,"value3d":-57.8},{"rank":485,"team":"JAC","name":"Josh Cameron","pos":"WR","games":17,"adp":35.01,"bye":7,"sos":4.0,"injRisk":0.0,"floor":17.5,"consensus":29.0,"dsProj":20.0,"ceiling":89.5,"value3d":-58.0},{"rank":486,"team":"DET","name":"Brock Wright","pos":"TE","games":17,"adp":39.05,"bye":6,"sos":-2.0,"injRisk":0.0,"floor":24.7,"consensus":37.0,"dsProj":26.0,"ceiling":78.0,"value3d":-58.3},{"rank":487,"team":"CLE","name":"Malachi Corley","pos":"WR","games":17,"adp":82.03,"bye":11,"sos":4.3,"injRisk":6.0,"floor":15.0,"consensus":7.0,"dsProj":17.0,"ceiling":86.6,"value3d":-59.2},{"rank":488,"team":"NO","name":"Barion Brown","pos":"WR","games":17,"adp":77.02,"bye":8,"sos":0.9,"injRisk":0.0,"floor":16.8,"consensus":25.0,"dsProj":19.0,"ceiling":84.2,"value3d":-59.4},{"rank":489,"team":"KC","name":"Jeff Caldwell","pos":"WR","games":17,"adp":36.07,"bye":5,"sos":-2.6,"injRisk":0.0,"floor":13.7,"consensus":null,"dsProj":16.0,"ceiling":86.6,"value3d":-59.4},{"rank":490,"team":"TEN","name":"Xavier Restrepo","pos":"WR","games":17,"adp":46.02,"bye":9,"sos":5.0,"injRisk":0.0,"floor":13.9,"consensus":4.0,"dsProj":15.0,"ceiling":85.1,"value3d":-59.8},{"rank":491,"team":"IND","name":"Deion Burks","pos":"WR","games":17,"adp":41.12,"bye":13,"sos":-0.8,"injRisk":0.0,"floor":14.4,"consensus":27.0,"dsProj":18.0,"ceiling":83.2,"value3d":-60.1},{"rank":492,"team":"ATL","name":"Casey Washington","pos":"WR","games":17,"adp":80.01,"bye":11,"sos":0.4,"injRisk":0.0,"floor":15.2,"consensus":15.0,"dsProj":17.0,"ceiling":82.8,"value3d":-60.1},{"rank":493,"team":"DET","name":"Dominic Lovett","pos":"WR","games":17,"adp":75.04,"bye":6,"sos":-1.0,"injRisk":0.0,"floor":13.7,"consensus":null,"dsProj":16.0,"ceiling":82.4,"value3d":-60.4},{"rank":494,"team":"BAL","name":"Josh Cuevas","pos":"TE","games":17,"adp":null,"bye":13,"sos":3.6,"injRisk":0.0,"floor":14.8,"consensus":null,"dsProj":17.0,"ceiling":82.5,"value3d":-60.6},{"rank":495,"team":"PIT","name":"Riley Nowakowski","pos":"TE","games":17,"adp":null,"bye":9,"sos":3.0,"injRisk":0.0,"floor":15.6,"consensus":null,"dsProj":18.0,"ceiling":79.6,"value3d":-61.0},{"rank":496,"team":"TB","name":"David Sills V","pos":"WR","games":17,"adp":null,"bye":10,"sos":2.6,"injRisk":0.0,"floor":15.0,"consensus":null,"dsProj":16.0,"ceiling":79.1,"value3d":-61.0},{"rank":497,"team":"SF","name":"Luke Farrell","pos":"TE","games":17,"adp":33.11,"bye":8,"sos":-3.6,"injRisk":0.0,"floor":14.5,"consensus":9.0,"dsProj":16.0,"ceiling":80.7,"value3d":-61.2},{"rank":498,"team":"NYJ","name":"Tim Patrick","pos":"WR","games":17,"adp":66.02,"bye":13,"sos":-1.0,"injRisk":6.0,"floor":20.3,"consensus":11.0,"dsProj":23.0,"ceiling":68.3,"value3d":-61.6},{"rank":499,"team":"JAC","name":"Hunter Long","pos":"TE","games":17,"adp":37.07,"bye":7,"sos":2.5,"injRisk":22.0,"floor":13.8,"consensus":13.0,"dsProj":15.0,"ceiling":79.6,"value3d":-61.6},{"rank":500,"team":"TB","name":"Devin Culp","pos":"TE","games":17,"adp":50.11,"bye":10,"sos":-2.8,"injRisk":0.0,"floor":15.3,"consensus":7.0,"dsProj":17.0,"ceiling":76.5,"value3d":-61.9},{"rank":501,"team":"NO","name":"Bub Means","pos":"WR","games":17,"adp":77.06,"bye":8,"sos":0.9,"injRisk":0.0,"floor":14.9,"consensus":32.0,"dsProj":16.0,"ceiling":75.1,"value3d":-61.9},{"rank":502,"team":"DAL","name":"Brevyn Spann-Ford","pos":"TE","games":17,"adp":58.07,"bye":14,"sos":-2.5,"injRisk":0.0,"floor":14.9,"consensus":13.0,"dsProj":16.0,"ceiling":75.1,"value3d":-62.5},{"rank":503,"team":"BUF","name":"Mecole Hardman","pos":"WR","games":17,"adp":70.04,"bye":7,"sos":0.7,"injRisk":7.0,"floor":11.7,"consensus":null,"dsProj":15.0,"ceiling":73.1,"value3d":-62.8},{"rank":504,"team":"CIN","name":"Charlie Jones","pos":"WR","games":17,"adp":82.07,"bye":6,"sos":4.0,"injRisk":0.0,"floor":12.6,"consensus":null,"dsProj":13.0,"ceiling":71.6,"value3d":-63.0},{"rank":505,"team":"PIT","name":"Kaden Wetjen","pos":"WR","games":17,"adp":null,"bye":9,"sos":-2.6,"injRisk":0.0,"floor":17.2,"consensus":null,"dsProj":20.0,"ceiling":65.7,"value3d":-63.1},{"rank":506,"team":"NO","name":"Mason Tipton","pos":"WR","games":17,"adp":78.08,"bye":8,"sos":0.9,"injRisk":0.0,"floor":12.4,"consensus":10.0,"dsProj":14.0,"ceiling":68.9,"value3d":-63.6},{"rank":507,"team":"IND","name":"Will Mallory","pos":"TE","games":17,"adp":60.1,"bye":13,"sos":1.5,"injRisk":0.0,"floor":13.0,"consensus":13.0,"dsProj":14.0,"ceiling":70.8,"value3d":-63.8},{"rank":508,"team":"SEA","name":"Emmanuel Henderson Jr.","pos":"WR","games":17,"adp":null,"bye":11,"sos":-0.1,"injRisk":0.0,"floor":11.7,"consensus":null,"dsProj":14.0,"ceiling":68.9,"value3d":-63.8},{"rank":509,"team":"ARI","name":"Tip Reiman","pos":"TE","games":17,"adp":57.03,"bye":14,"sos":-3.6,"injRisk":0.0,"floor":12.5,"consensus":10.0,"dsProj":14.0,"ceiling":69.6,"value3d":-64.3},{"rank":510,"team":"PHI","name":"Quez Watkins","pos":"WR","games":17,"adp":62.09,"bye":10,"sos":6.6,"injRisk":6.0,"floor":11.4,"consensus":null,"dsProj":13.0,"ceiling":67.2,"value3d":-64.3},{"rank":511,"team":"KC","name":"Jared Wiley","pos":"TE","games":17,"adp":59.09,"bye":5,"sos":1.9,"injRisk":0.0,"floor":14.2,"consensus":11.0,"dsProj":15.0,"ceiling":67.3,"value3d":-64.5},{"rank":512,"team":"WAS","name":"John Bates","pos":"TE","games":17,"adp":32.05,"bye":7,"sos":-3.0,"injRisk":0.0,"floor":14.1,"consensus":25.0,"dsProj":16.0,"ceiling":67.3,"value3d":-64.6},{"rank":513,"team":"NYG","name":"Thomas Fidone II","pos":"TE","games":17,"adp":49.1,"bye":8,"sos":3.2,"injRisk":0.0,"floor":8.9,"consensus":21.0,"dsProj":10.0,"ceiling":69.0,"value3d":-64.6},{"rank":514,"team":"CIN","name":"Jack Endries","pos":"TE","games":17,"adp":43.09,"bye":6,"sos":3.5,"injRisk":0.0,"floor":15.0,"consensus":18.0,"dsProj":18.0,"ceiling":61.9,"value3d":-65.3},{"rank":515,"team":"KC","name":"Jake Briningstool","pos":"TE","games":17,"adp":null,"bye":5,"sos":1.9,"injRisk":0.0,"floor":8.6,"consensus":null,"dsProj":10.0,"ceiling":66.6,"value3d":-65.3},{"rank":516,"team":"PHI","name":"Johnny Wilson","pos":"WR","games":17,"adp":80.08,"bye":10,"sos":6.6,"injRisk":5.0,"floor":12.2,"consensus":null,"dsProj":15.0,"ceiling":61.2,"value3d":-65.4},{"rank":517,"team":"ARI","name":"Harrison Wallace III","pos":"WR","games":17,"adp":null,"bye":14,"sos":-0.8,"injRisk":0.0,"floor":10.1,"consensus":null,"dsProj":11.0,"ceiling":61.7,"value3d":-65.6},{"rank":518,"team":"MIA","name":"Tahj Washington","pos":"WR","games":17,"adp":79.11,"bye":6,"sos":-1.2,"injRisk":0.0,"floor":9.9,"consensus":null,"dsProj":11.0,"ceiling":60.8,"value3d":-65.7},{"rank":519,"team":"NO","name":"Kevin Austin Jr.","pos":"WR","games":17,"adp":67.02,"bye":8,"sos":0.9,"injRisk":0.0,"floor":13.5,"consensus":25.0,"dsProj":15.0,"ceiling":58.3,"value3d":-65.9},{"rank":520,"team":"DAL","name":"Michael Trigg","pos":"TE","games":17,"adp":22.09,"bye":14,"sos":-2.5,"injRisk":0.0,"floor":13.6,"consensus":27.0,"dsProj":17.0,"ceiling":59.7,"value3d":-66.2},{"rank":521,"team":"TB","name":"Eric Rivers","pos":"WR","games":17,"adp":70.07,"bye":10,"sos":2.6,"injRisk":0.0,"floor":9.9,"consensus":24.0,"dsProj":11.0,"ceiling":57.5,"value3d":-66.5},{"rank":522,"team":"PHI","name":"Darius Cooper","pos":"WR","games":17,"adp":null,"bye":10,"sos":6.6,"injRisk":0.0,"floor":13.2,"consensus":null,"dsProj":14.0,"ceiling":55.8,"value3d":-66.6},{"rank":523,"team":"DAL","name":"Jordan Hudson","pos":"WR","games":17,"adp":null,"bye":14,"sos":-0.7,"injRisk":0.0,"floor":10.6,"consensus":null,"dsProj":12.0,"ceiling":57.5,"value3d":-66.6},{"rank":524,"team":"IND","name":"Anthony Gould","pos":"WR","games":17,"adp":81.01,"bye":13,"sos":-0.8,"injRisk":0.0,"floor":9.3,"consensus":5.0,"dsProj":10.0,"ceiling":57.0,"value3d":-66.7},{"rank":525,"team":"NE","name":"Efton Chism","pos":"WR","games":17,"adp":null,"bye":11,"sos":-2.5,"injRisk":0.0,"floor":10.7,"consensus":null,"dsProj":11.0,"ceiling":56.1,"value3d":-66.8},{"rank":526,"team":"TB","name":"Bauer Sharp","pos":"TE","games":17,"adp":null,"bye":10,"sos":-2.8,"injRisk":0.0,"floor":11.8,"consensus":null,"dsProj":13.0,"ceiling":59.7,"value3d":-66.9},{"rank":527,"team":"DAL","name":"Anthony Smith","pos":"WR","games":17,"adp":null,"bye":14,"sos":-0.7,"injRisk":0.0,"floor":10.1,"consensus":null,"dsProj":12.0,"ceiling":55.9,"value3d":-67.0},{"rank":528,"team":"HOU","name":"Lewis Bond","pos":"WR","games":17,"adp":79.04,"bye":8,"sos":4.4,"injRisk":0.0,"floor":9.8,"consensus":null,"dsProj":11.0,"ceiling":52.2,"value3d":-67.9},{"rank":529,"team":"ATL","name":"Charlie Woerner","pos":"TE","games":17,"adp":41.07,"bye":11,"sos":4.8,"injRisk":0.0,"floor":12.2,"consensus":13.0,"dsProj":14.0,"ceiling":54.4,"value3d":-68.2},{"rank":530,"team":"JAC","name":"CJ Williams","pos":"WR","games":17,"adp":null,"bye":7,"sos":4.0,"injRisk":0.0,"floor":9.4,"consensus":null,"dsProj":11.0,"ceiling":49.7,"value3d":-68.6},{"rank":531,"team":"GB","name":"J. Michael Sturdivant","pos":"WR","games":17,"adp":null,"bye":11,"sos":1.3,"injRisk":0.0,"floor":9.4,"consensus":null,"dsProj":10.0,"ceiling":48.8,"value3d":-68.7},{"rank":532,"team":"MIA","name":"Seydou Traore","pos":"TE","games":17,"adp":null,"bye":6,"sos":-3.2,"injRisk":0.0,"floor":9.2,"consensus":null,"dsProj":11.0,"ceiling":54.4,"value3d":-68.8},{"rank":533,"team":"TB","name":"Payne Durham","pos":"TE","games":17,"adp":57.07,"bye":10,"sos":-2.8,"injRisk":0.0,"floor":11.5,"consensus":9.0,"dsProj":12.0,"ceiling":52.4,"value3d":-69.0},{"rank":534,"team":"DEN","name":"Dallen Bentley","pos":"TE","games":17,"adp":null,"bye":10,"sos":-1.0,"injRisk":0.0,"floor":10.1,"consensus":null,"dsProj":12.0,"ceiling":51.2,"value3d":-69.5},{"rank":535,"team":"NYJ","name":"Jeremy Ruckert","pos":"TE","games":17,"adp":37.12,"bye":13,"sos":-1.5,"injRisk":0.0,"floor":12.1,"consensus":13.0,"dsProj":13.0,"ceiling":44.6,"value3d":-70.8},{"rank":536,"team":"GB","name":"RJ Maryland","pos":"TE","games":17,"adp":null,"bye":11,"sos":-3.3,"injRisk":0.0,"floor":8.7,"consensus":null,"dsProj":10.0,"ceiling":45.9,"value3d":-71.2},{"rank":537,"team":"KC","name":"John Michael Gyllenborg","pos":"TE","games":17,"adp":null,"bye":5,"sos":1.9,"injRisk":0.0,"floor":8.7,"consensus":null,"dsProj":10.0,"ceiling":45.9,"value3d":-71.2},{"rank":538,"team":"PHI","name":"Johnny Mundt","pos":"TE","games":17,"adp":44.12,"bye":10,"sos":7.1,"injRisk":0.0,"floor":11.3,"consensus":null,"dsProj":13.0,"ceiling":42.4,"value3d":-71.4},{"rank":539,"team":"CLE","name":"Aaron Anderson","pos":"WR","games":17,"adp":80.03,"bye":11,"sos":4.3,"injRisk":0.0,"floor":5.9,"consensus":25.0,"dsProj":7.0,"ceiling":36.7,"value3d":-71.8},{"rank":540,"team":"CLE","name":"Carsen Ryan","pos":"TE","games":17,"adp":null,"bye":11,"sos":3.4,"injRisk":0.0,"floor":7.4,"consensus":null,"dsProj":9.0,"ceiling":41.8,"value3d":-72.4},{"rank":541,"team":"PHI","name":"Grant Calcaterra","pos":"TE","games":17,"adp":31.1,"bye":10,"sos":7.1,"injRisk":0.0,"floor":12.7,"consensus":13.0,"dsProj":14.0,"ceiling":36.1,"value3d":-72.6},{"rank":542,"team":"ATL","name":"Vinny Anthony II","pos":"WR","games":17,"adp":null,"bye":11,"sos":0.4,"injRisk":0.0,"floor":6.0,"consensus":null,"dsProj":7.0,"ceiling":33.9,"value3d":-72.6},{"rank":543,"team":"TEN","name":"Jaren Kanak","pos":"TE","games":17,"adp":null,"bye":9,"sos":4.1,"injRisk":0.0,"floor":7.8,"consensus":null,"dsProj":9.0,"ceiling":36.7,"value3d":-73.8},{"rank":544,"team":"IND","name":"Mo Alie-Cox","pos":"TE","games":17,"adp":47.12,"bye":13,"sos":1.5,"injRisk":10.0,"floor":18.4,"consensus":15.0,"dsProj":18.0,"ceiling":18.4,"value3d":-75.0},{"rank":545,"team":"IND","name":"Andrew Ogletree","pos":"TE","games":17,"adp":33.1,"bye":13,"sos":1.5,"injRisk":0.0,"floor":13.1,"consensus":5.0,"dsProj":13.0,"ceiling":13.1,"value3d":-78.7},{"rank":546,"team":"BAL","name":"Durham Smythe","pos":"TE","games":17,"adp":44.05,"bye":13,"sos":3.6,"injRisk":8.0,"floor":9.5,"consensus":14.0,"dsProj":10.0,"ceiling":9.5,"value3d":-81.2},{"rank":547,"team":"IND","name":"Spencer Shrader","pos":"K","games":10,"adp":null,"bye":13,"sos":-2.2,"injRisk":0.0,"floor":70.6,"consensus":null,"dsProj":72.0,"ceiling":97.2,"value3d":-83.3},{"rank":548,"team":"ARI","name":"Joshua Karty","pos":"K","games":8,"adp":74.09,"bye":14,"sos":1.9,"injRisk":0.0,"floor":63.4,"consensus":null,"dsProj":64.0,"ceiling":89.6,"value3d":-91.9},{"rank":549,"team":"IND","name":"Blake Grupe","pos":"K","games":7,"adp":78.02,"bye":13,"sos":-2.2,"injRisk":0.0,"floor":56.1,"consensus":93.0,"dsProj":57.0,"ceiling":82.2,"value3d":-100.1},{"rank":550,"team":"MIN","name":"J.J. McCarthy","pos":"QB","games":2,"adp":20.11,"bye":6,"sos":4.0,"injRisk":41.0,"floor":31.9,"consensus":17.0,"dsProj":33.0,"ceiling":130.0,"value3d":-105.7},{"rank":551,"team":"LAR","name":"Ty Simpson","pos":"QB","games":2,"adp":23.02,"bye":11,"sos":-0.0,"injRisk":0.0,"floor":26.7,"consensus":16.0,"dsProj":30.0,"ceiling":97.8,"value3d":-110.8},{"rank":552,"team":"NYJ","name":"Cade Klubnik","pos":"QB","games":2,"adp":30.02,"bye":13,"sos":-4.4,"injRisk":0.0,"floor":25.0,"consensus":17.0,"dsProj":28.0,"ceiling":83.2,"value3d":-113.2},{"rank":553,"team":"PIT","name":"Drew Allar","pos":"QB","games":1,"adp":27.09,"bye":9,"sos":-2.1,"injRisk":0.0,"floor":13.0,"consensus":22.0,"dsProj":14.0,"ceiling":44.9,"value3d":-122.1},{"rank":554,"team":"CLE","name":"Taylen Green","pos":"QB","games":1,"adp":null,"bye":11,"sos":5.4,"injRisk":0.0,"floor":11.5,"consensus":null,"dsProj":14.0,"ceiling":47.5,"value3d":-122.1},{"rank":555,"team":"CLE","name":"Dillon Gabriel","pos":"QB","games":1,"adp":69.1,"bye":11,"sos":5.4,"injRisk":0.0,"floor":12.0,"consensus":13.0,"dsProj":13.0,"ceiling":42.7,"value3d":-122.7},{"rank":556,"team":"NYG","name":"Jason Sanders","pos":"K","games":4,"adp":34.06,"bye":8,"sos":0.2,"injRisk":0.0,"floor":10.1,"consensus":136.0,"dsProj":10.0,"ceiling":10.1,"value3d":-159.8},{"rank":557,"team":"UNS","name":"Brandon McManus","pos":"K","games":15,"adp":56.09,"bye":18,"sos":null,"injRisk":0.0,"floor":102.1,"consensus":33.0,"dsProj":123.0,"ceiling":137.8,"value3d":-171.1},{"rank":558,"team":"UNS","name":"Graham Gano","pos":"K","games":16,"adp":51.07,"bye":18,"sos":null,"injRisk":0.0,"floor":114.0,"consensus":44.0,"dsProj":118.0,"ceiling":156.3,"value3d":-171.1}];
+
+function initPlannerTab() {
+  buildStrategyChips();
+}
+
+// Convert DS ADP string "R.PP" to overall pick number (12-team baseline for ADP)
+function adpToOverall(adpStr) {
+  if (!adpStr) return 9999;
+  const s = adpStr.toString().trim();
+  const dot = s.indexOf('.');
+  if (dot === -1) return parseFloat(s) || 9999;
+  const round = parseInt(s.slice(0, dot));
+  const pick  = parseInt(s.slice(dot + 1));
+  return (round - 1) * 12 + pick;
+}
+
+// Snake-draft overall pick for a given round (1-indexed) and draft position
+function snakePick(round, draftPos, leagueSize) {
+  return round % 2 === 1
+    ? (round - 1) * leagueSize + draftPos
+    : round * leagueSize - draftPos + 1;
+}
+
+// Resolve a player's overall DS tier — from the DS_TIERS lookup, or estimated from rank
+function getPlayerTier(p) {
+  const t = DS_TIERS[p.name];
+  if (t) return t.ot;
+  // Fallback: estimate tier from rank (roughly 1 tier per 14 picks)
+  return p.rank ? Math.ceil(p.rank / 14) : 99;
+}
+
+// Tier-based scarcity analysis: for each eligible position, score by
+// (tier quality) × (1 / count remaining at that tier). Higher = more urgent.
+// Example: 1 Tier-2 WR vs 7 Tier-2 RBs → WR urgency = 0.5×1 = 0.5, RB = 0.5×0.14 → take WR.
+function tierBasedPickPos(overall, draftedNames, board, eligible) {
+  const src = (board || DS_RANKINGS).filter(p => p.rank && !draftedNames.has(p.name));
+
+  let bestPos   = eligible[0];
+  let bestScore = -Infinity;
+
+  for (const pos of eligible) {
+    const avail = src.filter(p => p.pos === pos);
+    if (!avail.length) continue;
+
+    const bestTier     = Math.min(...avail.map(p => getPlayerTier(p)));
+    const countAtTier  = avail.filter(p => getPlayerTier(p) === bestTier).length;
+
+    // Core scarcity formula
+    const score = (1 / bestTier) * (1 / countAtTier);
+
+    if (score > bestScore) { bestScore = score; bestPos = pos; }
+  }
+
+  return bestPos;
+}
+
+// Per-round target position for each strategy
+// Returns a position string, or null for "best available (no DEF/K)"
+const PLANNER_STRATEGIES = [
+  {
+    key: 'balanced',
+    name: 'Control – Balanced',
+    desc: 'Best available each round, no DEF/K',
+    targets: [null, null, null, null, null, null, null, null, null, null],
+  },
+  {
+    key: 'tierbased',
+    name: 'Tier Based',
+    desc: 'Drafts by tier scarcity: scarce tier = higher urgency. Never reaches across tiers; targets positions running out fastest.',
+    isTierBased: true,
+  },
+  {
+    key: 'zeroRB',
+    name: '0 RB',
+    desc: 'No RB rounds 1–5 (best value, QB+TE required); flood RB rounds 6–16; K R10, DEF R11',
+    isFlood: true, bannedEarly: 'RB', floodPos: 'RB',
+  },
+  {
+    key: 'zeroWR',
+    name: '0 WR',
+    desc: 'No WR rounds 1–5 (best value, QB+TE required); flood WR rounds 6–16; K R10, DEF R11',
+    isFlood: true, bannedEarly: 'WR', floodPos: 'WR',
+  },
+  {
+    key: 'heroRB',
+    name: 'Hero RB',
+    desc: 'Elite RB R1, WRs R2–5 (best onzie R1–5), flood RB R6–16; K R10, DEF R11',
+    isHero: true, primaryEarly: 'RB', secondaryEarly: 'WR', primaryLate: 'RB',
+  },
+  {
+    key: 'heroWR',
+    name: 'Hero WR',
+    desc: 'Elite WR R1, RBs R2–5 (best onzie R1–5), flood WR R6–16; K R10, DEF R11',
+    isHero: true, primaryEarly: 'WR', secondaryEarly: 'RB', primaryLate: 'WR',
+  },
+  {
+    key: 'strongRB',
+    name: 'Strong RB',
+    desc: 'Lock RB R1–3, dynamic WR/Onzie R4–5, flood WR R6–16; K R10, DEF R11',
+    isStrong: true, primaryPos: 'RB', secondaryPos: 'WR',
+  },
+  {
+    key: 'strongWR',
+    name: 'Strong WR',
+    desc: 'Lock WR R1–3, dynamic RB/Onzie R4–5, flood RB R6–16; K R10, DEF R11',
+    isStrong: true, primaryPos: 'WR', secondaryPos: 'RB',
+  },
+];
+
+// Select the best available player for a pick — uses rank (±2) as availability window
+function plannerSelectPlayer(overallPick, targetPos, draftedNames, allPlayers) {
+  return allPlayers
+    .filter(p => p.rank && Math.abs(p.rank - overallPick) <= 2)
+    .filter(p => !draftedNames.has(p.name))
+    .filter(p => targetPos ? p.pos === targetPos : (p.pos !== 'DST' && p.pos !== 'K'))
+    .sort((a, b) => (b.dsProj || 0) - (a.dsProj || 0))[0] || null;
+}
+
+// Build optimal starting lineup from a 16-player roster
+// Slots: QB(1), RB(2), WR(2), TE(1), FLEX/RB/WR/TE(1), K(1), DEF(1) = 9 starters
+function plannerBuildLineup(roster) {
+  const byPos = { QB: [], RB: [], WR: [], TE: [], K: [], DEF: [] };
+  roster.forEach(p => { if (byPos[p.pos]) byPos[p.pos].push(p); });
+  Object.values(byPos).forEach(arr => arr.sort((a, b) => (b.dsProj || 0) - (a.dsProj || 0)));
+
+  const lineup = [];
+  const used   = new Set();
+
+  const slots = [
+    { pos: 'QB',  count: 1 },
+    { pos: 'RB',  count: 2 },
+    { pos: 'WR',  count: 2 },
+    { pos: 'TE',  count: 1 },
+    { pos: 'K',   count: 1 },
+    { pos: 'DEF', count: 1 },
+  ];
+
+  for (const slot of slots) {
+    let filled = 0;
+    for (const p of byPos[slot.pos] || []) {
+      if (filled >= slot.count) break;
+      if (!used.has(p.name)) {
+        lineup.push({ ...p, slotLabel: slot.pos });
+        used.add(p.name);
+        filled++;
+      }
+    }
+  }
+
+  // FLEX: best remaining RB/WR/TE
+  const flex = roster
+    .filter(p => ['RB','WR','TE'].includes(p.pos) && !used.has(p.name))
+    .sort((a, b) => (b.dsProj || 0) - (a.dsProj || 0))[0];
+  if (flex) {
+    lineup.push({ ...flex, slotLabel: 'FLEX' });
+    used.add(flex.name);
+  }
+
+  const bench   = roster.filter(p => !used.has(p.name));
+  const totalProj = lineup.reduce((s, p) => s + (p.dsProj || 0), 0);
+  return { lineup, bench, totalProj };
+}
+
+// Gaussian random via Box-Muller transform
+function gaussianRandom(mean = 0, sd = 1) {
+  let u, v;
+  do { u = Math.random(); } while (u === 0);
+  do { v = Math.random(); } while (v === 0);
+  return mean + sd * Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+}
+
+// Randomize player ranks with noise (SD scales with rank — mid-rounders vary most)
+function randomizeBoard() {
+  return DS_RANKINGS
+    .map(p => {
+      if (!p.rank) return p;
+      const sd = Math.max(3, p.rank * 0.15);
+      return { ...p, rank: Math.max(1, Math.round(p.rank + gaussianRandom(0, sd))) };
+    })
+    .sort((a, b) => a.rank - b.rank);
+}
+
+// Find best available player at a position from the remaining board.
+// Respects Rankings-tab tags: Avoid players are skipped unless they've fallen
+// 2+ rounds below their rank; Must Get / Target players get a sort boost.
+function plannerFindBest(overall, pos, draftedNames, allowedPositions, board, leagueSize) {
+  const ls  = leagueSize || 14;
+  const src = board || DS_RANKINGS;
+  return src
+    .filter(p => p.rank && !draftedNames.has(p.name))
+    .filter(p => pos ? p.pos === pos : allowedPositions.includes(p.pos))
+    .filter(p => {
+      // Avoid: skip unless they've fallen 2+ full rounds below their rank
+      if (rankTagMap[p.name] === 'avoid') return overall >= (p.rank || 0) + 2 * ls;
+      return true;
+    })
+    .sort((a, b) => {
+      // Boost Must Get / Target players so they're preferred over equal-value BPA
+      const boost = { mustget: 40, target: 15 };
+      const scoreA = (a.value3d || 0) + (boost[rankTagMap[a.name]] || 0);
+      const scoreB = (b.value3d || 0) + (boost[rankTagMap[b.name]] || 0);
+      return scoreB - scoreA;
+    })[0] || null;
+}
+
+// Find the highest-priority Must Get / Target player we should proactively reach for.
+// Must Get: reachable up to 1 full round (leagueSize picks) before their rank.
+// Target:   reachable up to 8 picks before their rank.
+// Returns the player object, or null if none in range.
+function findTaggedReachPlayer(overall, draftedNames, board, leagueSize) {
+  const ls  = leagueSize || 14;
+  const src = (board || DS_RANKINGS).filter(p =>
+    p.rank && !draftedNames.has(p.name) &&
+    (rankTagMap[p.name] === 'mustget' || rankTagMap[p.name] === 'target')
+  );
+  // Sort: Must Get first, then by rank (best players first)
+  src.sort((a, b) => {
+    const order = { mustget: 0, target: 1 };
+    const diff  = order[rankTagMap[a.name]] - order[rankTagMap[b.name]];
+    return diff !== 0 ? diff : (a.rank || 999) - (b.rank || 999);
+  });
+  for (const p of src) {
+    const window = rankTagMap[p.name] === 'mustget' ? ls : 8;
+    if (overall >= (p.rank || 999) - window) return p;
+  }
+  return null;
+}
+
+// Drain the board for all picks between the last user pick and the current one.
+// Opponents take BPA (rank order); K/DEF become eligible for opponents in round 10+.
+function simulateOtherPicks(fromPick, toPick, draftedNames, board, leagueSize) {
+  const ls  = leagueSize || 14;
+  const src = board || DS_RANKINGS;
+  for (let pick = fromPick + 1; pick < toPick; pick++) {
+    const pickRound = Math.ceil(pick / ls);
+    const allowKDef = pickRound >= 10;
+    const bpa = src
+      .filter(p => p.rank && !draftedNames.has(p.name))
+      .filter(p => allowKDef ? true : (p.pos !== 'DST' && p.pos !== 'K' && p.pos !== 'DEF'))
+      .sort((a, b) => a.rank - b.rank)[0];
+    if (bpa) draftedNames.add(bpa.name);
+  }
+}
+
+// Simulate one strategy for a given draft position
+function plannerSimulate(draftPos, leagueSize, strategy, board) {
+  const draftedNames = new Set();
+  const roster = [];
+  let earlyOnzieDone = false;
+  let lateOnzieDone  = false;
+  let lastUserPick   = 0;
+
+  for (let round = 1; round <= 16; round++) {
+    const overall = snakePick(round, draftPos, leagueSize);
+
+    // Drain board: simulate every pick between last user pick and this one
+    simulateOtherPicks(lastUserPick, overall, draftedNames, board, leagueSize);
+
+    let resolvedTarget;
+
+    // ── Must Get / Target reach override ────────────────────────────────────
+    // If a tagged player is now within reach (Must Get = 1 round, Target = 8 picks),
+    // draft them immediately regardless of strategy — respects user's expressed preference.
+    const taggedReach = findTaggedReachPlayer(overall, draftedNames, board, leagueSize);
+    if (taggedReach) {
+      draftedNames.add(taggedReach.name);
+      roster.push({ ...taggedReach, round, overallPick: overall });
+      lastUserPick = overall;
+      continue;
+    }
+
+    // ── K / DEF override (late rounds) ─────────────────────────────────────
+    // Matches DS behavior: K in rounds 10-12, DEF in rounds 11-13 if not yet drafted
+    const hasK   = roster.some(p => p.pos === 'K');
+    const hasDEF = roster.some(p => p.pos === 'DEF');
+    if (!hasK && round >= 10 && round <= 12) {
+      resolvedTarget = 'K';
+    } else if (!hasDEF && round >= 11 && round <= 13) {
+      resolvedTarget = 'DEF';
+    } else if (strategy.isTierBased) {
+      // ── Tier Based strategy ──────────────────────────────────────────────
+      // Core rule: at each pick, choose the position where the best-available
+      // tier has the fewest players left on the board. Scarcity = urgency.
+      // Onzies (QB, TE) are included once each; K/DEF handled by override above.
+      const hasQB = roster.some(p => p.pos === 'QB');
+      const hasTE = roster.some(p => p.pos === 'TE');
+      const round = Math.ceil(overall / leagueSize);
+
+      // Force onzie if we're running out of rounds to grab one
+      if (!hasQB && round >= 9) {
+        resolvedTarget = 'QB';
+      } else if (!hasTE && round >= 9) {
+        resolvedTarget = 'TE';
+      } else {
+        // Build eligible position list: RB + WR always; QB/TE until filled
+        const eligible = ['RB', 'WR'];
+        if (!hasQB) eligible.push('QB');
+        if (!hasTE) eligible.push('TE');
+
+        resolvedTarget = tierBasedPickPos(overall, draftedNames, board, eligible);
+      }
+
+    } else if (strategy.isHero) {
+      const hasQB = roster.some(p => p.pos === 'QB');
+      const hasTE = roster.some(p => p.pos === 'TE');
+      const neededOnzie = !hasQB ? 'QB' : 'TE'; // which onzie is still missing for late pick
+
+      if (round === 1) {
+        // R1: always the primary elite position
+        resolvedTarget = strategy.primaryEarly;
+
+      } else if (round <= 5) {
+        // Rounds 2–5: secondary position, but take early onzie when it beats the secondary
+        if (!earlyOnzieDone) {
+          const bestSecondary = plannerFindBest(overall, strategy.secondaryEarly, draftedNames, null, board, leagueSize);
+          const bestOnzie     = plannerFindBest(overall, null, draftedNames, ['QB','TE'], board, leagueSize);
+          const forceOnzie    = round === 5;
+          if (forceOnzie || (bestOnzie && (!bestSecondary || (bestOnzie.value3d || 0) >= (bestSecondary.value3d || 0)))) {
+            resolvedTarget = bestOnzie ? bestOnzie.pos : 'TE';
+            earlyOnzieDone = true;
+          } else {
+            resolvedTarget = strategy.secondaryEarly;
+          }
+        } else {
+          resolvedTarget = strategy.secondaryEarly;
+        }
+
+      } else if (round === 6) {
+        // R6: bridge round — always primary late position
+        resolvedTarget = strategy.primaryLate;
+
+      } else {
+        // Rounds 7–10: primary late position, but take late onzie when it beats primary
+        if (!lateOnzieDone && !(hasQB && hasTE)) {
+          const bestPrimary = plannerFindBest(overall, strategy.primaryLate, draftedNames, null, board, leagueSize);
+          const bestOnzie   = plannerFindBest(overall, neededOnzie, draftedNames, null, board, leagueSize);
+          const forceOnzie  = round === 10;
+          if (forceOnzie || (bestOnzie && (!bestPrimary || (bestOnzie.value3d || 0) >= (bestPrimary.value3d || 0)))) {
+            resolvedTarget = neededOnzie;
+            lateOnzieDone = true;
+          } else {
+            resolvedTarget = strategy.primaryLate;
+          }
+        } else {
+          resolvedTarget = strategy.primaryLate;
+        }
+      }
+
+    } else if (strategy.isStrong) {
+      // Strong RB / Strong WR
+      // R1–3: lock primary; R4–5: dynamic secondary/onzie (min 1 secondary by R5);
+      // R6–10: flood secondary, opportunistically take onzie or primary on great value
+      const hasQB = roster.some(p => p.pos === 'QB');
+      const hasTE = roster.some(p => p.pos === 'TE');
+      const secondaryCount = roster.filter(p => p.pos === strategy.secondaryPos).length;
+      const neededOnzie = !hasQB ? 'QB' : 'TE';
+
+      if (round <= 3) {
+        resolvedTarget = strategy.primaryPos;
+
+      } else if (round <= 5) {
+        const roundsLeft   = 5 - round + 1;
+        const onziesNeeded = (!hasQB ? 1 : 0) + (!hasTE ? 1 : 0);
+        // Force onzie if we'd otherwise run out of rounds to fill them
+        if (onziesNeeded >= roundsLeft) {
+          resolvedTarget = neededOnzie;
+        } else if (secondaryCount === 0 && round === 5) {
+          // Must have ≥1 secondary before R6
+          resolvedTarget = strategy.secondaryPos;
+        } else {
+          // Best of secondary vs best onzie
+          const bestSecondary = plannerFindBest(overall, strategy.secondaryPos, draftedNames, null, board, leagueSize);
+          const onzieEligible  = ['QB','TE'].filter(p => !(p==='QB'&&hasQB) && !(p==='TE'&&hasTE));
+          const bestOnzie      = onzieEligible.length
+            ? plannerFindBest(overall, null, draftedNames, onzieEligible, board, leagueSize)
+            : null;
+          if (bestOnzie && bestSecondary && (bestOnzie.value3d||0) > (bestSecondary.value3d||0)) {
+            resolvedTarget = bestOnzie.pos;
+          } else {
+            resolvedTarget = strategy.secondaryPos;
+          }
+        }
+
+      } else {
+        // R6–10: default to secondary; opportunistically grab onzie or primary
+        const bestSecondary = plannerFindBest(overall, strategy.secondaryPos, draftedNames, null, board, leagueSize);
+        const onzieEligible  = ['QB','TE'].filter(p => !(p==='QB'&&hasQB) && !(p==='TE'&&hasTE));
+        const bestOnzie      = onzieEligible.length
+          ? plannerFindBest(overall, null, draftedNames, onzieEligible, board, leagueSize)
+          : null;
+        const bestPrimary    = plannerFindBest(overall, strategy.primaryPos, draftedNames, null, board, leagueSize);
+        const forceOnzie     = round === 10 && onzieEligible.length > 0;
+
+        if (bestOnzie && (forceOnzie || (bestSecondary && (bestOnzie.value3d||0) >= (bestSecondary.value3d||0)))) {
+          resolvedTarget = bestOnzie.pos;
+          lateOnzieDone = true;
+        } else if (secondaryCount >= 3 && bestPrimary && bestSecondary &&
+                   (bestPrimary.value3d||0) > (bestSecondary.value3d||0) * 1.12) {
+          // Good-value shot at primary once we've flooded secondary
+          resolvedTarget = strategy.primaryPos;
+        } else {
+          resolvedTarget = strategy.secondaryPos;
+        }
+      }
+
+    } else if (strategy.isFlood) {
+      // 0 RB / 0 WR: dynamic within constraints
+      const hasQB = roster.some(p => p.pos === 'QB');
+      const hasTE = roster.some(p => p.pos === 'TE');
+
+      if (round <= 5) {
+        // Eligible = everything except banned position, DEF, K, and already-filled onzies
+        const eligible = ['QB','RB','WR','TE'].filter(p =>
+          p !== strategy.bannedEarly &&
+          !(p === 'QB' && hasQB) &&
+          !(p === 'TE' && hasTE)
+        );
+        const roundsLeft   = 5 - round + 1;
+        const onziesNeeded = (!hasQB ? 1 : 0) + (!hasTE ? 1 : 0);
+
+        if (onziesNeeded >= roundsLeft) {
+          // Must take an onzie this round — pick best available by 3D value
+          const neededPos = !hasQB && !hasTE ? null : !hasQB ? 'QB' : 'TE';
+          const bestOnzie = plannerFindBest(overall, neededPos, draftedNames, ['QB','TE'].filter(p => !(p==='QB'&&hasQB) && !(p==='TE'&&hasTE)), board, leagueSize);
+          resolvedTarget = bestOnzie ? bestOnzie.pos : (!hasQB ? 'QB' : 'TE');
+        } else {
+          // Take best available from all eligible positions
+          const best = plannerFindBest(overall, null, draftedNames, eligible, board, leagueSize);
+          resolvedTarget = best ? best.pos : eligible[0];
+        }
+      } else {
+        // Rounds 6–10: flood the target position
+        resolvedTarget = strategy.floodPos;
+      }
+
+    } else if (strategy.isCustom) {
+      // Custom user-defined strategy: one target value per round
+      const target = (strategy.targets[round - 1] || 'DYNAMIC').toUpperCase();
+      const hasQB  = roster.some(p => p.pos === 'QB');
+      const hasTE  = roster.some(p => p.pos === 'TE');
+
+      if (target === 'DYNAMIC') {
+        const eligible = ['QB','RB','WR','TE'].filter(p => !(p==='QB'&&hasQB) && !(p==='TE'&&hasTE));
+        const player = plannerFindBest(overall, null, draftedNames, eligible, board, leagueSize);
+        if (player) { draftedNames.add(player.name); roster.push({ ...player, round, overallPick:overall }); }
+        else roster.push({ name:'(No match)', pos:'?', dsProj:0, round, overallPick:overall });
+        lastUserPick = overall;
+        continue;
+      } else if (target === 'ONZIE') {
+        const onzieEligible = ['QB','TE'].filter(p => !(p==='QB'&&hasQB) && !(p==='TE'&&hasTE));
+        if (onzieEligible.length) {
+          const player = plannerFindBest(overall, null, draftedNames, onzieEligible, board, leagueSize);
+          if (player) { draftedNames.add(player.name); roster.push({ ...player, round, overallPick:overall }); }
+          else roster.push({ name:'(No match)', pos:'QB/TE', dsProj:0, round, overallPick:overall });
+        } else {
+          // Already have QB & TE — grab best non-K/DST
+          const player = plannerFindBest(overall, null, draftedNames, ['RB','WR'], board, leagueSize);
+          if (player) { draftedNames.add(player.name); roster.push({ ...player, round, overallPick:overall }); }
+          else roster.push({ name:'(No match)', pos:'?', dsProj:0, round, overallPick:overall });
+        }
+        lastUserPick = overall;
+        continue;
+      } else if (target === '!ONZIE') {
+        // Not Onzie — RB or WR only
+        const player = plannerFindBest(overall, null, draftedNames, ['RB','WR'], board, leagueSize);
+        if (player) { draftedNames.add(player.name); roster.push({ ...player, round, overallPick:overall }); }
+        else roster.push({ name:'(No match)', pos:'RB/WR', dsProj:0, round, overallPick:overall });
+        lastUserPick = overall;
+        continue;
+      } else if (target === 'DYN_RBWR') {
+        // Dynamic RB/WR — best available between RB and WR only
+        const player = plannerFindBest(overall, null, draftedNames, ['RB','WR'], board, leagueSize);
+        if (player) { draftedNames.add(player.name); roster.push({ ...player, round, overallPick:overall }); }
+        else roster.push({ name:'(No match)', pos:'RB/WR', dsProj:0, round, overallPick:overall });
+        lastUserPick = overall;
+        continue;
+      } else if (target.startsWith('!')) {
+        // Negation: not a specific position
+        const banned = target.slice(1); // 'RB', 'WR', etc.
+        const eligible = ['QB','RB','WR','TE'].filter(p => p !== banned && !(p==='QB'&&hasQB) && !(p==='TE'&&hasTE));
+        const player = plannerFindBest(overall, null, draftedNames, eligible.length ? eligible : ['QB','RB','WR','TE'], board, leagueSize);
+        if (player) { draftedNames.add(player.name); roster.push({ ...player, round, overallPick:overall }); }
+        else roster.push({ name:'(No match)', pos:'?', dsProj:0, round, overallPick:overall });
+        lastUserPick = overall;
+        continue;
+      } else {
+        // Specific position: RB, WR, QB, TE
+        resolvedTarget = target;
+      }
+
+    } else {
+      // Control – Balanced: dynamic best available, QB/TE capped at 1 each
+      const hasQB = roster.filter(p => p.pos === 'QB').length >= 1;
+      const hasTE = roster.filter(p => p.pos === 'TE').length >= 1;
+      const eligible = ['QB','RB','WR','TE'].filter(p => !(p === 'QB' && hasQB) && !(p === 'TE' && hasTE));
+      const player = plannerFindBest(overall, null, draftedNames, eligible, board, leagueSize);
+      if (player) { draftedNames.add(player.name); roster.push({ ...player, round, overallPick: overall }); }
+      else roster.push({ name: '(No match)', pos: '?', dsProj: 0, round, overallPick: overall });
+      lastUserPick = overall;
+      continue;
+    }
+
+    const player = plannerFindBest(overall, resolvedTarget, draftedNames, null, board, leagueSize);
+    if (player) {
+      draftedNames.add(player.name);
+      roster.push({ ...player, round, overallPick: overall });
+    } else {
+      roster.push({ name: '(No match)', pos: resolvedTarget || '?', dsProj: 0, round, overallPick: overall });
+    }
+    lastUserPick = overall;
+  }
+
+  const { lineup, bench, totalProj } = plannerBuildLineup(roster);
+  return { roster, lineup, bench, totalProj };
+}
+
+// Run Monte Carlo: 10 randomized boards per strategy
+function runMonteCarlo(draftPos, leagueSize, strategy, runs = 10) {
+  let bestResult = null;
+  let worstResult = null;
+  let sumProj = 0;
+
+  for (let i = 0; i < runs; i++) {
+    const board  = randomizeBoard();
+    const result = plannerSimulate(draftPos, leagueSize, strategy, board);
+    sumProj += result.totalProj;
+    if (!bestResult || result.totalProj > bestResult.totalProj) bestResult = result;
+    if (!worstResult || result.totalProj < worstResult.totalProj) worstResult = result;
+  }
+
+  return { bestResult, worstResult, bestProj: bestResult.totalProj, floorProj: worstResult.totalProj, avgProj: sumProj / runs };
+}
+
+function posBadge(pos) {
+  return `<span class="planner-pos-badge pos-${pos}">${pos}</span>`;
+}
+
+function plannerCell(p) {
+  if (!p || p.name === '(No match)') return `<td class="pt-cell pt-empty">—</td>`;
+  const tag      = rankTagMap[p.name] || '';
+  const tagEmoji = tag === 'mustget' ? '🔥' : tag === 'target' ? '🎯' : tag === 'avoid' ? '🚫' : '';
+  const tagTitle = tag === 'mustget' ? 'Must Get' : tag === 'target' ? 'Target' : tag === 'avoid' ? 'Avoid' : '';
+  return `<td class="pt-cell">
+    <div class="pt-cell-inner">
+      ${posBadge(p.pos)}
+      <span class="pt-name">${p.name}</span>
+      ${tagEmoji ? `<span title="${tagTitle}" style="font-size:12px;line-height:1;flex-shrink:0">${tagEmoji}</span>` : ''}
+      <span class="pt-proj">${p.dsProj ? p.dsProj.toFixed(0) : '—'}</span>
+    </div>
+  </td>`;
+}
+
+// ── Custom Strategies ────────────────────────────────────────────────────────
+const CUSTOM_STORAGE_KEY = 'plannerCustomStrategies_v1';
+let customStrategies = (() => {
+  try { return JSON.parse(localStorage.getItem(CUSTOM_STORAGE_KEY) || '[]'); }
+  catch(e) { return []; }
+})();
+
+function allStrategies() { return [...PLANNER_STRATEGIES, ...customStrategies]; }
+function persistCustomStrategies() {
+  try { localStorage.setItem(CUSTOM_STORAGE_KEY, JSON.stringify(customStrategies)); } catch(e) {}
+}
+
+const TARGET_OPTIONS = [
+  { value:'DYNAMIC', label:'Dynamic (best avail)' },
+  { value:'RB',      label:'RB' },
+  { value:'WR',      label:'WR' },
+  { value:'QB',      label:'QB' },
+  { value:'TE',      label:'TE' },
+  { value:'ONZIE',   label:'Onzie (QB or TE)' },
+  { value:'!RB',     label:'Not RB' },
+  { value:'!WR',     label:'Not WR' },
+  { value:'!QB',     label:'Not QB' },
+  { value:'!TE',     label:'Not TE' },
+  { value:'!ONZIE',  label:'Not Onzie (RB or WR)' },
+  { value:'DYN_RBWR',label:'Dynamic RB/WR' },
+];
+
+let editingStrategyKey = null;
+
+function openStrategyEditor(key = null) {
+  editingStrategyKey = key;
+  const existing = key ? customStrategies.find(s => s.key === key) : null;
+  const targets   = existing ? existing.targets : Array(10).fill('DYNAMIC');
+  document.getElementById('strategyNameInput').value = existing ? existing.name : '';
+  document.getElementById('editorDeleteBtn').style.display = key ? '' : 'none';
+  document.getElementById('roundTargetGrid').innerHTML = Array.from({length:10}, (_,i) => `
+    <div class="round-target-row">
+      <label>Round ${i+1}</label>
+      <select id="roundTarget${i}">
+        ${TARGET_OPTIONS.map(o => `<option value="${o.value}"${targets[i]===o.value?' selected':''}>${o.label}</option>`).join('')}
+      </select>
+    </div>`).join('');
+  document.getElementById('strategyEditor').classList.add('open');
+  document.getElementById('strategyNameInput').focus();
+}
+
+function closeStrategyEditor() {
+  document.getElementById('strategyEditor').classList.remove('open');
+  editingStrategyKey = null;
+}
+
+function saveCustomStrategy() {
+  const name = document.getElementById('strategyNameInput').value.trim();
+  if (!name) { showToast('Enter a strategy name'); return; }
+  const targets = Array.from({length:10}, (_,i) => document.getElementById(`roundTarget${i}`).value);
+  if (editingStrategyKey) {
+    const idx = customStrategies.findIndex(s => s.key === editingStrategyKey);
+    if (idx !== -1) customStrategies[idx] = { ...customStrategies[idx], name, targets };
+  } else {
+    const newKey = `custom_${Date.now()}`;
+    customStrategies.push({ key:newKey, name, isCustom:true, targets });
+    enabledStrategies.add(newKey);
+  }
+  persistCustomStrategies();
+  closeStrategyEditor();
+  buildStrategyChips();
+  showToast('Strategy saved');
+}
+
+function deleteCustomStrategy() {
+  if (!editingStrategyKey) return;
+  if (!confirm(`Delete "${customStrategies.find(s=>s.key===editingStrategyKey)?.name}"?`)) return;
+  customStrategies = customStrategies.filter(s => s.key !== editingStrategyKey);
+  enabledStrategies.delete(editingStrategyKey);
+  persistCustomStrategies();
+  closeStrategyEditor();
+  buildStrategyChips();
+  showToast('Strategy deleted');
+}
+
+// ── Strategy toggles ─────────────────────────────────────────────────────────
+let enabledStrategies = new Set(['balanced']); // default: Balanced only — user must opt in to add more
+
+function buildStrategyChips() {
+  const wrap = document.getElementById('strategyChips');
+  if (!wrap) return;
+  const builtIn = PLANNER_STRATEGIES.map(s => `
+    <button id="chip-${s.key}" onclick="toggleStrategy('${s.key}')"
+      class="preset-btn${enabledStrategies.has(s.key)?' active':''}" style="font-size:11px"
+    >${s.name}</button>`).join('');
+  const custom = customStrategies.map(s => `
+    <span class="custom-chip-wrap">
+      <button id="chip-${s.key}" onclick="toggleStrategy('${s.key}')"
+        class="preset-btn${enabledStrategies.has(s.key)?' active':''}"
+        style="font-size:11px;border-radius:4px 0 0 4px"
+      >${s.name}</button><button class="chip-edit-btn" onclick="openStrategyEditor('${s.key}')" title="Edit strategy">✏</button>
+    </span>`).join('');
+  wrap.innerHTML = builtIn + custom;
+}
+
+function toggleStrategy(key) {
+  if (enabledStrategies.has(key)) {
+    if (enabledStrategies.size === 1) return;
+    enabledStrategies.delete(key);
+  } else {
+    enabledStrategies.add(key);
+  }
+  document.getElementById(`chip-${key}`)?.classList.toggle('active', enabledStrategies.has(key));
+}
+
+function setAllStrategies(on) {
+  allStrategies().forEach(s => {
+    if (on) enabledStrategies.add(s.key);
+    else if (enabledStrategies.size > 1) enabledStrategies.delete(s.key);
+  });
+  if (!on) enabledStrategies.add(PLANNER_STRATEGIES[0].key);
+  buildStrategyChips();
+}
+
+function runDraftPlanner() {
+  const pick       = parseInt(document.getElementById('plannerPick').value) || 1;
+  const leagueSize = parseInt(document.getElementById('plannerLeague').value) || 14;
+  const container  = document.getElementById('plannerResults');
+
+  if (!DS_RANKINGS || !DS_RANKINGS.length) {
+    container.innerHTML = '<div class="planner-empty">Player data not loaded yet. Please wait a moment and try again.</div>';
+    return;
+  }
+
+  const activeStrategies = allStrategies().filter(s => enabledStrategies.has(s.key));
+
+  const results = activeStrategies.map(s => {
+    const mc = runMonteCarlo(pick, leagueSize, s, 50);
+    return { strategy: s, result: mc.bestResult, worstResult: mc.worstResult, bestProj: mc.bestProj, floorProj: mc.floorProj, avgProj: mc.avgProj };
+  }).sort((a, b) => b.avgProj - a.avgProj); // sort by avg across 10 runs
+
+  const best = results[0]; // winner = highest average
+  const snakePicks = Array.from({length:16}, (_,i) => snakePick(i+1, pick, leagueSize));
+
+  // Build round rows — one row per round, all strategies side by side
+  const roundRows = Array.from({length:16}, (_, i) => {
+    const round = i + 1;
+    const cells = results.map(r => plannerCell(r.result.roster[i]));
+    return `<tr class="pt-round-row">
+      <td class="pt-row-label">
+        <span class="pt-round-num">R${round}</span>
+        <span class="pt-round-pick">#${snakePicks[i]}</span>
+      </td>
+      ${cells.join('')}
+    </tr>`;
+  }).join('');
+
+  // Build lineup rows — one row per slot
+  const slotOrder = ['QB','RB','RB','WR','WR','TE','FLEX','K','DEF'];
+  const lineupRows = slotOrder.map((slot, i) => {
+    const cells = results.map(r => plannerCell(r.result.lineup[i]));
+    return `<tr class="pt-lineup-row">
+      <td class="pt-row-label"><span class="planner-slot-label">${slot}</span></td>
+      ${cells.join('')}
+    </tr>`;
+  }).join('');
+
+  // Total footer — best + avg per strategy column (10 MC runs)
+  const totalFooter = `<tfoot>
+    <tr class="pt-total-row">
+      <td class="pt-row-label"><span class="pt-total-label">PROJ PTS</span></td>
+      ${results.map(r => `<td class="pt-total-cell${r === best ? ' pt-best' : ''}">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+          <span style="font-size:10px;color:var(--text3);font-weight:500;text-transform:uppercase;letter-spacing:.5px">best run</span>
+          <span class="pt-total-num">${r.bestProj.toFixed(0)}</span>
+          <span style="font-size:10px;color:var(--text3);font-weight:500;text-transform:uppercase;letter-spacing:.5px">avg (50 runs)</span>
+          <span style="font-size:18px;color:var(--text1);font-weight:800">${r.avgProj.toFixed(0)}</span>
+          <span style="font-size:10px;color:var(--text3);font-weight:500;text-transform:uppercase;letter-spacing:.5px;margin-top:2px">floor (worst run)</span>
+          <span style="font-size:13px;color:var(--red);font-weight:700">${r.floorProj.toFixed(0)}</span>
+          ${r === best ? '<span class="planner-winner-badge" style="margin-top:3px">⚡ Best</span>' : ''}
+        </div>
+      </td>`).join('')}
+    </tr>
+  </tfoot>`;
+
+  // Build insight callouts
+  const insights = [];
+
+  // Any non-winner whose best run beats the winner's avg
+  results.slice(1).forEach(r => {
+    if (r.bestProj > best.avgProj) {
+      const diff = (r.bestProj - best.avgProj).toFixed(0);
+      insights.push({
+        icon: '⚡',
+        color: '#f59e0b',
+        bg: 'rgba(245,158,11,0.08)',
+        border: 'rgba(245,158,11,0.3)',
+        text: `<strong>${r.strategy.name}</strong>'s best run (<strong>${r.bestProj.toFixed(0)} pts</strong>) beat the winner's avg of <strong>${best.avgProj.toFixed(0)} pts</strong> by <strong>+${diff}</strong> — high upside, inconsistent floor.`,
+      });
+    }
+  });
+
+  // Largest avg gap between 1st and 2nd place
+  if (results.length >= 2) {
+    const gap = results[0].avgProj - results[1].avgProj;
+    if (gap >= 10) {
+      insights.push({
+        icon: '🏆',
+        color: '#22c55e',
+        bg: 'rgba(34,197,94,0.07)',
+        border: 'rgba(34,197,94,0.25)',
+        text: `<strong>${results[0].strategy.name}</strong> leads by <strong>+${gap.toFixed(0)} avg pts</strong> over the next best strategy — a dominant result across all 10 simulations.`,
+      });
+    }
+  }
+
+  // Strategy where best and avg are close (consistent = tight range)
+  results.forEach(r => {
+    const spread = r.bestProj - r.avgProj;
+    if (spread <= 5 && spread >= 0) {
+      insights.push({
+        icon: '🎯',
+        color: '#6366f1',
+        bg: 'rgba(99,102,241,0.07)',
+        border: 'rgba(99,102,241,0.25)',
+        text: `<strong>${r.strategy.name}</strong> is highly consistent — best run is only <strong>${spread.toFixed(0)} pts</strong> above its avg, meaning little variance across simulations.`,
+      });
+    }
+  });
+
+  const insightHtml = insights.length ? `
+    <div style="margin-top:16px;display:flex;flex-direction:column;gap:8px">
+      <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.7px;margin-bottom:2px">📊 Sim Insights</div>
+      ${insights.map(ins => `
+        <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 14px;background:${ins.bg};border:1px solid ${ins.border};border-radius:8px;font-size:12px;line-height:1.5;color:var(--text2)">
+          <span style="font-size:15px;flex-shrink:0;margin-top:1px">${ins.icon}</span>
+          <span>${ins.text}</span>
+        </div>`).join('')}
+    </div>` : '';
+
+  container.innerHTML = `
+    <div style="margin-bottom:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <div style="font-size:12px;font-weight:700;color:var(--text2)">
+        📍 Pick ${pick} of ${leagueSize} &nbsp;·&nbsp;
+        <span style="color:var(--text3);font-family:var(--mono);font-size:11px">
+          Snake picks: ${snakePicks.join(', ')}
+        </span>
+        &nbsp;·&nbsp;
+        <span style="color:var(--accent);font-size:11px;font-weight:600">🎲 50 simulations / strategy — roster shown is best run</span>
+      </div>
+    </div>
+    <div class="pt-wrap">
+      <table class="pt-table">
+        <thead>
+          <tr>
+            <th class="pt-th-label"></th>
+            ${results.map(r => `<th class="pt-th${r === best ? ' pt-th-best' : ''}">
+              <div class="planner-strategy-name">${r.strategy.name}</div>
+              <div style="font-size:10px;color:var(--text3);font-weight:400;margin-top:2px">${r.strategy.desc}</div>
+            </th>`).join('')}
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="pt-section-header"><td colspan="${results.length + 1}" class="pt-section-label">Draft Picks</td></tr>
+          ${roundRows}
+          <tr class="pt-section-header"><td colspan="${results.length + 1}" class="pt-section-label">Starting Lineup</td></tr>
+          ${lineupRows}
+        </tbody>
+        ${totalFooter}
+      </table>
+    </div>
+    ${insightHtml}`;
+}
+
+// ── END DRAFT PLANNER ─────────────────────────────────────────────────────
+
+// ── RANKINGS TAB ──────────────────────────────────────────────────────────────
+
+// DS tier data extracted from mock draft results (Overall Tier / Pos. Tier)
+const DS_TIERS = {"Bijan Robinson":{"ot":1,"pt":1},"Jahmyr Gibbs":{"ot":1,"pt":1},"Puka Nacua":{"ot":1,"pt":1},"Jonathan Taylor":{"ot":2,"pt":2},"Jaxon Smith-Njigba":{"ot":1,"pt":1},"Ja'Marr Chase":{"ot":1,"pt":1},"Christian McCaffrey":{"ot":1,"pt":1},"De'Von Achane":{"ot":3,"pt":3},"Amon-Ra St. Brown":{"ot":2,"pt":2},"CeeDee Lamb":{"ot":2,"pt":2},"Derrick Henry":{"ot":3,"pt":3},"Ashton Jeanty":{"ot":2,"pt":2},"Justin Jefferson":{"ot":2,"pt":2},"Omarion Hampton":{"ot":3,"pt":3},"James Cook":{"ot":2,"pt":2},"Chase Brown":{"ot":4,"pt":4},"Drake London":{"ot":3,"pt":3},"A.J. Brown":{"ot":3,"pt":3},"Josh Jacobs":{"ot":4,"pt":4},"Breece Hall":{"ot":4,"pt":4},"Saquon Barkley":{"ot":3,"pt":3},"Kenneth Walker III":{"ot":3,"pt":3},"Jeremiyah Love":{"ot":4,"pt":4},"Kyren Williams":{"ot":5,"pt":5},"Josh Allen":{"ot":4,"pt":1},"Javonte Williams":{"ot":4,"pt":4},"Travis Etienne":{"ot":5,"pt":5},"Rashee Rice":{"ot":3,"pt":3},"George Pickens":{"ot":3,"pt":3},"Brock Bowers":{"ot":4,"pt":1},"Chris Olave":{"ot":4,"pt":4},"Bucky Irving":{"ot":6,"pt":6},"Nico Collins":{"ot":3,"pt":3},"Quinshon Judkins":{"ot":6,"pt":6},"Malik Nabers":{"ot":4,"pt":4},"Trey McBride":{"ot":4,"pt":1},"DeVonta Smith":{"ot":4,"pt":4},"Garrett Wilson":{"ot":5,"pt":4},"Cameron 'Cam' Skattebo":{"ot":5,"pt":5},"Lamar Jackson":{"ot":5,"pt":1},"Tetairoa McMillan":{"ot":5,"pt":5},"Tee Higgins":{"ot":4,"pt":4},"Zay Flowers":{"ot":4,"pt":4},"David Montgomery":{"ot":6,"pt":6},"D'Andre Swift":{"ot":5,"pt":5},"TreVeyon Henderson":{"ot":6,"pt":6},"Jadarian Price":{"ot":7,"pt":7},"Ladd McConkey":{"ot":5,"pt":5},"Emeka Egbuka":{"ot":5,"pt":5},"Chuba Hubbard":{"ot":7,"pt":7},"Terry McLaurin":{"ot":5,"pt":5},"Davante Adams":{"ot":5,"pt":4},"Jameson Williams":{"ot":5,"pt":5},"Colston Loveland":{"ot":5,"pt":1},"Bhayshul Tuten":{"ot":7,"pt":7},"Jaylen Warren":{"ot":7,"pt":7},"Tony Pollard":{"ot":7,"pt":7},"Christian Watson":{"ot":5,"pt":5},"Rico Dowdle":{"ot":8,"pt":8},"Jaylen Waddle":{"ot":5,"pt":5},"Aaron Jones":{"ot":9,"pt":9},"Tyler Warren":{"ot":5,"pt":2},"Drake Maye":{"ot":5,"pt":1},"D.K. Metcalf":{"ot":6,"pt":6},"J.K. Dobbins":{"ot":7,"pt":7},"Jayden Daniels":{"ot":6,"pt":2},"Marvin Harrison Jr.":{"ot":6,"pt":6},"Luther Burden III":{"ot":5,"pt":5},"Rome Odunze":{"ot":5,"pt":5},"Carnell Tate":{"ot":7,"pt":6},"RJ Harvey":{"ot":8,"pt":8},"Rachaad White":{"ot":9,"pt":9},"Alec Pierce":{"ot":6,"pt":6},"Courtland Sutton":{"ot":6,"pt":6},"Parker Washington":{"ot":6,"pt":6},"Joe Burrow":{"ot":6,"pt":2},"Jalen Hurts":{"ot":6,"pt":2},"D.J. Moore":{"ot":6,"pt":6},"Harold Fannin Jr.":{"ot":6,"pt":3},"Mike Evans":{"ot":5,"pt":5},"Kenneth Gainwell":{"ot":9,"pt":9},"Kyle Pitts":{"ot":7,"pt":4},"Jordyn Tyson":{"ot":7,"pt":6},"Brian Thomas Jr.":{"ot":6,"pt":6},"Rhamondre Stevenson":{"ot":7,"pt":7},"Jakobi Meyers":{"ot":7,"pt":6},"Kyle Monangai":{"ot":8,"pt":8},"Sam LaPorta":{"ot":5,"pt":3},"Tucker Kraft":{"ot":5,"pt":2},"Wan'Dale Robinson":{"ot":10,"pt":8},"Chris Godwin":{"ot":9,"pt":7},"Makai Lemon":{"ot":9,"pt":7},"Michael Pittman Jr.":{"ot":7,"pt":6},"Jacory Croskey-Merritt":{"ot":9,"pt":9},"Jaxson Dart":{"ot":7,"pt":2},"George Kittle":{"ot":7,"pt":4},"Travis Kelce":{"ot":8,"pt":4},"Blake Corum":{"ot":8,"pt":8},"Trevor Lawrence":{"ot":7,"pt":2},"Michael Wilson":{"ot":9,"pt":7},"Zach Charbonnet":{"ot":10,"pt":10},"Jordan Addison":{"ot":7,"pt":6},"Dallas Goedert":{"ot":10,"pt":5},"Jake Ferguson":{"ot":11,"pt":5},"Jayden Reed":{"ot":6,"pt":6},"Matthew Golden":{"ot":9,"pt":8},"Quentin Johnston":{"ot":8,"pt":7},"Jonathon Brooks":{"ot":8,"pt":8},"Travis Hunter":{"ot":15,"pt":11},"Xavier Worthy":{"ot":7,"pt":7},"Caleb Williams":{"ot":7,"pt":2},"Ricky Pearsall":{"ot":7,"pt":6},"Isaiah Likely":{"ot":11,"pt":6},"Josh Downs":{"ot":9,"pt":7},"Khalil Shakir":{"ot":10,"pt":8},"Romeo Doubs":{"ot":9,"pt":7},"Isiah Pacheco":{"ot":10,"pt":10},"Tyjae Spears":{"ot":10,"pt":10},"Dak Prescott":{"ot":7,"pt":2},"Jordan Mason":{"ot":8,"pt":8},"Tyler Allgeier":{"ot":12,"pt":12},"Matthew Stafford":{"ot":9,"pt":3},"Woody Marks":{"ot":10,"pt":10},"Jalen Coker":{"ot":12,"pt":9},"Justin Herbert":{"ot":7,"pt":2},"Dalton Kincaid":{"ot":9,"pt":5},"Stefon Diggs":{"ot":9,"pt":8},"Chris Rodriguez":{"ot":10,"pt":10},"Brock Purdy":{"ot":7,"pt":2},"Patrick Mahomes":{"ot":8,"pt":3},"Jayden Higgins":{"ot":9,"pt":7},"Alvin Kamara":{"ot":11,"pt":11},"Tyrone Tracy Jr.":{"ot":11,"pt":11},"Brenton Strange":{"ot":11,"pt":6},"Bo Nix":{"ot":8,"pt":3},"Jordan Love":{"ot":9,"pt":3},"Brian Robinson Jr.":{"ot":12,"pt":12},"KC Concepcion":{"ot":9,"pt":7},"Brandon Aubrey":{"ot":14,"pt":1},"Baker Mayfield":{"ot":9,"pt":3},"Harrison Mevis":{"ot":13,"pt":1},"Denver Broncos":{"ot":11,"pt":1},"Jared Goff":{"ot":8,"pt":3},"Mark Andrews":{"ot":9,"pt":5},"Hunter Henry":{"ot":11,"pt":5},"Jake Bates":{"ot":13,"pt":1},"Braelon Allen":{"ot":13,"pt":13},"Kyler Murray":{"ot":8,"pt":2},"Kenyon Sadiq":{"ot":11,"pt":6},"T.J. Hockenson":{"ot":13,"pt":6},"Juwan Johnson":{"ot":12,"pt":6},"Dalton Schultz":{"ot":13,"pt":6},"Rashid Shaheed":{"ot":10,"pt":8},"Tyreek Hill":{"ot":12,"pt":9},"Dylan Sampson":{"ot":11,"pt":11},"Tyler Shough":{"ot":9,"pt":3},"Houston Texans":{"ot":12,"pt":2},"Los Angeles Rams":{"ot":14,"pt":3},"Keaton Mitchell":{"ot":12,"pt":12},"Seattle Seahawks":{"ot":12,"pt":2},"Tyler Bass":{"ot":14,"pt":1},"Omar Cooper Jr.":{"ot":11,"pt":8},"Deebo Samuel":{"ot":10,"pt":8},"Jason Myers":{"ot":15,"pt":2},"Cam Little":{"ot":13,"pt":1},"Justice Hill":{"ot":13,"pt":13},"Jalen McMillan":{"ot":10,"pt":8},"Brandon Aiyuk":{"ot":9,"pt":8},"Oronde Gadsden II":{"ot":12,"pt":6},"Kaytron Allen":{"ot":11,"pt":11},"Tyler Loop":{"ot":13,"pt":1},"Baltimore Ravens":{"ot":14,"pt":3},"Minnesota Vikings":{"ot":12,"pt":2},"Mike Washington Jr.":{"ot":13,"pt":13},"Evan McPherson":{"ot":13,"pt":1},"Cameron Dicker":{"ot":14,"pt":1},"Cairo Santos":{"ot":14,"pt":1},"Harrison Butker":{"ot":14,"pt":1},"Andres Borregales":{"ot":13,"pt":1},"Will Reichard":{"ot":15,"pt":2},"Pittsburgh Steelers":{"ot":13,"pt":2},"Jake Elliott":{"ot":14,"pt":1},"Pat Freiermuth":{"ot":15,"pt":7},"Wil Lutz":{"ot":14,"pt":1},"Denzel Boston":{"ot":11,"pt":9},"New England Patriots":{"ot":10,"pt":1},"Detroit Lions":{"ot":15,"pt":3},"Ka'imi Fairbairn":{"ot":15,"pt":2},"Buffalo Bills":{"ot":13,"pt":2},"Jordan James":{"ot":14,"pt":14},"Chase McLaughlin":{"ot":15,"pt":2},"Malik Willis":{"ot":11,"pt":3},"Philadelphia Eagles":{"ot":15,"pt":3},"C.J. Stroud":{"ot":11,"pt":3},"Jonah Coleman":{"ot":12,"pt":12},"Daniel Jones":{"ot":11,"pt":4},"Eddy Pineiro":{"ot":14,"pt":1},"Keenan Allen":{"ot":12,"pt":9},"Jake Moody":{"ot":14,"pt":1},"Fernando Mendoza":{"ot":14,"pt":5},"Nick Folk":{"ot":15,"pt":2},"Jauan Jennings":{"ot":12,"pt":9},"AJ Barner":{"ot":14,"pt":7},"Jerry Jeudy":{"ot":12,"pt":9},"Sam Darnold":{"ot":12,"pt":4},"Chris Boswell":{"ot":15,"pt":2},"Tre Tucker":{"ot":11,"pt":9},"Ty Johnson":{"ot":14,"pt":14},"Gunnar Helm":{"ot":15,"pt":7},"Jacksonville Jaguars":{"ot":12,"pt":2},"Cameron 'Cam' Ward":{"ot":12,"pt":4},"Jason Sanders":{"ot":15,"pt":3},"Chad Ryland":{"ot":15,"pt":2},"Cleveland Browns":{"ot":15,"pt":4},"Cincinnati Bengals":{"ot":15,"pt":4},"Los Angeles Chargers":{"ot":13,"pt":2},"Kansas City Chiefs":{"ot":13,"pt":2},"Green Bay Packers":{"ot":11,"pt":2},"Dallas Cowboys":{"ot":14,"pt":3},"Calvin Ridley":{"ot":10,"pt":8},"Jalen Nailor":{"ot":14,"pt":10},"Chicago Bears":{"ot":14,"pt":3},"San Francisco 49ers":{"ot":13,"pt":3},"Atlanta Falcons":{"ot":15,"pt":5}};
+
+const RANK_TAGS_KEY = 'rankingsTags_v1';
+let rankTagMap = (() => {
+  try { return JSON.parse(localStorage.getItem(RANK_TAGS_KEY) || '{}'); }
+  catch(e) { return {}; }
+})();
+
+function persistRankTags() {
+  try { localStorage.setItem(RANK_TAGS_KEY, JSON.stringify(rankTagMap)); } catch(e) {}
+}
+
+function setPlayerTag(name, tag) {
+  if (rankTagMap[name] === tag) {
+    delete rankTagMap[name]; // click same tag again = remove it
+  } else {
+    rankTagMap[name] = tag;
+  }
+  persistRankTags();
+  renderRankingsTable();
+}
+
+function clearAllRankTags() {
+  if (!Object.keys(rankTagMap).length) return;
+  if (!confirm('Remove all tags?')) return;
+  rankTagMap = {};
+  persistRankTags();
+  renderRankingsTable();
+}
+
+let rankPos       = 'ALL';
+let rankTagFilter = 'ALL';
+
+function setRankPos(pos) {
+  rankPos = pos;
+  document.querySelectorAll('[data-rankpos]').forEach(b => b.classList.toggle('active', b.dataset.rankpos === pos));
+  renderRankingsTable();
+}
+
+function setRankTagFilter(f) {
+  rankTagFilter = f;
+  document.querySelectorAll('[data-ranktag]').forEach(b => b.classList.toggle('active', b.dataset.ranktag === f));
+  renderRankingsTable();
+}
+
+function updateRankTagSummary() {
+  const el = document.getElementById('rankTagSummary');
+  if (!el) return;
+  const counts = { mustget: 0, target: 0, avoid: 0 };
+  Object.values(rankTagMap).forEach(v => { if (counts[v] != null) counts[v]++; });
+  const chips = [
+    counts.mustget ? `<span class="rank-summary-chip mustget" onclick="setRankTagFilter('mustget')" title="Show Must Gets">🔥 ${counts.mustget} Must Get<span class="rank-threshold-note">reach ≤1 round early</span></span>` : '',
+    counts.target  ? `<span class="rank-summary-chip target"  onclick="setRankTagFilter('target')"  title="Show Targets">🎯 ${counts.target} Target<span class="rank-threshold-note">reach ≤8 picks early</span></span>` : '',
+    counts.avoid   ? `<span class="rank-summary-chip avoid"   onclick="setRankTagFilter('avoid')"   title="Show Avoids">🚫 ${counts.avoid} Avoid<span class="rank-threshold-note">only if 2+ rounds late</span></span>` : '',
+  ].filter(Boolean).join('');
+  el.innerHTML = chips || '<span class="t3 fs11" style="padding:5px 0;opacity:.6">No players tagged yet — click 🔥 🎯 🚫 on any row below</span>';
+}
+
+function renderRankingsTable() {
+  const table = document.getElementById('rankTable');
+  if (!table) return;
+
+  updateRankTagSummary();
+
+  const search = (document.getElementById('rankSearch')?.value || '').toLowerCase().trim();
+  const POS_COLORS = { QB:'var(--blue)', RB:'var(--green)', WR:'var(--amber)', TE:'#A855F7', K:'var(--text3)', DEF:'var(--red)' };
+
+  const rows = DS_RANKINGS.filter(p => {
+    if (rankPos !== 'ALL' && p.pos !== rankPos) return false;
+    if (search && !p.name.toLowerCase().includes(search)) return false;
+    const tag = rankTagMap[p.name];
+    if (rankTagFilter === 'tagged'  && !tag) return false;
+    if (rankTagFilter === 'mustget' && tag !== 'mustget') return false;
+    if (rankTagFilter === 'target'  && tag !== 'target')  return false;
+    if (rankTagFilter === 'avoid'   && tag !== 'avoid')   return false;
+    return true;
+  });
+
+  if (!rows.length) {
+    table.innerHTML = `<tr><td colspan="13" class="t3 fs11 tac" style="padding:32px">No players match your filters.</td></tr>`;
+    return;
+  }
+
+  function injColor(v) {
+    if (v == null) return 'var(--text3)';
+    if (v >= 75) return 'var(--red)';
+    if (v >= 50) return 'var(--amber)';
+    return 'var(--green)';
+  }
+  function sosColor(v) {
+    if (v == null) return 'var(--text3)';
+    if (v > 3)  return 'var(--red)';
+    if (v < -3) return 'var(--green)';
+    return 'var(--text2)';
+  }
+  function val3dColor(v) {
+    if (v == null) return 'var(--text3)';
+    if (v >= 60) return 'var(--green)';
+    if (v >= 30) return 'var(--amber)';
+    return 'var(--text2)';
+  }
+  function esc(s) { return s.replace(/'/g, "\\'"); }
+
+  // Tier colors (cycles through a palette by tier number)
+  const TIER_COLORS = ['#a78bfa','#60a5fa','#34d399','#fbbf24','#f87171','#fb923c','#38bdf8','#4ade80','#e879f9','#facc15','#94a3b8','#f472b6','#a3e635','#67e8f9','#c084fc'];
+  function tierColor(t) { return TIER_COLORS[(t - 1) % TIER_COLORS.length]; }
+  function tierBadge(t, title) {
+    if (!t) return '—';
+    const c = tierColor(t);
+    return `<span class="mono fs9 fw7" style="color:${c};background:${c}18;border:1px solid ${c}44;padding:1px 7px;border-radius:3px" title="${title}">T${t}</span>`;
+  }
+
+  let lastOverallTier = null;
+  const COL_COUNT = 15; // total columns in row
+
+  const rowsHTML = rows.map(r => {
+    const tier   = DS_TIERS[r.name] || null;
+    const ot     = tier?.ot ?? null;
+    const pt     = tier?.pt ?? null;
+    const tag    = rankTagMap[r.name] || '';
+    const col    = POS_COLORS[r.pos] || 'var(--text3)';
+    const posLbl = r.pos + (r.posRank || '');
+    const adpLbl = r.adp != null ? `Rd ${Math.floor(r.adp)}.${String(Math.round((r.adp % 1)*100)).padStart(2,'0')}` : '—';
+    const sosPct = r.sos     != null ? (r.sos > 0 ? '+' : '') + r.sos + '%' : '—';
+    const injPct = r.injRisk != null ? r.injRisk + '%' : '—';
+    const rangeLbl = (r.floor != null && r.ceiling != null) ? `${Math.round(r.floor)}–${Math.round(r.ceiling)}` : '—';
+    const rowBg = tag === 'mustget' ? 'background:rgba(255,107,53,0.05)'
+                : tag === 'target'  ? 'background:rgba(74,144,226,0.05)'
+                : tag === 'avoid'   ? 'background:rgba(255,71,87,0.05)'
+                : '';
+
+    // Insert a tier divider when overall tier changes (only when not filtered to a specific tier)
+    let divider = '';
+    if (ot !== null && ot !== lastOverallTier && rankTagFilter === 'ALL') {
+      const tc = tierColor(ot);
+      divider = `<tr><td colspan="${COL_COUNT}" style="padding:4px 10px;background:${tc}10;border-top:2px solid ${tc}55;border-bottom:1px solid ${tc}33">
+        <span style="font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:${tc}">Tier ${ot}</span>
+      </td></tr>`;
+      lastOverallTier = ot;
+    } else if (ot === null && lastOverallTier !== null && rankTagFilter === 'ALL') {
+      // Players with no tier data go after a separator
+      divider = `<tr><td colspan="${COL_COUNT}" style="padding:4px 10px;background:var(--surface2);border-top:2px solid var(--border2)">
+        <span style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)">Untiered</span>
+      </td></tr>`;
+      lastOverallTier = null;
+    }
+
+    return divider + `<tr style="border-bottom:1px solid var(--border);${rowBg}">
+      <td style="padding:6px 8px;white-space:nowrap">
+        <button class="rank-tag-btn${tag==='mustget'?' active-mustget':''}" onclick="setPlayerTag('${esc(r.name)}','mustget')" title="Must Get — reach up to 1 full round early">🔥</button>
+        <button class="rank-tag-btn${tag==='target'?' active-target':''}"   onclick="setPlayerTag('${esc(r.name)}','target')"  title="Target — reach up to 8 picks early" style="margin-left:3px">🎯</button>
+        <button class="rank-tag-btn${tag==='avoid'?' active-avoid':''}"     onclick="setPlayerTag('${esc(r.name)}','avoid')"   title="Avoid — only if 2+ rounds below ADP" style="margin-left:3px">🚫</button>
+      </td>
+      <td class="t3 mono fs10 tac" style="padding:7px 6px;min-width:32px">${r.rank}</td>
+      <td class="t2 fs11 fw5" style="padding:7px 8px;white-space:nowrap">${r.name}</td>
+      <td style="padding:7px 6px;white-space:nowrap">
+        <span class="mono fs9 fw7" style="color:${col};background:${col}18;border:1px solid ${col}33;padding:1px 6px;border-radius:3px">${posLbl}</span>
+      </td>
+      <td class="t3 fs10 tac mono" style="padding:7px 6px">${r.team || '—'}</td>
+      <td class="t3 fs10 tac mono" style="padding:7px 6px">${adpLbl}</td>
+      <td class="tac" style="padding:7px 6px">${tierBadge(ot, 'Overall Tier')}</td>
+      <td class="tac" style="padding:7px 6px">${tierBadge(pt, 'Positional Tier')}</td>
+      <td class="mono fs10 tac fw7" style="padding:7px 6px;color:${val3dColor(r.value3d)}">${r.value3d != null ? r.value3d : '—'}</td>
+      <td class="t2 mono fs10 tac fw6" style="padding:7px 6px">${r.dsProj != null ? r.dsProj : '—'}</td>
+      <td class="t3 mono fs10 tac" style="padding:7px 6px">${r.consensus != null ? r.consensus : '—'}</td>
+      <td class="t3 mono fs10 tac" style="padding:7px 6px;color:var(--text2)">${rangeLbl}</td>
+      <td class="mono fs10 tac" style="padding:7px 6px;color:${injColor(r.injRisk)}">${injPct}</td>
+      <td class="mono fs10 tac" style="padding:7px 6px;color:${sosColor(r.sos)}">${sosPct}</td>
+      <td class="t3 mono fs10 tac" style="padding:7px 6px">${r.bye ?? '—'}</td>
+    </tr>`;
+  }).join('');
+
+  table.innerHTML = `
+    <thead>
+      <tr style="border-bottom:2px solid var(--border)">
+        <th class="t3 fs9 fw7 caps" style="padding:8px 6px;letter-spacing:.06em;text-align:left;white-space:nowrap">Tag</th>
+        <th class="t3 fs9 fw7 caps tac" style="padding:8px 6px;letter-spacing:.06em;white-space:nowrap">Rank</th>
+        <th class="t3 fs9 fw7 caps" style="padding:8px 6px;letter-spacing:.06em;text-align:left;white-space:nowrap">Player</th>
+        <th class="t3 fs9 fw7 caps" style="padding:8px 6px;letter-spacing:.06em;white-space:nowrap">Pos</th>
+        <th class="t3 fs9 fw7 caps tac" style="padding:8px 6px;letter-spacing:.06em;white-space:nowrap">Team</th>
+        <th class="t3 fs9 fw7 caps tac" style="padding:8px 6px;letter-spacing:.06em;white-space:nowrap">ADP</th>
+        <th class="t3 fs9 fw7 caps tac" style="padding:8px 6px;letter-spacing:.06em;white-space:nowrap" title="Overall Tier (DS)">OT</th>
+        <th class="t3 fs9 fw7 caps tac" style="padding:8px 6px;letter-spacing:.06em;white-space:nowrap" title="Positional Tier (DS)">PT</th>
+        <th class="t3 fs9 fw7 caps tac" style="padding:8px 6px;letter-spacing:.06em;white-space:nowrap" title="Draft Sharks 3D Value">3D Val</th>
+        <th class="t3 fs9 fw7 caps tac" style="padding:8px 6px;letter-spacing:.06em;white-space:nowrap" title="DS projection (pts)">DS Proj</th>
+        <th class="t3 fs9 fw7 caps tac" style="padding:8px 6px;letter-spacing:.06em;white-space:nowrap" title="Industry consensus projection">Cons.</th>
+        <th class="t3 fs9 fw7 caps tac" style="padding:8px 6px;letter-spacing:.06em;white-space:nowrap" title="Floor–Ceiling range">Range</th>
+        <th class="t3 fs9 fw7 caps tac" style="padding:8px 6px;letter-spacing:.06em;white-space:nowrap" title="Injury risk %">Inj%</th>
+        <th class="t3 fs9 fw7 caps tac" style="padding:8px 6px;letter-spacing:.06em;white-space:nowrap" title="Strength of Schedule">SOS</th>
+        <th class="t3 fs9 fw7 caps tac" style="padding:8px 6px;letter-spacing:.06em;white-space:nowrap">Bye</th>
+      </tr>
+    </thead>
+    <tbody>${rowsHTML}</tbody>`;
+}
+
+// ── END RANKINGS TAB ──────────────────────────────────────────────────────────
+
 </script>
 </body>
 </html>
