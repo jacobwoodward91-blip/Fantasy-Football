@@ -5745,6 +5745,34 @@ async function loadAdpData(scoring) {
   }
 }
 
+// ── FantasyPros VBD (Value-Based Drafting) — merged onto the ADP table ─────
+// VBD/VORP measure a player's value above a replacement-level baseline at
+// their position. We fetch it separately and merge it onto ADP rows by
+// normalized player name (reuses the same normalizeName() the hit rate
+// engine uses, so suffix/punctuation differences between sources don't
+// cause silent match failures).
+let vbdCache = {}; // { half: Map(normalizedName -> {vbd, vorp, vols}), ... }
+
+async function loadVbdData(scoring) {
+  if (vbdCache[scoring]) return vbdCache[scoring];
+  if (!WORKER_URL) return new Map();
+  try {
+    const res = await fetch(`${WORKER_URL}/vbd?scoring=${scoring}`);
+    if (!res.ok) return new Map();
+    const data = await res.json();
+    const map = new Map();
+    (data.players || []).forEach(p => {
+      const key = normalizeName(p.name);
+      if (key) map.set(key, { vbd: p.vbd, vorp: p.vorp, vols: p.vols });
+    });
+    vbdCache[scoring] = map;
+    return map;
+  } catch(e) {
+    console.warn('[VBD] fetch failed:', e.message);
+    return new Map();
+  }
+}
+
 async function renderAdpTable() {
   const table = document.getElementById('adpTable');
   if (!table) return;
@@ -5754,10 +5782,13 @@ async function renderAdpTable() {
 
   // Show loading state
   if (!adpCache[adpScoring]) {
-    table.innerHTML = `<tr><td colspan="5" class="t3 fs11 tac" style="padding:24px">⏳ Loading ADP data...</td></tr>`;
+    table.innerHTML = `<tr><td colspan="7" class="t3 fs11 tac" style="padding:24px">⏳ Loading ADP data...</td></tr>`;
   }
 
-  const players = await loadAdpData(adpScoring);
+  const [players, vbdMap] = await Promise.all([
+    loadAdpData(adpScoring),
+    loadVbdData(adpScoring),
+  ]);
 
   const rows = players.filter(p => {
     if (adpPos !== 'ALL' && p.pos !== adpPos) return false;
@@ -5766,7 +5797,7 @@ async function renderAdpTable() {
   });
 
   if (!rows.length) {
-    table.innerHTML = `<tr><td colspan="5" class="t3 fs11 tac" style="padding:24px">
+    table.innerHTML = `<tr><td colspan="7" class="t3 fs11 tac" style="padding:24px">
       ${players.length === 0
         ? `Could not load ADP data. ${WORKER_URL ? 'Worker may be unreachable.' : 'No worker configured.'}`
         : 'No players match your search or filter.'}
@@ -5774,11 +5805,20 @@ async function renderAdpTable() {
     return;
   }
 
+  // VBD coverage note — VBD is scraped from FantasyPros' 12-team baseline
+  // (team-count is computed client-side on their end, so we can't request
+  // 14-team directly). Still directionally useful, just not perfectly tuned
+  // to league size. Surfaced once at the top instead of per-row noise.
+  const vbdHit = rows.filter(r => vbdMap.has(normalizeName(r.name))).length;
+
   const rowsHTML = rows.map(r => {
     const col    = POS_COLORS[r.pos] || 'var(--text3)';
     const round  = Math.ceil(r.adp / TEAMS);
     const pick   = Math.round(r.adp - (round - 1) * TEAMS) || 1;
     const posLbl = r.pos + (r.posRank || '');
+    const vbdRow = vbdMap.get(normalizeName(r.name));
+    const vbdCell  = vbdRow ? vbdRow.vbd  : null;
+    const vorpCell = vbdRow ? vbdRow.vorp : null;
     return `<tr style="border-bottom:1px solid var(--border)">
       <td class="t3 mono fs10 tac" style="padding:7px 8px;min-width:40px">${r.rank}</td>
       <td class="t2 fs11" style="padding:7px 8px;font-weight:500">${r.name}</td>
@@ -5786,8 +5826,9 @@ async function renderAdpTable() {
         <span class="mono fs9 fw7" style="color:${col};background:${col}18;border:1px solid ${col}33;padding:1px 6px;border-radius:3px">${posLbl}</span>
       </td>
       <td class="t3 fs10 tac mono" style="padding:7px 8px">${r.team || 'FA'}</td>
-      <td class="t3 fs10 tac mono" style="padding:7px 8px">${r.adp.toFixed(1)}</td>
-      <td class="t3 fs10 tac mono" style="padding:7px 8px">R${round}.${pick}</td>
+      <td class="t3 fs10 tac mono" style="padding:7px 8px">${r.bye != null ? r.bye : '—'}</td>
+      <td class="t3 fs10 tac mono" style="padding:7px 8px">${r.adp.toFixed(1)}<span class="t3" style="opacity:0.6"> R${round}.${pick}</span></td>
+      <td class="t3 fs10 tac mono" style="padding:7px 8px" title="VBD / VORP — value above a replacement-level player at this position (FantasyPros, 12-team baseline)">${vbdCell != null ? `${vbdCell}<span class="t3" style="opacity:0.6"> / ${vorpCell}</span>` : '—'}</td>
     </tr>`;
   }).join('');
 
@@ -5798,11 +5839,24 @@ async function renderAdpTable() {
         <th class="t3 fs9 fw7 caps" style="padding:8px;letter-spacing:.06em;text-align:left">Player</th>
         <th class="t3 fs9 fw7 caps" style="padding:8px;letter-spacing:.06em">Pos</th>
         <th class="t3 fs9 fw7 caps tac" style="padding:8px;letter-spacing:.06em">Team</th>
-        <th class="t3 fs9 fw7 caps tac" style="padding:8px;letter-spacing:.06em">ADP</th>
-        <th class="t3 fs9 fw7 caps tac" style="padding:8px;letter-spacing:.06em">Round</th>
+        <th class="t3 fs9 fw7 caps tac" style="padding:8px;letter-spacing:.06em">Bye</th>
+        <th class="t3 fs9 fw7 caps tac" style="padding:8px;letter-spacing:.06em">ADP / Round</th>
+        <th class="t3 fs9 fw7 caps tac" style="padding:8px;letter-spacing:.06em" title="Value above replacement (12-team baseline)">VBD / VORP</th>
       </tr>
     </thead>
     <tbody>${rowsHTML}</tbody>`;
+
+  // Quiet coverage note under the table — helps explain any "—" cells
+  // without cluttering every row with a tooltip.
+  let note = document.getElementById('adpVbdCoverageNote');
+  if (!note) {
+    note = document.createElement('div');
+    note.id = 'adpVbdCoverageNote';
+    note.className = 't3 fs9';
+    note.style.cssText = 'margin-top:8px;padding:0 4px';
+    table.parentElement.appendChild(note);
+  }
+  note.textContent = `VBD/VORP matched for ${vbdHit} of ${rows.length} shown players — FantasyPros 12-team baseline, value above a replacement-level player at that position.`;
 }
 
 
