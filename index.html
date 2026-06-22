@@ -11717,30 +11717,91 @@ function botMockPick(slotIdx) {
     return;
   }
 
-  // ── ROUND 1 PICKS 1–12: pure tier-swap model ─────────────────────────────
-  // Real round-1 drafts are essentially ADP order with minor swaps within
-  // value tiers. Someone might take Robinson over Gibbs or Chase over Barkley,
-  // but nobody skips the consensus RB1 to grab a WR2.
+  // ── ROUND 1 PICKS 1–12: position-aware top-3 model ──────────────────────
+  // Real round-1 drafts run very close to consensus with minor positional
+  // preference swaps. The model works like this:
   //
-  // Tier window = ADP gap of ≤ ~6 picks (half a round's worth). Players
-  // within that gap of the #1 available are "in the same tier" and can be
-  // reordered among themselves. Outside the tier = ADP wins, no exceptions.
+  //   1. Determine which position the bot is leaning toward (from tendency
+  //      weights, or just the top available position if ADP-only mode).
+  //   2. Constrain the pick to the top 3 available AT THAT POSITION — so a
+  //      bot who wants an RB can pick RB1, RB2, or RB3, but not RB7.
+  //   3. Among those 3, pick by ADP proximity — earlier ADP = more likely.
+  //   4. Picks 1–4: skip tendency entirely, just pick from ADP top-2 overall.
+  //      The very first picks of a draft are almost always chalk.
   if (round === 1 && pickInRound <= 12) {
-    const topPlayer  = eligible[0];
-    const tierWindow = 6; // ADP spread that defines "same tier"
-    const tier       = eligible.filter(p => (p.adp - topPlayer.adp) <= tierWindow);
 
-    if (tier.length <= 1) {
-      // No tier-mate — just take the consensus top pick
-      recordMockPick(slotIdx, topPlayer);
+    // Picks 1–4: almost pure ADP, tiny variance only between #1 and #2 overall
+    if (pickInRound <= 4) {
+      const top2 = eligible.slice(0, 2);
+      // 80% chance of pure #1, 20% chance of #2 (if they exist)
+      const pick = (top2.length > 1 && Math.random() < 0.20) ? top2[1] : top2[0];
+      recordMockPick(slotIdx, pick || eligible[0]);
       return;
     }
 
-    // Among tier members, pick uniformly at random (all equally plausible)
-    // This produces natural round-1 variance: Gibbs vs Robinson vs Barkley
-    // can swap freely, but nobody reaches past the tier boundary.
-    const pick = tier[Math.floor(Math.random() * tier.length)];
-    recordMockPick(slotIdx, pick);
+    // Picks 5–12: tendency influences WHICH position, top-3 at that position
+    // constrains HOW FAR the bot can reach within it.
+
+    // Build tendency weights (same as later rounds)
+    let r1weights = null;
+    if (mockState.mode === 'league') {
+      if (ownerId && mockState.managerTend[ownerId]) {
+        const tend = mockState.managerTend[ownerId];
+        const w = {};
+        POSITIONS.forEach(pos => { w[pos] = tend[pos]?.[1] || 0; });
+        const total = Object.values(w).reduce((s, v) => s + v, 0);
+        if (total > 0) r1weights = w;
+      }
+      if (!r1weights) {
+        const w = {};
+        POSITIONS.forEach(pos => { w[pos] = POS_DATA?.[pos]?.leagueTendency?.[1] || 0; });
+        const total = Object.values(w).reduce((s, v) => s + v, 0);
+        if (total > 0) r1weights = w;
+      }
+    }
+
+    // Determine the bot's preferred position for this pick
+    let preferredPos = null;
+    if (r1weights) {
+      // Weighted random draw from tendency weights
+      const totalW = Object.values(r1weights).reduce((s, v) => s + v, 0);
+      let rand = Math.random() * totalW;
+      for (const pos of POSITIONS) {
+        rand -= (r1weights[pos] || 0);
+        if (rand <= 0) { preferredPos = pos; break; }
+      }
+    }
+
+    // If we have a preferred position, restrict to top 3 available at it.
+    // Guard: if the top-3 at that position are ranked way outside the round-1
+    // value zone (ADP > 28 for a 14-team league), fall back to pure ADP top-2
+    // so bots don't reach for a late-round TE in round 1.
+    const adpR1Cutoff = TEAMS * 1.5; // ~21 for 14-team — nothing beyond here in Rd1
+    if (preferredPos) {
+      const atPos = eligible
+        .filter(p => (p.pos === preferredPos || (preferredPos === 'DEF' && p.pos === 'D/ST'))
+                  && p.adp <= adpR1Cutoff)
+        .slice(0, 3); // hard cap: top 3 at this position only
+
+      if (atPos.length) {
+        // Weight toward earlier ADP within the top-3: index 0 = 60%, 1 = 30%, 2 = 10%
+        const weights = [0.60, 0.30, 0.10].slice(0, atPos.length);
+        const totalW  = weights.reduce((s, v) => s + v, 0);
+        let rand = Math.random() * totalW;
+        let pick = atPos[0];
+        for (let i = 0; i < atPos.length; i++) {
+          rand -= weights[i];
+          if (rand <= 0) { pick = atPos[i]; break; }
+        }
+        recordMockPick(slotIdx, pick);
+        return;
+      }
+    }
+
+    // Fallback: top-2 overall by ADP (no viable position match)
+    const top2 = eligible.slice(0, 2);
+    const pick  = (top2.length > 1 && Math.random() < 0.25) ? top2[1] : top2[0];
+    recordMockPick(slotIdx, pick || eligible[0]);
     return;
   }
 
@@ -11862,7 +11923,7 @@ function renderMockBoard() {
     const info   = mockState.slots[i] || {};
     const label  = isMe ? 'YOU' : (info.label || `Bot ${i+1}`);
     const color  = isMe ? 'color:var(--green);' : '';
-    return `<th style="padding:4px 3px;font-size:8px;font-weight:600;text-align:center;min-width:60px;${color}">${label}</th>`;
+    return `<th style="padding:4px 3px;font-size:8px;font-weight:600;text-align:center;min-width:72px;${color}">${label}</th>`;
   }).join('');
 
   let html = `<thead><tr><th style="padding:4px 6px;font-size:8px;color:var(--text3);text-align:left;width:28px">Rd</th>${slotHeaders}</tr></thead><tbody>`;
@@ -11882,14 +11943,16 @@ function renderMockBoard() {
 
       let cellContent = '';
       if (pick) {
-        const col  = MOCK_POS_COLOR[pick.player.pos] || 'var(--text3)';
-        cellContent = `<div style="font-size:8px;font-weight:600;color:${col};line-height:1.1">${pick.player.name.split(' ').slice(-1)[0]}</div>
-                       <div style="font-size:7px;color:${col};opacity:0.8">${pick.player.pos}</div>`;
+        const col   = MOCK_POS_COLOR[pick.player.pos] || 'var(--text3)';
+        // Show full name, wrapping naturally within the fixed cell width
+        const name  = pick.player.name;
+        cellContent = `<div style="font-size:7.5px;font-weight:600;color:${col};line-height:1.2;word-break:break-word;padding:0 2px">${name}</div>
+                       <div style="font-size:7px;color:${col};opacity:0.75;margin-top:1px">${pick.player.pos}</div>`;
       } else if (isCurrent) {
         cellContent = `<div style="font-size:8px;color:var(--green);font-weight:700">▶</div>`;
       }
 
-      html += `<td style="padding:3px;text-align:center;background:${cellBg};border-left:1px solid var(--border)">${cellContent}</td>`;
+      html += `<td style="padding:4px 3px;text-align:center;vertical-align:top;background:${cellBg};border-left:1px solid var(--border)">${cellContent}</td>`;
     }
     html += `</tr>`;
   }
