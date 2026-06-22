@@ -868,6 +868,7 @@
   <div class="tab-nav">
     <button class="tab-btn active" id="tab-calc" onclick="switchTab('calc')"><span class="tab-emoji">🏈</span><span class="tab-label"> Draft Picks</span></button>
     <button class="tab-btn" id="tab-map" onclick="switchTab('map')"><span class="tab-emoji">🗺</span><span class="tab-label"> Draft Map</span></button>
+    <button class="tab-btn" id="tab-mock" onclick="switchTab('mock')"><span class="tab-emoji">🎯</span><span class="tab-label"> Mock Draft</span></button>
     <button class="tab-btn" id="tab-season" onclick="switchTab('season')"><span class="tab-emoji">📊</span><span class="tab-label"> In-Season</span></button>
     <button class="tab-btn" id="tab-suggest" onclick="switchTab('suggest')"><span class="tab-emoji">💡</span><span class="tab-label"> Suggestions</span></button>
     <button class="tab-btn" id="tab-tendencies" onclick="switchTab('tendencies')"><span class="tab-emoji">🧠</span><span class="tab-label"> Team Insights</span></button>
@@ -1457,6 +1458,175 @@
       </div>
     </div>
 
+</div>
+
+<!-- ── MOCK DRAFT PANEL ──────────────────────────────────────── -->
+<div class="tab-panel" id="panel-mock">
+  <div style="max-width:1060px;margin:0 auto;padding:20px 16px 60px">
+
+    <!-- SCREEN 1: SETUP -->
+    <div id="mockSetupScreen">
+      <div style="margin-bottom:20px">
+        <div class="t1 fw7" style="font-size:17px;margin-bottom:4px">🎯 Mock Draft Simulator</div>
+        <div class="t2 fs11" style="line-height:1.6">Simulate your league draft with bots that mimic real manager tendencies. Assign managers to slots, pick your spot, and get a personalized draft strategy before you start.</div>
+      </div>
+
+      <!-- No-sync notice -->
+      <div id="mockNoSyncNotice" style="display:none;background:rgba(74,144,226,0.08);border:1px solid rgba(74,144,226,0.25);border-radius:10px;padding:12px 16px;margin-bottom:16px">
+        <div class="fs11 fw6" style="color:#4A90E2;margin-bottom:3px">💡 Sync your ESPN league for smarter bots</div>
+        <div class="t3 fs10">Without a sync, bots draft by ADP order with light randomness. After syncing, each bot uses your real leaguemates' historical tendencies by round.
+          <button onclick="switchTab('espn')" style="margin-left:8px;color:#4A90E2;background:none;border:none;cursor:pointer;font-size:10px;font-weight:700;padding:0">Sync Now →</button>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+
+        <!-- Draft Slot + Mode -->
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px">
+          <div class="t3 fs9 fw7 caps" style="letter-spacing:.09em;margin-bottom:10px">Your Draft Settings</div>
+
+          <div style="margin-bottom:14px">
+            <div class="t2 fs11 fw6" style="margin-bottom:6px">Your Draft Slot</div>
+            <select id="mockMySlot" onchange="onMockSlotChange()"
+              style="width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:7px;padding:8px 10px;color:var(--text);font-size:12px;font-family:var(--sans)">
+              <option value="">— Choose your pick slot —</option>
+            </select>
+          </div>
+
+          <div style="margin-bottom:14px">
+            <div class="t2 fs11 fw6" style="margin-bottom:6px">Bot Mode</div>
+            <div class="team-btns">
+              <button id="mockModeLeague" class="team-btn active" onclick="setMockMode('league')" title="Bots use real manager tendencies from ESPN history">🧠 League Tendency</button>
+              <button id="mockModeAdp"    class="team-btn"        onclick="setMockMode('adp')"    title="Bots draft purely by ADP order">📋 ADP Only</button>
+            </div>
+            <div id="mockModeNote" class="t3 fs9" style="margin-top:5px;line-height:1.5"></div>
+          </div>
+
+          <div>
+            <div class="t2 fs11 fw6" style="margin-bottom:6px">Rounds</div>
+            <div class="team-btns">
+              <button class="team-btn" data-mockrounds="14" onclick="setMockRounds(14)">14</button>
+              <button class="team-btn active" data-mockrounds="16" onclick="setMockRounds(16)">16</button>
+              <button class="team-btn" data-mockrounds="18" onclick="setMockRounds(18)">18</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Draft Strategy Card -->
+        <div id="mockStrategyCard" style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px">
+          <div class="t3 fs9 fw7 caps" style="letter-spacing:.09em;margin-bottom:10px">📋 Draft Strategy</div>
+          <div id="mockStrategyContent" class="t3 fs11" style="line-height:1.7">
+            Select your draft slot to generate a personalized strategy.
+          </div>
+        </div>
+      </div>
+
+      <!-- Slot Assignment Table -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <div>
+            <div class="t3 fs9 fw7 caps" style="letter-spacing:.09em;margin-bottom:2px">Slot Assignments</div>
+            <div class="t3 fs10">Assign a manager to each draft slot. Your slot is locked to YOU.</div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button onclick="autoFillSlots()" class="t2 fs10 fw6" style="background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:5px 12px;cursor:pointer">Auto-fill from ESPN</button>
+            <button onclick="clearSlots()" class="t3 fs10" style="background:none;border:none;cursor:pointer;padding:5px 8px">Clear</button>
+          </div>
+        </div>
+        <div id="mockSlotTable" style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px"></div>
+      </div>
+
+      <!-- Start Button -->
+      <div style="text-align:center;margin-top:4px">
+        <button onclick="startMockDraft()" id="mockStartBtn"
+          style="background:var(--green);color:#000;border:none;border-radius:10px;padding:13px 48px;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--sans);letter-spacing:.03em;opacity:0.4;pointer-events:none">
+          🎯 Start Draft
+        </button>
+        <div class="t3 fs10" style="margin-top:8px" id="mockStartHint">Select your draft slot to begin</div>
+      </div>
+    </div>
+
+    <!-- SCREEN 2: LIVE DRAFT BOARD -->
+    <div id="mockDraftScreen" style="display:none">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+        <div>
+          <div class="t1 fw7" style="font-size:15px" id="mockPickStatus">Round 1, Pick 1</div>
+          <div class="t3 fs10" id="mockPickSubStatus"></div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <div id="mockYourPickBadge" style="display:none;background:rgba(0,210,106,0.15);border:1px solid var(--green);border-radius:6px;padding:5px 12px;color:var(--green);font-size:11px;font-weight:700">
+            🎯 YOUR PICK
+          </div>
+          <button onclick="resetMockDraft()" class="t3 fs11" style="background:var(--surface2);border:1px solid var(--border2);border-radius:7px;padding:6px 14px;cursor:pointer">↩ Reset</button>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 300px;gap:14px;align-items:start">
+        <!-- Draft Board Grid -->
+        <div style="overflow-x:auto">
+          <table id="mockBoardTable" style="width:100%;border-collapse:collapse;font-size:9px;table-layout:fixed"></table>
+        </div>
+
+        <!-- Available Players Panel -->
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;position:sticky;top:20px">
+          <div style="padding:10px 12px;border-bottom:1px solid var(--border)">
+            <div class="t2 fs11 fw6" style="margin-bottom:6px">Available Players</div>
+            <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:6px">
+              <button class="team-btn active" data-mockpos="ALL" onclick="setMockPosFilter('ALL')">All</button>
+              <button class="team-btn" data-mockpos="QB" onclick="setMockPosFilter('QB')">QB</button>
+              <button class="team-btn" data-mockpos="RB" onclick="setMockPosFilter('RB')">RB</button>
+              <button class="team-btn" data-mockpos="WR" onclick="setMockPosFilter('WR')">WR</button>
+              <button class="team-btn" data-mockpos="TE" onclick="setMockPosFilter('TE')">TE</button>
+              <button class="team-btn" data-mockpos="K" onclick="setMockPosFilter('K')">K</button>
+              <button class="team-btn" data-mockpos="DEF" onclick="setMockPosFilter('DEF')">DEF</button>
+            </div>
+            <input id="mockPlayerSearch" type="text" placeholder="Search..." oninput="renderMockAvailablePlayers()"
+              style="width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:5px 8px;font-size:11px;color:var(--text);outline:none;box-sizing:border-box">
+          </div>
+          <div id="mockAvailableList" style="max-height:520px;overflow-y:auto;padding:4px 0"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCREEN 3: DRAFT RESULTS -->
+    <div id="mockResultsScreen" style="display:none">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px">
+        <div>
+          <div class="t1 fw7" style="font-size:17px;margin-bottom:3px">🏆 Draft Complete — Your Results</div>
+          <div class="t3 fs11" id="mockResultsSubline"></div>
+        </div>
+        <button onclick="resetMockDraft()" style="background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:9px 18px;font-size:12px;font-weight:600;cursor:pointer;color:var(--text2)">🔄 Draft Again</button>
+      </div>
+
+      <!-- Summary Stats Row -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px" id="mockResultsStats"></div>
+
+      <!-- Steals + Reaches -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px">
+          <div class="fs11 fw7" style="color:var(--green);margin-bottom:10px">🟢 Steals (Best Value Picks)</div>
+          <div id="mockResultsSteals"></div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px">
+          <div class="fs11 fw7" style="color:var(--amber);margin-bottom:10px">🟡 Reaches (Paid Above Value)</div>
+          <div id="mockResultsReaches"></div>
+        </div>
+      </div>
+
+      <!-- Your Roster -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:16px">
+        <div class="t1 fw6 fs13" style="margin-bottom:12px">Your Draft Roster</div>
+        <div id="mockResultsRoster"></div>
+      </div>
+
+      <!-- Draft Analysis Card -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px">
+        <div class="t1 fw6 fs13" style="margin-bottom:12px">📊 Pick-by-Pick Analysis</div>
+        <div id="mockResultsAnalysis"></div>
+      </div>
+    </div>
+
+  </div>
 </div>
 
 <!-- ── TRADE SUGGESTIONS PANEL ─────────────────────────────── -->
@@ -3397,6 +3567,7 @@ function switchTab(name) {
   document.getElementById(`tab-${name}`).classList.add('active');
   document.getElementById(`panel-${name}`).classList.add('active');
   if (name === 'map') { renderHeatmap(); renderAdpTable(); }
+  if (name === 'mock') initMockDraftTab();
   if (name === 'season' && !seasonDataLoaded) initSeasonTab();
   if (name === 'espn') initEspnTab();
   if (name === 'suggest') initSuggestTab();
@@ -5547,26 +5718,38 @@ const VORP_REPLACEMENT_RANK = {
 
 // Compute per-position baseline projections from the live ADP + projection data.
 // Returns { QB: {vols: number|null, vorp: number|null}, RB: {...}, ... }
+//
+// Important: the *display* of the ADP table is sorted by ADP, but the
+// replacement-level baseline is computed by sorting players at each position
+// by their projected points (descending). This matters because deep in any
+// position group, ADP and projection often disagree — a player can be ADP RB48
+// while projecting like RB80, dragging the baseline down to a misleading value.
+// Ranking by projection isolates "what does the 48th-best-projected RB
+// actually score" from "who happens to be drafted around pick 48 at RB."
 function computeReplacementBaselines(adpPlayers) {
   const out = { QB:{vols:null,vorp:null}, RB:{vols:null,vorp:null}, WR:{vols:null,vorp:null}, TE:{vols:null,vorp:null} };
   ['QB','RB','WR','TE'].forEach(pos => {
-    // Get all players at this position with their projections, sorted by ADP rank
-    const posPlayers = adpPlayers
+    // Pull all players at this position who have a projection, then sort by
+    // projection descending — i.e. their "true" positional rank by projected
+    // output, ignoring ADP. Position in this sorted array (1-indexed) is the
+    // projection-rank we anchor the baseline window on.
+    const projRanked = adpPlayers
       .filter(p => p.pos === pos)
-      .map(p => ({ rank: p.rank, posRank: p.posRank, proj: fpProjections[normalizeName(p.name)]?.fpts || null }))
-      .filter(p => p.posRank != null)
-      .sort((a, b) => a.posRank - b.posRank);
+      .map(p => ({ proj: fpProjections[normalizeName(p.name)]?.fpts || null }))
+      .filter(p => p.proj != null)
+      .sort((a, b) => b.proj - a.proj);
 
-    // Median-of-window helper — pulls 5 players centered on the target rank,
-    // keeps only those with projections, returns the median. If fewer than 2
-    // have projections in the window, returns null (we'd rather show "—" than
-    // a baseline computed from one unreliable data point).
-    const baselineAt = (targetPosRank) => {
-      const windowSize = 5;
-      const low  = Math.max(1, targetPosRank - 2);
-      const high = targetPosRank + 2;
-      const projs = posPlayers
-        .filter(p => p.posRank >= low && p.posRank <= high && p.proj)
+    // Median-of-window helper — pulls 5 players centered on the target rank
+    // (the Nth-best-projected at this position) and returns the median.
+    // Players past the end of the projection-ranked list are skipped (no
+    // wrap-around, no zero-padding). If fewer than 2 players are in the
+    // window, returns null (we'd rather show "—" than a baseline computed
+    // from one data point).
+    const baselineAt = (targetProjRank) => {
+      const low  = Math.max(1, targetProjRank - 2);
+      const high = targetProjRank + 2;
+      const projs = projRanked
+        .slice(low - 1, high)        // slice is 0-indexed, half-open
         .map(p => p.proj)
         .sort((a, b) => a - b);
       if (projs.length < 2) return null;
@@ -10925,6 +11108,919 @@ loadFromHash();
 renderAll();
 
 // Initialize hit rate engine in background — won't block UI
+
+// ═══════════════════════════════════════════════════════════════════════════
+// MOCK DRAFT SIMULATOR
+// ═══════════════════════════════════════════════════════════════════════════
+
+// ── State ─────────────────────────────────────────────────────────────────
+let mockState = {
+  mySlot:       null,   // 1-based slot index (user's pick position)
+  mockRounds:   16,
+  mode:         'league', // 'league' | 'adp'
+  slots:        [],     // array[0..TEAMS-1] of { label, ownerId }
+  picks:        [],     // all picks so far: { slot, round, pick, overallPick, player }
+  available:    [],     // ADP-ordered player pool, filtered as picks happen
+  posFilter:    'ALL',
+  isYourPick:   false,
+  finished:     false,
+  managerTend:  {},     // ownerId -> { pos -> { round -> pct } }
+  snakeOrder:   [],     // overallPick index -> slot (0-based)
+};
+
+// ── POS colors (reuse existing map) ────────────────────────────────────────
+const MOCK_POS_COLOR = { QB:'#FF6B6B', RB:'#00D26A', WR:'#4A90E2', TE:'#F5A623', K:'#A78BFA', DEF:'#64748b', 'D/ST':'#64748b' };
+
+// ── Tab init ──────────────────────────────────────────────────────────────
+function initMockDraftTab() {
+  const hasEspn = !!(espnData?.history?.length);
+  document.getElementById('mockNoSyncNotice').style.display = hasEspn ? 'none' : 'block';
+
+  // Populate slot dropdown (always 1–TEAMS)
+  const slotSel = document.getElementById('mockMySlot');
+  const curVal  = slotSel.value;
+  slotSel.innerHTML = '<option value="">— Choose your pick slot —</option>';
+  for (let i = 1; i <= TEAMS; i++) {
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = `Slot ${i} (Pick ${i}, ${i + TEAMS}, ${i + TEAMS*2}…)`;
+    slotSel.appendChild(opt);
+  }
+  if (curVal) slotSel.value = curVal;
+
+  // Update mode note
+  updateMockModeNote();
+
+  // Render slot assignment table
+  renderMockSlotTable();
+
+  // Try restore cached slot assignments
+  try {
+    const cached = JSON.parse(localStorage.getItem('mockSlotAssignments') || 'null');
+    if (cached && cached.length === TEAMS) {
+      mockState.slots = cached;
+      renderMockSlotTable();
+    }
+  } catch(e) {}
+
+  // Build manager tendencies from ESPN history
+  if (hasEspn) mockState.managerTend = buildManagerTendencies(espnData.history);
+
+  // Update mode note based on ESPN availability
+  if (!hasEspn && mockState.mode === 'league') {
+    // silently fall back to adp-only note
+  }
+  updateMockModeNote();
+}
+
+function setMockMode(mode) {
+  mockState.mode = mode;
+  document.getElementById('mockModeLeague').classList.toggle('active', mode === 'league');
+  document.getElementById('mockModeAdp').classList.toggle('active', mode === 'adp');
+  updateMockModeNote();
+}
+
+function setMockRounds(n) {
+  mockState.mockRounds = n;
+  document.querySelectorAll('[data-mockrounds]').forEach(b =>
+    b.classList.toggle('active', parseInt(b.dataset.mockrounds) === n)
+  );
+}
+
+function updateMockModeNote() {
+  const el = document.getElementById('mockModeNote');
+  if (!el) return;
+  const hasEspn = !!(espnData?.history?.length);
+  if (mockState.mode === 'league') {
+    el.textContent = hasEspn
+      ? `✅ Using ${espnData.history.length} seasons of real draft data to drive bot behavior per slot.`
+      : '⚠️ No ESPN sync — league tendency mode will fall back to ADP until you sync.';
+  } else {
+    el.textContent = 'Bots pick the best available player by ADP with ±1 round of randomness.';
+  }
+}
+
+// ── Slot Table ─────────────────────────────────────────────────────────────
+function renderMockSlotTable() {
+  const container = document.getElementById('mockSlotTable');
+  if (!container) return;
+  const mySlot = parseInt(document.getElementById('mockMySlot')?.value) || null;
+
+  // Ensure slots array is sized
+  if (!mockState.slots.length) {
+    mockState.slots = Array.from({ length: TEAMS }, (_, i) => ({ label: '', ownerId: null }));
+  }
+
+  // Build manager options from registry
+  const registry = espnData?.managerRegistry || {};
+  const managerOpts = Object.entries(registry).map(([id, m]) =>
+    `<option value="${id}">${m.abbrev || m.displayName || id}</option>`
+  ).join('');
+
+  container.innerHTML = Array.from({ length: TEAMS }, (_, i) => {
+    const slotNum  = i + 1;
+    const isMe     = slotNum === mySlot;
+    const slot     = mockState.slots[i] || { label: '', ownerId: null };
+    const border   = isMe ? 'border-color:var(--green);background:rgba(0,210,106,0.06)' : '';
+
+    if (isMe) {
+      return `<div style="background:var(--surface2);border:1px solid var(--green);border-radius:8px;padding:8px;background:rgba(0,210,106,0.06)">
+        <div class="t3 fs9 fw7" style="color:var(--green);margin-bottom:4px">SLOT ${slotNum} — YOU</div>
+        <div class="t2 fs10 fw6">Your Pick</div>
+      </div>`;
+    }
+
+    const hasRegistry = Object.keys(registry).length > 0;
+    const inputEl = hasRegistry
+      ? `<select onchange="setSlotAssignment(${i}, this.value, 'owner')"
+           style="width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:5px;padding:4px 6px;font-size:10px;color:var(--text);margin-top:4px;font-family:var(--sans)">
+           <option value="">Bot ${slotNum}</option>
+           ${managerOpts.replace(`value="${slot.ownerId}"`, `value="${slot.ownerId}" selected`)}
+         </select>`
+      : `<input type="text" placeholder="Bot ${slotNum}" value="${slot.label || ''}"
+           onchange="setSlotAssignment(${i}, this.value, 'label')"
+           style="width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:5px;padding:4px 6px;font-size:10px;color:var(--text);margin-top:4px;font-family:var(--sans);box-sizing:border-box">`;
+
+    return `<div style="background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:8px">
+      <div class="t3 fs9 fw6" style="margin-bottom:2px">SLOT ${slotNum}</div>
+      ${inputEl}
+    </div>`;
+  }).join('');
+}
+
+function setSlotAssignment(idx, value, type) {
+  if (!mockState.slots[idx]) mockState.slots[idx] = { label: '', ownerId: null };
+  if (type === 'owner') mockState.slots[idx].ownerId = value || null;
+  else                  mockState.slots[idx].label   = value || '';
+  saveSlotAssignments();
+}
+
+function saveSlotAssignments() {
+  try { localStorage.setItem('mockSlotAssignments', JSON.stringify(mockState.slots)); } catch(e) {}
+}
+
+function autoFillSlots() {
+  if (!espnData?.managerRegistry) { showToast('Sync ESPN first to auto-fill slots'); return; }
+  const registry = espnData.managerRegistry;
+  const currentIds = espnData.currentOwnerIds || Object.keys(registry);
+  const mySlot = parseInt(document.getElementById('mockMySlot')?.value) || null;
+
+  // Get most-recent draft order from history to suggest realistic order
+  const lastDraft = espnData.history?.[0]; // most recent first
+  let orderedOwners = currentIds.slice(0, TEAMS);
+
+  if (lastDraft?.picks) {
+    // Derive slot → ownerId from last year's draft picks
+    const slotMap = {};
+    lastDraft.picks.forEach(p => {
+      const slot = ((p.overallPick - 1) % TEAMS) + 1;
+      if (!slotMap[slot]) slotMap[slot] = p.ownerId;
+    });
+    orderedOwners = [];
+    for (let s = 1; s <= TEAMS; s++) {
+      orderedOwners.push(slotMap[s] || currentIds[s-1] || null);
+    }
+  }
+
+  mockState.slots = Array.from({ length: TEAMS }, (_, i) => {
+    const slotNum = i + 1;
+    if (slotNum === mySlot) return { label: 'YOU', ownerId: null };
+    const ownerId = orderedOwners[i] || null;
+    const meta    = ownerId ? registry[ownerId] : null;
+    return { label: meta?.abbrev || meta?.displayName || `Bot ${slotNum}`, ownerId };
+  });
+
+  saveSlotAssignments();
+  renderMockSlotTable();
+  showToast('Slots filled from last ESPN draft order');
+}
+
+function clearSlots() {
+  mockState.slots = Array.from({ length: TEAMS }, () => ({ label: '', ownerId: null }));
+  saveSlotAssignments();
+  renderMockSlotTable();
+}
+
+// ── Slot change → enable start + refresh strategy ──────────────────────────
+function onMockSlotChange() {
+  const slot = parseInt(document.getElementById('mockMySlot').value);
+  mockState.mySlot = isNaN(slot) ? null : slot;
+
+  const startBtn  = document.getElementById('mockStartBtn');
+  const startHint = document.getElementById('mockStartHint');
+
+  if (mockState.mySlot) {
+    startBtn.style.opacity       = '1';
+    startBtn.style.pointerEvents = 'auto';
+    if (startHint) startHint.textContent = `You pick at slots ${mockState.mySlot}, ${mockState.mySlot + TEAMS}, ${mockState.mySlot + TEAMS*2}… in snake order`;
+    renderMockSlotTable(); // re-render to lock your slot
+    generateDraftStrategy();
+  } else {
+    startBtn.style.opacity       = '0.4';
+    startBtn.style.pointerEvents = 'none';
+    if (startHint) startHint.textContent = 'Select your draft slot to begin';
+    document.getElementById('mockStrategyContent').textContent = 'Select your draft slot to generate a personalized strategy.';
+  }
+}
+
+// ── Draft Strategy Generator ───────────────────────────────────────────────
+function generateDraftStrategy() {
+  const el = document.getElementById('mockStrategyContent');
+  if (!el) return;
+
+  const slot = mockState.mySlot;
+  if (!slot) return;
+
+  const adpPlayers = Object.values(adpCache).flat();
+  const hasAdp = adpPlayers.length > 0;
+  const hasTend = !!(espnData?.history?.length);
+
+  // Slot tier
+  const slotTier = slot <= 4 ? 'early' : slot <= 8 ? 'mid' : slot <= 11 ? 'late-mid' : 'late';
+  const slotDesc = {
+    early:     'top-4 pick',
+    mid:       'middle pick',
+    'late-mid':'late-middle pick',
+    late:      'late pick (great for zero-RB or late QB strategies)',
+  }[slotTier];
+
+  // Pick numbers across rounds (snake)
+  const myPicks = [];
+  for (let r = 0; r < mockState.mockRounds; r++) {
+    const snakeSlot = r % 2 === 0 ? slot : (TEAMS + 1 - slot);
+    const overall   = r * TEAMS + snakeSlot;
+    myPicks.push({ round: r + 1, overall, snakeSlot });
+  }
+
+  // League tendency by round for key positions
+  const leagueTend = {};
+  if (hasTend) {
+    ['QB','RB','WR','TE'].forEach(pos => {
+      leagueTend[pos] = POS_DATA?.[pos]?.leagueTendency || {};
+    });
+  }
+
+  // Build strategy lines
+  const lines = [];
+
+  // Round 1 read
+  const r1tend = hasTend
+    ? (['RB','WR','TE','QB'].map(p => ({ p, t: leagueTend[p]?.[1] || 0 })).sort((a,b) => b.t - a.t))
+    : [];
+  const r1top = r1tend[0];
+  if (r1top && r1top.t >= 30) {
+    lines.push(`Your league floods <strong>${r1top.p}</strong> in round 1 (~${r1top.t}% of picks). With a ${slotDesc}, expect most elite ${r1top.p}s gone by your turn — target the best available ${r1top.p === 'RB' ? 'WR/RB' : 'RB/WR'} by ADP.`);
+  } else {
+    lines.push(`From slot ${slot}, you have a ${slotDesc}. Prioritize the single best player available by ADP — round 1 should always be BPA (Best Player Available).`);
+  }
+
+  // Rounds 2-3 read
+  const r2tend = hasTend
+    ? (['RB','WR','TE','QB'].map(p => ({ p, t: leagueTend[p]?.[2] || 0 })).sort((a,b) => b.t - a.t))
+    : [];
+  if (r2tend[0]?.t >= 35) {
+    lines.push(`Rounds 2–3: your league runs heavy <strong>${r2tend[0].p}</strong> (~${r2tend[0].t}% in round 2). If you waited at ${r2tend[0].p} in round 1, this is your window — they dry up fast.`);
+  } else {
+    lines.push(`Rounds 2–3: continue stacking skill positions. RBs and WRs with high VOLS are the priority — check the ADP table for green VOLS numbers.`);
+  }
+
+  // TE run warning
+  const teTend3 = leagueTend['TE']?.[3] || 0;
+  const teTend4 = leagueTend['TE']?.[4] || 0;
+  if (hasTend && (teTend3 + teTend4) >= 30) {
+    lines.push(`⚠️ TE run warning: your league historically grabs TE in rounds 3–4 (~${Math.round((teTend3+teTend4)/2)}% of picks). Consider grabbing one early or waiting for the round 7–9 value tier.`);
+  }
+
+  // QB note
+  const qbTend1 = leagueTend['QB']?.[1] || 0;
+  const qbTend2 = leagueTend['QB']?.[2] || 0;
+  if (hasTend && (qbTend1 + qbTend2) < 15) {
+    lines.push(`QBs: your league typically waits — less than ${Math.round((qbTend1+qbTend2)/2)}% of rounds 1–2 are QBs. You can safely target rounds 4–6 for a QB1 with VOLS upside.`);
+  } else if (hasTend && qbTend2 >= 20) {
+    lines.push(`QBs: your leaguemates jump early (~${qbTend2}% in round 2). Decide now whether you're going early QB (rounds 2–3) or streaming from round 7+.`);
+  } else {
+    lines.push(`QBs: consider mid rounds (4–6) unless a top-3 QB falls to you. In half-PPR, QB scarcity sets in quickly after the top 5.`);
+  }
+
+  // Late round wisdom
+  lines.push(`Rounds 10+: lock in a K and DEF late (rounds ${Math.min(14, mockState.mockRounds-2)}–${mockState.mockRounds}). Use middle rounds for upside RB/WR handcuffs and high-ceiling backups.`);
+
+  if (!hasTend) {
+    lines.push(`<span style="color:#4A90E2">💡 Sync your ESPN league to get tendency-driven advice specific to how YOUR leaguemates actually draft.</span>`);
+  }
+
+  el.innerHTML = lines.map(l => `<div style="margin-bottom:9px;padding-left:10px;border-left:2px solid var(--border2)">${l}</div>`).join('');
+}
+
+// ── Build per-manager tendency map ────────────────────────────────────────
+// Returns: { ownerId -> { pos -> { round -> count } } }  (later normalized to %)
+function buildManagerTendencies(historyArr) {
+  if (!historyArr?.length) return {};
+  const POSITIONS = ['QB','RB','WR','TE','K','DEF'];
+  const tend = {}; // ownerId -> pos -> round -> count
+
+  historyArr.forEach(season => {
+    (season.picks || []).forEach(pick => {
+      const { ownerId, position, round } = pick;
+      if (!ownerId || !position || !round || round > 16) return;
+      const pos = position === 'D/ST' ? 'DEF' : position;
+      if (!POSITIONS.includes(pos)) return;
+
+      if (!tend[ownerId]) tend[ownerId] = {};
+      if (!tend[ownerId][pos]) tend[ownerId][pos] = {};
+      tend[ownerId][pos][round] = (tend[ownerId][pos][round] || 0) + 1;
+    });
+  });
+
+  // Normalize each ownerId+round to percentages
+  const result = {};
+  Object.entries(tend).forEach(([ownerId, posMap]) => {
+    result[ownerId] = {};
+    for (let r = 1; r <= 16; r++) {
+      const total = POSITIONS.reduce((s, p) => s + (posMap[p]?.[r] || 0), 0);
+      if (total === 0) continue;
+      POSITIONS.forEach(pos => {
+        if (!result[ownerId][pos]) result[ownerId][pos] = {};
+        result[ownerId][pos][r] = Math.round(((posMap[pos]?.[r] || 0) / total) * 100);
+      });
+    }
+  });
+
+  return result;
+}
+
+// ── Snake order builder ────────────────────────────────────────────────────
+function buildSnakeOrder(numTeams, numRounds) {
+  const order = [];
+  for (let r = 0; r < numRounds; r++) {
+    for (let p = 0; p < numTeams; p++) {
+      order.push(r % 2 === 0 ? p : numTeams - 1 - p);
+    }
+  }
+  return order; // index = overallPick-1, value = slot index (0-based)
+}
+
+// ── Start Draft ────────────────────────────────────────────────────────────
+async function startMockDraft() {
+  if (!mockState.mySlot) return;
+
+  // Ensure ADP data is loaded
+  let pool = adpCache[SCORING] || adpCache['half'] || [];
+  if (!pool.length) {
+    showToast('Loading ADP data…');
+    pool = await loadAdpData(SCORING);
+    if (!pool.length) { showToast('Could not load ADP data — check your connection'); return; }
+  }
+
+  // Build player pool with projections
+  mockState.available = pool.map(p => {
+    const fp   = getFPProjection(p.name);
+    const vols = window._volsMap?.[normalizeName(p.name)];
+    return {
+      name:    p.name,
+      pos:     p.pos === 'DST' ? 'DEF' : p.pos,
+      team:    p.team || '',
+      bye:     p.bye,
+      adp:     p.adp,
+      adpRank: p.rank,
+      proj:    fp?.fpts || null,
+      vols:    typeof vols === 'number' ? vols : null,
+      tag:     rankTagMap[p.name] || null,
+    };
+  }).filter(p => p.name && p.adp);
+
+  // Build VOLS map if not already populated by ADP table
+  // (renderAdpTable builds it — we recompute here if needed)
+  if (!window._volsMap && typeof computeReplacementBaselines === 'function') {
+    try { computeReplacementBaselines(); } catch(e) {}
+  }
+
+  // Initialize draft state
+  mockState.picks       = [];
+  mockState.finished    = false;
+  mockState.posFilter   = 'ALL';
+  mockState.snakeOrder  = buildSnakeOrder(TEAMS, mockState.mockRounds);
+
+  // Ensure slots array is correct size
+  if (!mockState.slots.length || mockState.slots.length !== TEAMS) {
+    mockState.slots = Array.from({ length: TEAMS }, () => ({ label: '', ownerId: null }));
+  }
+
+  // Show draft board
+  document.getElementById('mockSetupScreen').style.display   = 'none';
+  document.getElementById('mockDraftScreen').style.display   = 'block';
+  document.getElementById('mockResultsScreen').style.display = 'none';
+
+  renderMockBoard();
+  renderMockAvailablePlayers();
+  advanceMockPick();
+}
+
+// ── Current pick pointer ───────────────────────────────────────────────────
+function currentMockPickIndex() { return mockState.picks.length; }
+function currentMockSlot()      { return mockState.snakeOrder[currentMockPickIndex()]; } // 0-based
+function currentMockRound()     { return Math.floor(currentMockPickIndex() / TEAMS) + 1; }
+function currentMockPickInRound() { return (currentMockPickIndex() % TEAMS) + 1; }
+
+// ── Advance pick state ─────────────────────────────────────────────────────
+function advanceMockPick() {
+  const idx    = currentMockPickIndex();
+  const total  = TEAMS * mockState.mockRounds;
+  if (idx >= total) { finishMockDraft(); return; }
+
+  const slot       = currentMockSlot(); // 0-based
+  const isMe       = (slot + 1) === mockState.mySlot;
+  const round      = currentMockRound();
+  const pickInRnd  = currentMockPickInRound();
+  const slotInfo   = mockState.slots[slot] || {};
+  const slotLabel  = isMe ? 'YOU' : (slotInfo.label || `Bot ${slot+1}`);
+
+  // Update status bar
+  const statusEl   = document.getElementById('mockPickStatus');
+  const subEl      = document.getElementById('mockPickSubStatus');
+  const badgeEl    = document.getElementById('mockYourPickBadge');
+
+  if (statusEl) statusEl.textContent = `Round ${round}, Pick ${pickInRnd} (Overall ${idx+1})`;
+  if (badgeEl)  badgeEl.style.display = isMe ? 'block' : 'none';
+
+  // Compute next "your pick" for sub-status
+  if (subEl) {
+    if (isMe) {
+      subEl.textContent = `It's your pick — ${mockState.available.length} players available`;
+    } else {
+      // Find next pick that belongs to user
+      const nextMine = mockState.snakeOrder.slice(idx+1).findIndex(s => s+1 === mockState.mySlot);
+      subEl.textContent = nextMine >= 0
+        ? `Picking for: ${slotLabel} · Your next pick in ${nextMine + 1} pick${nextMine === 0 ? '' : 's'}`
+        : `Picking for: ${slotLabel}`;
+    }
+  }
+
+  if (!isMe) {
+    // Bot pick — fire after small delay so board renders
+    setTimeout(() => botMockPick(slot), 350);
+  }
+  // If user's turn, just wait — they click a player in the available list
+}
+
+// ── Bot pick logic ─────────────────────────────────────────────────────────
+function botMockPick(slotIdx) {
+  if (mockState.finished) return;
+  const round    = currentMockRound();
+  const slotInfo = mockState.slots[slotIdx] || {};
+  const ownerId  = slotInfo.ownerId;
+  const POSITIONS = ['QB','RB','WR','TE','K','DEF'];
+
+  // Get per-manager tendency for this round (if available + league mode)
+  let posWeights = null;
+  if (mockState.mode === 'league' && ownerId && mockState.managerTend[ownerId]) {
+    const tend = mockState.managerTend[ownerId];
+    posWeights = {};
+    POSITIONS.forEach(pos => {
+      posWeights[pos] = tend[pos]?.[round] || 0;
+    });
+    // If no tendency data for this round, fall through to league-wide
+    const totalWeight = Object.values(posWeights).reduce((s, v) => s + v, 0);
+    if (totalWeight === 0) posWeights = null;
+  }
+
+  // League-wide tendency fallback
+  if (!posWeights && mockState.mode === 'league') {
+    posWeights = {};
+    POSITIONS.forEach(pos => {
+      posWeights[pos] = POS_DATA?.[pos]?.leagueTendency?.[round] || 0;
+    });
+    const totalWeight = Object.values(posWeights).reduce((s, v) => s + v, 0);
+    if (totalWeight === 0) posWeights = null;
+  }
+
+  // Filter out 🚫 avoid tags from bot's options (bots respect user's tag research)
+  const eligible = mockState.available.filter(p => p.tag !== 'avoid');
+
+  let picked = null;
+
+  if (posWeights) {
+    // Weighted random position selection
+    const totalW = Object.values(posWeights).reduce((s, v) => s + v, 0);
+    let rand = Math.random() * totalW;
+    let chosenPos = null;
+    for (const pos of POSITIONS) {
+      rand -= (posWeights[pos] || 0);
+      if (rand <= 0) { chosenPos = pos; break; }
+    }
+    chosenPos = chosenPos || POSITIONS[0];
+
+    // Pick best available at that position by ADP
+    const atPos = eligible.filter(p => p.pos === chosenPos || (chosenPos === 'DEF' && p.pos === 'D/ST'));
+    if (atPos.length) {
+      // Add slight randomness: pick from top-3 at position
+      const pool = atPos.slice(0, 3);
+      picked = pool[Math.floor(Math.random() * pool.length)];
+    }
+  }
+
+  // Fallback: pure ADP top available
+  if (!picked && eligible.length) {
+    const pool = eligible.slice(0, 3);
+    picked = pool[Math.floor(Math.random() * Math.max(1, Math.min(3, pool.length)))];
+  }
+
+  if (!picked && mockState.available.length) picked = mockState.available[0];
+  if (!picked) { finishMockDraft(); return; }
+
+  recordMockPick(slotIdx, picked);
+}
+
+// ── User pick ──────────────────────────────────────────────────────────────
+function userMockPick(playerName) {
+  if (mockState.finished) return;
+  const isMe = (currentMockSlot() + 1) === mockState.mySlot;
+  if (!isMe) return;
+  const player = mockState.available.find(p => p.name === playerName);
+  if (!player) return;
+  recordMockPick(currentMockSlot(), player);
+}
+
+// ── Record a pick ──────────────────────────────────────────────────────────
+function recordMockPick(slotIdx, player) {
+  const overallPick = currentMockPickIndex() + 1;
+  const round       = currentMockRound();
+  const pickInRnd   = currentMockPickInRound();
+
+  mockState.picks.push({
+    slot:        slotIdx,
+    round,
+    pickInRound: pickInRnd,
+    overallPick,
+    player,
+    isUser:      (slotIdx + 1) === mockState.mySlot,
+  });
+
+  // Remove from available pool
+  mockState.available = mockState.available.filter(p => p.name !== player.name);
+
+  renderMockBoard();
+  renderMockAvailablePlayers();
+  advanceMockPick();
+}
+
+// ── Board renderer ─────────────────────────────────────────────────────────
+function renderMockBoard() {
+  const table = document.getElementById('mockBoardTable');
+  if (!table) return;
+
+  const mySlot0 = mockState.mySlot - 1; // 0-based
+
+  // Build slot labels for header
+  const slotHeaders = Array.from({ length: TEAMS }, (_, i) => {
+    const isMe   = i === mySlot0;
+    const info   = mockState.slots[i] || {};
+    const label  = isMe ? 'YOU' : (info.label || `Bot ${i+1}`);
+    const color  = isMe ? 'color:var(--green);' : '';
+    return `<th style="padding:4px 3px;font-size:8px;font-weight:600;text-align:center;min-width:60px;${color}">${label}</th>`;
+  }).join('');
+
+  let html = `<thead><tr><th style="padding:4px 6px;font-size:8px;color:var(--text3);text-align:left;width:28px">Rd</th>${slotHeaders}</tr></thead><tbody>`;
+
+  for (let r = 0; r < mockState.mockRounds; r++) {
+    html += `<tr style="border-top:1px solid var(--border)"><td class="t3 mono" style="padding:4px 6px;font-size:9px;text-align:center;font-weight:700">${r+1}</td>`;
+    for (let s = 0; s < TEAMS; s++) {
+      // In snake draft: even rounds go left→right, odd go right→left
+      const boardSlot = r % 2 === 0 ? s : TEAMS - 1 - s;
+      const overallIdx = r * TEAMS + s;
+      const pick = mockState.picks.find(p => p.overallPick === overallIdx + 1);
+      const isMe  = boardSlot === mySlot0;
+      const isCurrent = overallIdx === currentMockPickIndex() && !mockState.finished;
+
+      let cellBg = isMe ? 'rgba(0,210,106,0.05)' : 'transparent';
+      if (isCurrent) cellBg = 'rgba(0,210,106,0.12)';
+
+      let cellContent = '';
+      if (pick) {
+        const col  = MOCK_POS_COLOR[pick.player.pos] || 'var(--text3)';
+        cellContent = `<div style="font-size:8px;font-weight:600;color:${col};line-height:1.1">${pick.player.name.split(' ').slice(-1)[0]}</div>
+                       <div style="font-size:7px;color:${col};opacity:0.8">${pick.player.pos}</div>`;
+      } else if (isCurrent) {
+        cellContent = `<div style="font-size:8px;color:var(--green);font-weight:700">▶</div>`;
+      }
+
+      html += `<td style="padding:3px;text-align:center;background:${cellBg};border-left:1px solid var(--border)">${cellContent}</td>`;
+    }
+    html += `</tr>`;
+  }
+
+  html += `</tbody>`;
+  table.innerHTML = html;
+}
+
+// ── Available players panel ────────────────────────────────────────────────
+function setMockPosFilter(pos) {
+  mockState.posFilter = pos;
+  document.querySelectorAll('[data-mockpos]').forEach(b =>
+    b.classList.toggle('active', b.dataset.mockpos === pos)
+  );
+  renderMockAvailablePlayers();
+}
+
+function renderMockAvailablePlayers() {
+  const container = document.getElementById('mockAvailableList');
+  if (!container) return;
+
+  const isMyTurn   = !mockState.finished && (currentMockSlot() + 1) === mockState.mySlot;
+  const search     = (document.getElementById('mockPlayerSearch')?.value || '').toLowerCase();
+  const posFilter  = mockState.posFilter;
+
+  let players = mockState.available.filter(p => {
+    if (posFilter !== 'ALL' && p.pos !== posFilter) return false;
+    if (search && !p.name.toLowerCase().includes(search)) return false;
+    return true;
+  }).slice(0, 80);
+
+  if (!players.length) {
+    container.innerHTML = `<div class="t3 fs10 tac" style="padding:20px">No players match filter</div>`;
+    return;
+  }
+
+  container.innerHTML = players.map(p => {
+    const col     = MOCK_POS_COLOR[p.pos] || 'var(--text3)';
+    const proj    = p.proj ? `${p.proj.toFixed(0)} pts` : '—';
+    const tag     = p.tag === 'mustget' ? '🔥' : p.tag === 'target' ? '🎯' : p.tag === 'avoid' ? '🚫' : '';
+    const tagNote = p.tag === 'mustget' ? 'style="background:rgba(255,71,87,0.06)"' : p.tag === 'target' ? 'style="background:rgba(0,210,106,0.05)"' : '';
+    const clickable = isMyTurn ? `onclick="userMockPick('${p.name.replace(/'/g,"\\'")}')";cursor:pointer` : 'opacity:0.6';
+    const hoverClass = isMyTurn ? 'mock-player-row' : '';
+
+    return `<div class="${hoverClass}" ${tagNote} onclick="${isMyTurn ? `userMockPick('${p.name.replace(/'/g,"\\'")}')` : ''}"
+      style="display:flex;align-items:center;padding:6px 12px;border-bottom:1px solid var(--border);gap:8px;${isMyTurn ? 'cursor:pointer' : 'opacity:0.75'}">
+      <span style="font-size:9px;font-weight:700;color:${col};background:${col}1A;border:1px solid ${col}44;padding:1px 5px;border-radius:3px;min-width:28px;text-align:center">${p.pos}</span>
+      <div style="flex:1;min-width:0">
+        <div class="t1" style="font-size:10px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${tag} ${p.name}</div>
+        <div class="t3" style="font-size:9px">${p.team || ''} ${p.bye ? `· Bye ${p.bye}` : ''}</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div class="mono t2" style="font-size:10px">${proj}</div>
+        <div class="t3 mono" style="font-size:8px">ADP ${p.adp?.toFixed(1) || '—'}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── Finish draft ───────────────────────────────────────────────────────────
+function finishMockDraft() {
+  mockState.finished = true;
+  document.getElementById('mockDraftScreen').style.display   = 'none';
+  document.getElementById('mockResultsScreen').style.display = 'block';
+  renderMockResults();
+}
+
+// ── Results renderer ───────────────────────────────────────────────────────
+function renderMockResults() {
+  const myPicks = mockState.picks.filter(p => p.isUser);
+  if (!myPicks.length) return;
+
+  // ── Optimal lineup projected points ──────────────────────────────────────
+  const myPlayers = myPicks.map(p => p.player);
+  const projTotal = calcOptimalLineupProj(myPlayers);
+
+  // ── Grade (based on VOLS surplus) ────────────────────────────────────────
+  const volsSum = myPicks.reduce((s, p) => s + (p.player.vols || 0), 0);
+  const grade   = volsSum >= 80 ? 'A' : volsSum >= 50 ? 'B' : volsSum >= 20 ? 'C' : volsSum >= 0 ? 'D' : 'F';
+  const gradeColor = { A:'var(--green)', B:'#7ED321', C:'var(--amber)', D:'#FF6B35', F:'var(--red)' }[grade];
+
+  // ── Steals & Reaches ──────────────────────────────────────────────────────
+  // Steal = drafted significantly better than ADP round suggests
+  // Reach = paid 2+ rounds early compared to ADP
+  const steals = [], reaches = [];
+  myPicks.forEach(p => {
+    const expectedRound = Math.ceil(p.player.adp / TEAMS);
+    const actualRound   = p.round;
+    const diff          = expectedRound - actualRound; // positive = steal, negative = reach
+    const hasTend = espnData?.history?.length;
+    const tendNote = hasTend && POS_DATA?.[p.player.pos]?.leagueTendency?.[actualRound]
+      ? `Your league drafts ${p.player.pos} here ${POS_DATA[p.player.pos].leagueTendency[actualRound]}% of the time.`
+      : '';
+
+    if (diff >= 2) {
+      steals.push({ pick: p, diff, tendNote });
+    } else if (diff <= -2) {
+      reaches.push({ pick: p, diff, tendNote });
+    }
+  });
+  steals.sort((a, b) => b.diff - a.diff);
+  reaches.sort((a, b) => a.diff - b.diff);
+
+  // ── Subline ────────────────────────────────────────────────────────────────
+  const slotInfo   = mockState.slots[mockState.mySlot - 1] || {};
+  document.getElementById('mockResultsSubline').textContent =
+    `Slot ${mockState.mySlot} · ${mockState.mockRounds} rounds · ${myPicks.length} picks`;
+
+  // ── Stats row ──────────────────────────────────────────────────────────────
+  document.getElementById('mockResultsStats').innerHTML = [
+    { label:'Draft Grade', val: grade, sub: `${volsSum >= 0 ? '+' : ''}${volsSum.toFixed(0)} VOLS surplus`, color: gradeColor },
+    { label:'Proj Pts (Optimal)', val: projTotal.toFixed(0), sub: 'Best starter lineup', color: 'var(--blue)' },
+    { label:'Steals', val: steals.length, sub: '2+ rounds of value', color: 'var(--green)' },
+    { label:'Reaches', val: reaches.length, sub: '2+ rounds early', color: 'var(--amber)' },
+  ].map(s => `
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center">
+      <div class="t3 fs9 fw7 caps" style="letter-spacing:.08em;margin-bottom:6px">${s.label}</div>
+      <div class="mono fw7" style="font-size:24px;color:${s.color}">${s.val}</div>
+      <div class="t3 fs9" style="margin-top:3px">${s.sub}</div>
+    </div>`).join('');
+
+  // ── Steals list ────────────────────────────────────────────────────────────
+  document.getElementById('mockResultsSteals').innerHTML = steals.length
+    ? steals.map(s => {
+        const col = MOCK_POS_COLOR[s.pick.player.pos] || 'var(--text3)';
+        return `<div style="padding:8px;border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:flex-start">
+          <span style="font-size:9px;font-weight:700;color:${col};background:${col}1A;border:1px solid ${col}44;padding:1px 5px;border-radius:3px;flex-shrink:0">${s.pick.player.pos}</span>
+          <div>
+            <div class="t1 fs11 fw6">${s.pick.player.name}</div>
+            <div class="t3 fs9">Rd ${s.pick.round}, Pick ${s.pick.pickInRound} · ADP ~Rd ${Math.ceil(s.pick.player.adp/TEAMS)} · Got ${s.diff} round${s.diff===1?'':'s'} early value</div>
+            ${s.tendNote ? `<div class="t3 fs9" style="margin-top:2px;color:#4A90E2">${s.tendNote}</div>` : ''}
+          </div>
+        </div>`;
+      }).join('')
+    : '<div class="t3 fs10" style="padding:12px;text-align:center">No notable steals this draft</div>';
+
+  // ── Reaches list ───────────────────────────────────────────────────────────
+  document.getElementById('mockResultsReaches').innerHTML = reaches.length
+    ? reaches.map(r => {
+        const col = MOCK_POS_COLOR[r.pick.player.pos] || 'var(--text3)';
+        return `<div style="padding:8px;border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:flex-start">
+          <span style="font-size:9px;font-weight:700;color:${col};background:${col}1A;border:1px solid ${col}44;padding:1px 5px;border-radius:3px;flex-shrink:0">${r.pick.player.pos}</span>
+          <div>
+            <div class="t1 fs11 fw6">${r.pick.player.name}</div>
+            <div class="t3 fs9">Rd ${r.pick.round}, Pick ${r.pick.pickInRound} · ADP ~Rd ${Math.ceil(r.pick.player.adp/TEAMS)} · Reached ${Math.abs(r.diff)} round${Math.abs(r.diff)===1?'':'s'} early</div>
+            ${r.tendNote ? `<div class="t3 fs9" style="margin-top:2px;color:#4A90E2">${r.tendNote}</div>` : ''}
+          </div>
+        </div>`;
+      }).join('')
+    : '<div class="t3 fs10" style="padding:12px;text-align:center">No significant reaches this draft</div>';
+
+  // ── Roster by position ─────────────────────────────────────────────────────
+  const POS_ORDER = ['QB','RB','WR','TE','K','DEF'];
+  const byPos = {};
+  POS_ORDER.forEach(p => byPos[p] = []);
+  myPicks.forEach(p => { const pos = p.player.pos; if (byPos[pos]) byPos[pos].push(p); });
+
+  document.getElementById('mockResultsRoster').innerHTML = `
+    <div style="overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:11px">
+        <thead>
+          <tr style="border-bottom:1px solid var(--border)">
+            <th class="t3 fs9 fw7 caps tac" style="padding:6px 8px">Rd</th>
+            <th class="t3 fs9 fw7 caps" style="padding:6px 8px;text-align:left">Player</th>
+            <th class="t3 fs9 fw7 caps tac" style="padding:6px 8px">Pos</th>
+            <th class="t3 fs9 fw7 caps tac" style="padding:6px 8px">ADP</th>
+            <th class="t3 fs9 fw7 caps tac" style="padding:6px 8px">Proj Pts</th>
+            <th class="t3 fs9 fw7 caps tac" style="padding:6px 8px">VOLS</th>
+            <th class="t3 fs9 fw7 caps tac" style="padding:6px 8px">Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${myPicks.map(pick => {
+            const p      = pick.player;
+            const col    = MOCK_POS_COLOR[p.pos] || 'var(--text3)';
+            const adpRnd = Math.ceil(p.adp / TEAMS);
+            const diff   = adpRnd - pick.round;
+            const valColor = diff >= 2 ? 'var(--green)' : diff <= -2 ? 'var(--amber)' : 'var(--text3)';
+            const valTxt   = diff >= 2 ? `🟢 +${diff}r` : diff <= -2 ? `🟡 ${diff}r` : '—';
+            const volsColor = (p.vols || 0) > 0 ? 'var(--green)' : (p.vols || 0) < -5 ? 'var(--red)' : 'var(--text3)';
+            return `<tr style="border-bottom:1px solid var(--border)">
+              <td class="t3 mono tac" style="padding:7px 8px">${pick.round}.${pick.pickInRound}</td>
+              <td class="t1 fw6" style="padding:7px 8px">${p.name}</td>
+              <td style="padding:7px 8px;text-align:center">
+                <span style="font-size:9px;font-weight:700;color:${col};background:${col}1A;border:1px solid ${col}44;padding:1px 6px;border-radius:3px">${p.pos}</span>
+              </td>
+              <td class="t3 mono tac" style="padding:7px 8px">${p.adp?.toFixed(1) || '—'}</td>
+              <td class="t2 mono tac fw6" style="padding:7px 8px">${p.proj ? p.proj.toFixed(0) : '—'}</td>
+              <td class="mono tac fw6" style="padding:7px 8px;color:${volsColor}">${p.vols != null ? (p.vols >= 0 ? '+' : '') + p.vols.toFixed(1) : '—'}</td>
+              <td class="mono tac fw6" style="padding:7px 8px;color:${valColor}">${valTxt}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>`;
+
+  // ── Pick-by-pick analysis ──────────────────────────────────────────────────
+  const hasTend = espnData?.history?.length;
+  document.getElementById('mockResultsAnalysis').innerHTML = `
+    <div style="overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:11px">
+        <thead>
+          <tr style="border-bottom:1px solid var(--border)">
+            <th class="t3 fs9 fw7 caps tac" style="padding:6px 8px">Pick</th>
+            <th class="t3 fs9 fw7 caps" style="padding:6px 8px;text-align:left">Player</th>
+            <th class="t3 fs9 fw7 caps tac" style="padding:6px 8px">Pos</th>
+            <th class="t3 fs9 fw7 caps tac" style="padding:6px 8px">VOLS</th>
+            <th class="t3 fs9 fw7 caps tac" style="padding:6px 8px">Value</th>
+            ${hasTend ? '<th class="t3 fs9 fw7 caps tac" style="padding:6px 8px">Lg Tend</th>' : ''}
+            <th class="t3 fs9 fw7 caps" style="padding:6px 8px">Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${myPicks.map(pick => {
+            const p       = pick.player;
+            const col     = MOCK_POS_COLOR[p.pos] || 'var(--text3)';
+            const adpRnd  = Math.ceil(p.adp / TEAMS);
+            const diff    = adpRnd - pick.round;
+            const valColor = diff >= 2 ? 'var(--green)' : diff <= -2 ? 'var(--amber)' : 'var(--text3)';
+            const valTxt   = diff >= 2 ? `🟢 Steal +${diff}r` : diff <= -2 ? `🟡 Reach ${diff}r` : '✓ Fair';
+            const volsColor = (p.vols || 0) > 0 ? 'var(--green)' : (p.vols || 0) < -5 ? 'var(--red)' : 'var(--text3)';
+            const tendPct   = hasTend ? (POS_DATA?.[p.pos]?.leagueTendency?.[pick.round] ?? null) : null;
+            const tendCell  = hasTend
+              ? `<td class="t3 mono tac" style="padding:7px 8px">${tendPct != null ? `${tendPct}%` : '—'}</td>`
+              : '';
+
+            const notes = [];
+            if (p.tag === 'mustget') notes.push('🔥 Must-get tag');
+            if (p.tag === 'target')  notes.push('🎯 Target tag');
+            if (diff >= 3)           notes.push('Elite value drop');
+            if ((p.vols || 0) > 20)  notes.push('High VOLS player');
+            if (tendPct != null && tendPct >= 40) notes.push(`High-frequency pos (${tendPct}%)`);
+            if (tendPct != null && tendPct < 10)  notes.push(`Contrarian pick (lg avg ${tendPct}%)`);
+
+            return `<tr style="border-bottom:1px solid var(--border)">
+              <td class="t3 mono tac" style="padding:7px 8px">${pick.round}.${pick.pickInRound}</td>
+              <td class="t1 fw6" style="padding:7px 8px">${p.name}</td>
+              <td style="padding:7px 8px;text-align:center">
+                <span style="font-size:9px;font-weight:700;color:${col};background:${col}1A;border:1px solid ${col}44;padding:1px 6px;border-radius:3px">${p.pos}</span>
+              </td>
+              <td class="mono tac fw6" style="padding:7px 8px;color:${volsColor}">${p.vols != null ? (p.vols >= 0 ? '+' : '') + p.vols.toFixed(1) : '—'}</td>
+              <td class="mono tac fw6" style="padding:7px 8px;color:${valColor};font-size:10px">${valTxt}</td>
+              ${tendCell}
+              <td class="t3" style="padding:7px 8px;font-size:9px">${notes.join(' · ') || '—'}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+// ── Optimal lineup projected points ───────────────────────────────────────
+// Fills: 1 QB, 2 RB, 2 WR, 1 TE, 1 FLEX (best RB/WR/TE leftover), 1 K, 1 DEF
+function calcOptimalLineupProj(players) {
+  const byPos = {};
+  players.forEach(p => {
+    if (!byPos[p.pos]) byPos[p.pos] = [];
+    byPos[p.pos].push(p.proj || 0);
+  });
+  const sort = arr => (arr || []).slice().sort((a, b) => b - a);
+
+  const qbs  = sort(byPos['QB']);
+  const rbs  = sort(byPos['RB']);
+  const wrs  = sort(byPos['WR']);
+  const tes  = sort(byPos['TE']);
+  const ks   = sort(byPos['K']);
+  const defs = sort(byPos['DEF'] || byPos['D/ST']);
+
+  const starters = {
+    QB:  qbs.slice(0, 1),
+    RB:  rbs.slice(0, 2),
+    WR:  wrs.slice(0, 2),
+    TE:  tes.slice(0, 1),
+    K:   ks.slice(0, 1),
+    DEF: defs.slice(0, 1),
+  };
+
+  // FLEX: best remaining from RB/WR/TE pool
+  const rbBench  = rbs.slice(2);
+  const wrBench  = wrs.slice(2);
+  const teBench  = tes.slice(1);
+  const flexPool = [...rbBench, ...wrBench, ...teBench].sort((a, b) => b - a);
+  const flex     = flexPool.slice(0, 1);
+
+  const all = [
+    ...starters.QB, ...starters.RB, ...starters.WR,
+    ...starters.TE, ...starters.K, ...starters.DEF, ...flex
+  ];
+
+  return all.reduce((s, v) => s + v, 0);
+}
+
+// ── Reset ──────────────────────────────────────────────────────────────────
+function resetMockDraft() {
+  mockState.picks     = [];
+  mockState.available = [];
+  mockState.finished  = false;
+
+  document.getElementById('mockSetupScreen').style.display   = 'block';
+  document.getElementById('mockDraftScreen').style.display   = 'none';
+  document.getElementById('mockResultsScreen').style.display = 'none';
+
+  // Re-init the tab to refresh slot table etc.
+  initMockDraftTab();
+}
+
+// ── CSS for hover on player rows ───────────────────────────────────────────
+(function injectMockStyles() {
+  const style = document.createElement('style');
+  style.textContent = `
+    .mock-player-row:hover { background: rgba(0,210,106,0.07) !important; }
+    .mock-player-row { transition: background 0.1s; }
+  `;
+  document.head.appendChild(style);
+})();
+
 // Updates heatmap and insight cards with real data once loaded
 initHitRateEngine();
 
