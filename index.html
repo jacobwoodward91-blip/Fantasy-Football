@@ -1528,12 +1528,17 @@
             <div class="t3 fs9 fw7 caps" style="letter-spacing:.09em;margin-bottom:2px">Slot Assignments</div>
             <div class="t3 fs10">Assign a manager to each draft slot. Your slot is locked to YOU.</div>
           </div>
-          <div style="display:flex;gap:8px">
-            <button onclick="autoFillSlots()" class="t2 fs10 fw6" style="background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:5px 12px;cursor:pointer">Auto-fill from ESPN</button>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button onclick="fetch2026DraftOrder()" id="mockFetch2026Btn" class="t2 fs10 fw6" style="background:var(--blue-bg);border:1px solid rgba(74,144,226,0.35);border-radius:6px;padding:5px 12px;cursor:pointer;color:var(--blue)">🔍 Fetch 2026 Draft Order</button>
+            <button onclick="autoFillSlots()" class="t2 fs10 fw6" style="background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:5px 12px;cursor:pointer">Auto-fill from Last Season</button>
             <button onclick="clearSlots()" class="t3 fs10" style="background:none;border:none;cursor:pointer;padding:5px 8px">Clear</button>
           </div>
         </div>
         <div id="mockSlotTable" style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px"></div>
+        <div id="mock2026DebugPanel" style="display:none;margin-top:12px">
+          <div class="t3 fs9 fw7 caps" style="letter-spacing:.08em;margin-bottom:6px;color:var(--blue)">2026 ESPN API Response</div>
+          <pre id="mock2026DebugOutput" style="background:#0a1118;border:1px solid var(--border);border-radius:8px;padding:12px;font-size:10px;color:#0f0;max-height:260px;overflow-y:auto;white-space:pre-wrap;word-break:break-all;font-family:var(--mono)"></pre>
+        </div>
       </div>
 
       <!-- Start Button -->
@@ -11295,6 +11300,139 @@ function autoFillSlots() {
   showToast('Slots filled from last ESPN draft order');
 }
 
+// ── Fetch 2026 draft order / draft settings from ESPN ─────────────────────
+// ESPN's draftDetail endpoint for the current/upcoming season may return:
+//   - draftDetail.picks[]           → draft already happened, full pick list
+//   - draftDetail.settings.pickOrder[] → commissioner-set snake order (pre-draft)
+//   - draftDetail.settings.draftType   → "SNAKE", "AUCTION", etc.
+//   - draftDetail.squadronicEnabled    → (internal ESPN field, ignore)
+// We log the full raw response so we can see exactly what's there,
+// then apply whatever order fields exist to fill the slot table.
+async function fetch2026DraftOrder() {
+  if (!espnSession) { showToast('Connect to ESPN first (use the extension or bookmarklet)'); return; }
+
+  const leagueId = document.getElementById('espnLeagueId')?.value?.trim()
+    || localStorage.getItem('espnLeagueId')
+    || '201187';
+
+  const btn = document.getElementById('mockFetch2026Btn');
+  if (btn) { btn.textContent = '⏳ Fetching…'; btn.style.pointerEvents = 'none'; }
+
+  const debugPanel  = document.getElementById('mock2026DebugPanel');
+  const debugOutput = document.getElementById('mock2026DebugOutput');
+  if (debugPanel)  debugPanel.style.display  = 'block';
+  if (debugOutput) debugOutput.textContent   = 'Fetching from ESPN…';
+
+  try {
+    // Fetch with mDraftDetail + mSettings + mTeam for 2026
+    const url  = espnUrl(2026, leagueId, ['mDraftDetail', 'mSettings', 'mTeam']);
+    const data = await espnFetch(url);
+
+    // ── Log everything useful ────────────────────────────────────────────
+    const summary = {
+      topLevelKeys:          Object.keys(data),
+      draftDetailKeys:       Object.keys(data.draftDetail || {}),
+      draftDetailPickCount:  data.draftDetail?.picks?.length ?? 'none',
+      draftSettings:         data.draftDetail?.settings || data.settings?.draftSettings || null,
+      pickOrder:             data.draftDetail?.settings?.pickOrder
+                          || data.draftDetail?.pickOrder
+                          || data.settings?.draftSettings?.pickOrder
+                          || null,
+      draftType:             data.draftDetail?.settings?.type
+                          || data.settings?.draftSettings?.type
+                          || null,
+      draftDate:             data.draftDetail?.settings?.date
+                          || data.draftDetail?.date
+                          || null,
+      teamCount:             data.settings?.size || data.teams?.length || null,
+      teams:                 (data.teams || []).map(t => ({
+                               id:      t.id,
+                               abbrev:  t.abbrev,
+                               owner:   t.primaryOwner || (t.owners?.[0]) || null,
+                               name:    `${t.location||''} ${t.nickname||''}`.trim(),
+                             })),
+      samplePick:            data.draftDetail?.picks?.[0] || null,
+      rawDraftDetail:        data.draftDetail || null,
+    };
+
+    if (debugOutput) debugOutput.textContent = JSON.stringify(summary, null, 2);
+
+    // ── Try to apply order to slot table ─────────────────────────────────
+    const registry = espnData?.managerRegistry || {};
+    const mySlot   = parseInt(document.getElementById('mockMySlot')?.value) || null;
+
+    // Case 1: Draft already happened — picks have teamId, derive slot → owner
+    if (data.draftDetail?.picks?.length > 0) {
+      const picks = data.draftDetail.picks;
+
+      // Build teamId → ownerId from teams array in this response
+      const teamOwnerMap = {};
+      (data.teams || []).forEach(t => {
+        const oid = t.primaryOwner || t.owners?.[0] || null;
+        if (oid) teamOwnerMap[t.id] = oid;
+      });
+
+      const slotOwner = {};
+      picks.forEach(p => {
+        const slot = ((p.id - 1) % (data.settings?.size || TEAMS)) + 1;
+        if (!slotOwner[slot] && p.teamId && teamOwnerMap[p.teamId]) {
+          slotOwner[slot] = teamOwnerMap[p.teamId];
+        }
+      });
+
+      const numTeams = data.settings?.size || TEAMS;
+      mockState.slots = Array.from({ length: numTeams }, (_, i) => {
+        const slotNum = i + 1;
+        if (slotNum === mySlot) return { label: 'YOU', ownerId: null };
+        const ownerId = slotOwner[slotNum] || null;
+        const meta    = ownerId ? registry[ownerId] : null;
+        return { label: meta?.abbrev || meta?.displayName || `Bot ${slotNum}`, ownerId };
+      });
+
+      saveSlotAssignments();
+      renderMockSlotTable();
+      showToast(`✅ 2026 draft already happened — ${picks.length} picks loaded, slots filled`);
+
+    // Case 2: Pre-draft pick order set by commissioner
+    } else {
+      const pickOrder = summary.pickOrder;
+      if (pickOrder?.length) {
+        // pickOrder is typically an array of teamIds in draft slot order
+        const teamOwnerMap = {};
+        (data.teams || []).forEach(t => {
+          const oid = t.primaryOwner || t.owners?.[0] || null;
+          if (oid) teamOwnerMap[t.id] = oid;
+        });
+
+        mockState.slots = Array.from({ length: pickOrder.length }, (_, i) => {
+          const slotNum = i + 1;
+          if (slotNum === mySlot) return { label: 'YOU', ownerId: null };
+          const teamId  = pickOrder[i];
+          const ownerId = teamOwnerMap[teamId] || null;
+          const meta    = ownerId ? registry[ownerId] : null;
+          return { label: meta?.abbrev || meta?.displayName || `Bot ${slotNum}`, ownerId };
+        });
+
+        saveSlotAssignments();
+        renderMockSlotTable();
+        showToast(`✅ 2026 draft order loaded from ESPN settings (${pickOrder.length} slots)`);
+
+      } else {
+        // Case 3: No order set yet — tell user what we found
+        const typeStr = summary.draftType ? ` (type: ${summary.draftType})` : '';
+        const dateStr = summary.draftDate ? ` · Draft date: ${new Date(summary.draftDate).toLocaleDateString()}` : '';
+        showToast(`No 2026 draft order found yet${typeStr}${dateStr} — check the debug panel for raw response`);
+      }
+    }
+
+  } catch(err) {
+    if (debugOutput) debugOutput.textContent = `ERROR: ${err.message}`;
+    showToast(`ESPN 2026 fetch failed: ${err.message}`);
+  } finally {
+    if (btn) { btn.textContent = '🔍 Fetch 2026 Draft Order'; btn.style.pointerEvents = 'auto'; }
+  }
+}
+
 function clearSlots() {
   mockState.slots = Array.from({ length: TEAMS }, () => ({ label: '', ownerId: null }));
   saveSlotAssignments();
@@ -11566,19 +11704,69 @@ function advanceMockPick() {
 // ── Bot pick logic ─────────────────────────────────────────────────────────
 function botMockPick(slotIdx) {
   if (mockState.finished) return;
-  const round    = currentMockRound();
-  const slotInfo = mockState.slots[slotIdx] || {};
-  const ownerId  = slotInfo.ownerId;
-  const POSITIONS = ['QB','RB','WR','TE','K','DEF'];
+  const round       = currentMockRound();
+  const pickInRound = currentMockPickInRound(); // 1-based within the round
+  const slotInfo    = mockState.slots[slotIdx] || {};
+  const ownerId     = slotInfo.ownerId;
+  const POSITIONS   = ['QB','RB','WR','TE','K','DEF'];
 
-  // ── Build positional tendency weights for this manager + round ────────────
-  // Used as a SCORING MULTIPLIER on ADP-ranked candidates, not as a free
-  // position selector. A player must be competitive on ADP before tendency
-  // can push them up — bots won't skip CMC (#6 overall) to grab a WR.
+  // Filter out 🚫 avoid tags (bots respect user's tag research)
+  const eligible = mockState.available.filter(p => p.tag !== 'avoid');
+  if (!eligible.length) {
+    recordMockPick(slotIdx, mockState.available[0]);
+    return;
+  }
+
+  // ── ROUND 1 PICKS 1–12: pure tier-swap model ─────────────────────────────
+  // Real round-1 drafts are essentially ADP order with minor swaps within
+  // value tiers. Someone might take Robinson over Gibbs or Chase over Barkley,
+  // but nobody skips the consensus RB1 to grab a WR2.
+  //
+  // Tier window = ADP gap of ≤ ~6 picks (half a round's worth). Players
+  // within that gap of the #1 available are "in the same tier" and can be
+  // reordered among themselves. Outside the tier = ADP wins, no exceptions.
+  if (round === 1 && pickInRound <= 12) {
+    const topPlayer  = eligible[0];
+    const tierWindow = 6; // ADP spread that defines "same tier"
+    const tier       = eligible.filter(p => (p.adp - topPlayer.adp) <= tierWindow);
+
+    if (tier.length <= 1) {
+      // No tier-mate — just take the consensus top pick
+      recordMockPick(slotIdx, topPlayer);
+      return;
+    }
+
+    // Among tier members, pick uniformly at random (all equally plausible)
+    // This produces natural round-1 variance: Gibbs vs Robinson vs Barkley
+    // can swap freely, but nobody reaches past the tier boundary.
+    const pick = tier[Math.floor(Math.random() * tier.length)];
+    recordMockPick(slotIdx, pick);
+    return;
+  }
+
+  // ── ROUND 1 PICKS 13–14 + ALL SUBSEQUENT ROUNDS: tendency-modulated ADP ──
+  // Now tendency starts to influence behavior. The window of candidates
+  // considered opens up round-by-round, and tendency acts as a scoring
+  // multiplier — it can reorder players within the window but cannot pull
+  // someone from well outside it past clearly superior ADP options.
+  //
+  // Window sizes (how many top-available players are considered):
+  //   R1 picks 13–14 : 4  (still early, small window)
+  //   R2–3           : 6
+  //   R4–7           : 9
+  //   R8+            : 14
+  let windowSize;
+  if      (round === 1)  windowSize = 4;
+  else if (round <= 3)   windowSize = 6;
+  else if (round <= 7)   windowSize = 9;
+  else                   windowSize = 14;
+
+  const candidates = eligible.slice(0, windowSize);
+
+  // Build positional tendency weights for this manager + round
   let posWeights = null;
-
   if (mockState.mode === 'league') {
-    // Try per-manager first
+    // Per-manager tendency first
     if (ownerId && mockState.managerTend[ownerId]) {
       const tend = mockState.managerTend[ownerId];
       const w = {};
@@ -11586,7 +11774,7 @@ function botMockPick(slotIdx) {
       const total = Object.values(w).reduce((s, v) => s + v, 0);
       if (total > 0) posWeights = w;
     }
-    // Fall back to league-wide tendency
+    // League-wide tendency fallback
     if (!posWeights) {
       const w = {};
       POSITIONS.forEach(pos => { w[pos] = POS_DATA?.[pos]?.leagueTendency?.[round] || 0; });
@@ -11595,55 +11783,34 @@ function botMockPick(slotIdx) {
     }
   }
 
-  // Filter out 🚫 avoid tags (bots respect user's tag research)
-  const eligible = mockState.available.filter(p => p.tag !== 'avoid');
-  if (!eligible.length && mockState.available.length) {
-    // All remaining players are tagged avoid — just pick by ADP
-    recordMockPick(slotIdx, mockState.available[0]);
-    return;
-  }
-
-  // ── ADP-anchored scoring ──────────────────────────────────────────────────
-  // Consider only players within a realistic reach window:
-  //   - Rounds 1–3: top 6 available (high-value picks, stay close to consensus)
-  //   - Rounds 4–8: top 8 available (some positional flexibility)
-  //   - Rounds 9+:  top 12 available (bots fill needs, more variance)
-  const windowSize = round <= 3 ? 6 : round <= 8 ? 8 : 12;
-  const window     = eligible.slice(0, windowSize);
-
   let picked = null;
 
-  if (posWeights && window.length > 0) {
-    // Normalize tendency weights to 0–1 range
+  if (posWeights && candidates.length > 0) {
     const maxW = Math.max(...Object.values(posWeights), 1);
 
-    // Score each candidate in the ADP window:
-    //   base score   = (windowSize - index) / windowSize  → 1.0 for #1, near 0 for last
-    //   tendency mult = 1.0 + (normalizedWeight * 0.4)   → up to 40% boost from tendency
-    // This means tendency can push a player from slot 3 to slot 1 in the window,
-    // but CANNOT pull a player from outside the window past everyone inside it.
-    const scored = window.map((p, idx) => {
+    // Score = ADP base × tendency multiplier
+    // Base: linear from 1.0 (#1 in window) down to ~0.35 (last in window)
+    // Tendency: adds up to 30% on top — enough to swap within a tier,
+    //           not enough to pull a mid-round value past an elite player.
+    const scored = candidates.map((p, idx) => {
       const pos       = p.pos === 'D/ST' ? 'DEF' : p.pos;
-      const baseScore = (windowSize - idx) / windowSize;
+      const baseScore = 1.0 - (idx / windowSize) * 0.65;
       const tendW     = (posWeights[pos] || 0) / maxW;
-      const score     = baseScore * (1.0 + tendW * 0.40);
+      const score     = baseScore * (1.0 + tendW * 0.30);
       return { p, score };
     });
 
-    // Add small noise so identical-score players don't always resolve the same way
-    scored.forEach(s => { s.score += Math.random() * 0.05; });
+    // Tiny noise so equal-scored players don't always resolve identically
+    scored.forEach(s => { s.score += Math.random() * 0.03; });
     scored.sort((a, b) => b.score - a.score);
 
-    // Pick from top 2 of scored candidates for a touch of variance
+    // Pick from the top 2 scored — one more touch of variance without chaos
     const topN = scored.slice(0, 2);
     picked = topN[Math.floor(Math.random() * topN.length)].p;
   }
 
-  // Pure ADP fallback (ADP-only mode, or no tendency data)
-  if (!picked) {
-    picked = window[0] || eligible[0] || mockState.available[0];
-  }
-
+  // ADP-only mode or no tendency data — straight top of window
+  if (!picked) picked = candidates[0] || eligible[0] || mockState.available[0];
   if (!picked) { finishMockDraft(); return; }
 
   recordMockPick(slotIdx, picked);
