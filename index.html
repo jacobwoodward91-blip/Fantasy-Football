@@ -828,124 +828,6 @@
   .aic{align-items:center}
   .fsh0{flex-shrink:0}
   .f1{flex:1}
-
-/* ── RANKINGS + DRAFT PLANNER (merged from index_2.html) ── */
-  /* ── RANKINGS TAB ── */
-  .rank-tag-btn {
-    background: var(--surface3); border: 1px solid var(--border2);
-    border-radius: 5px; padding: 3px 7px; cursor: pointer;
-    font-size: 14px; line-height: 1; transition: background .15s, border-color .15s;
-  }
-  .rank-tag-btn:hover { background: var(--surface2); }
-  .rank-tag-btn.active-mustget { background: rgba(255,107,53,0.18); border-color: rgba(255,107,53,0.5); }
-  .rank-tag-btn.active-target  { background: rgba(74,144,226,0.18); border-color: rgba(74,144,226,0.5); }
-  .rank-tag-btn.active-avoid   { background: rgba(255,71,87,0.18);  border-color: rgba(255,71,87,0.5); }
-  .rank-summary-chip {
-    display: inline-flex; align-items: center; gap: 5px;
-    padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 600;
-    border: 1px solid; cursor: pointer;
-  }
-  .rank-summary-chip.mustget { background: rgba(255,107,53,0.12); border-color: rgba(255,107,53,0.35); color: #FF6B35; }
-  .rank-summary-chip.target  { background: rgba(74,144,226,0.12);  border-color: rgba(74,144,226,0.35); color: #4A90E2; }
-  .rank-summary-chip.avoid   { background: rgba(255,71,87,0.12);   border-color: rgba(255,71,87,0.35);  color: #FF4757; }
-  .rank-threshold-note { font-size: 9px; font-weight: 400; opacity: .7; margin-left: 2px; }
-
-  /* ── DRAFT PLANNER ── */
-  .planner-controls {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 12px; padding: 20px 24px;
-    display: flex; align-items: flex-end; gap: 16px; flex-wrap: wrap;
-    margin-bottom: 20px;
-  }
-  .planner-field { display: flex; flex-direction: column; gap: 6px; }
-  .planner-field label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text3); }
-  .planner-input {
-    background: var(--surface2); border: 1px solid var(--border2);
-    color: var(--text); font-family: var(--mono); font-size: 14px; font-weight: 700;
-    padding: 8px 12px; border-radius: 6px; width: 80px; text-align: center; outline: none;
-  }
-  .planner-input:focus { border-color: var(--blue); }
-  .planner-run-btn {
-    background: var(--green); color: #000; font-family: var(--sans); font-size: 13px;
-    font-weight: 700; padding: 9px 22px; border-radius: 6px; border: none;
-    cursor: pointer; letter-spacing: 0.04em; transition: opacity 0.15s; white-space: nowrap;
-  }
-  .planner-run-btn:hover { opacity: 0.85; }
-  .planner-strategy-name { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
-  .planner-winner-badge {
-    font-family: var(--mono); font-size: 9px; font-weight: 700; letter-spacing: 0.08em;
-    background: var(--green-bg); color: var(--green); border: 1px solid rgba(0,210,106,0.3);
-    padding: 3px 7px; border-radius: 4px; text-transform: uppercase; white-space: nowrap;
-  }
-  .planner-slot-label { font-family: var(--mono); font-size: 9px; font-weight: 700; color: var(--text3); text-transform: uppercase; }
-  .planner-empty { padding: 32px 16px; text-align: center; color: var(--text3); font-size: 12px; }
-
-  .planner-pos-badge {
-    font-family: var(--mono); font-size: 8px; font-weight: 700;
-    padding: 2px 5px; border-radius: 3px; text-align: center; letter-spacing: 0.04em;
-    flex-shrink: 0;
-  }
-
-  /* ── Strategy Editor ── */
-  .strategy-editor { display:none; width:100%; border-top:1px solid var(--border); padding-top:14px; margin-top:6px; }
-  .strategy-editor.open { display:block; }
-  .round-target-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin-bottom:14px; }
-  @media(max-width:600px) { .round-target-grid { grid-template-columns:repeat(2,1fr); } }
-  .round-target-row { display:flex; flex-direction:column; gap:4px; }
-  .round-target-row label { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--text3); }
-  .editor-save-btn { background:var(--green); color:#000; border:none; border-radius:6px; padding:7px 16px; font-family:var(--sans); font-size:12px; font-weight:700; cursor:pointer; transition:opacity .15s; }
-  .editor-save-btn:hover { opacity:.85; }
-  .editor-cancel-btn { background:var(--surface3); border:1px solid var(--border2); color:var(--text2); border-radius:6px; padding:7px 14px; font-family:var(--sans); font-size:12px; font-weight:500; cursor:pointer; transition:all .15s; }
-  .editor-cancel-btn:hover { color:var(--text); border-color:var(--text3); }
-  .editor-delete-btn { background:none; border:1px solid rgba(255,71,87,.3); color:var(--red); border-radius:6px; padding:7px 14px; font-family:var(--sans); font-size:12px; font-weight:500; cursor:pointer; transition:all .15s; margin-left:auto; }
-  .editor-delete-btn:hover { background:var(--red-bg); }
-  .custom-chip-wrap { display:inline-flex; align-items:center; gap:1px; }
-  .chip-edit-btn { background:none; border:1px solid var(--border2); border-left:none; color:var(--text3); font-size:11px; cursor:pointer; padding:3px 6px; border-radius:0 4px 4px 0; line-height:1.2; transition:color .15s,background .15s; height:100%; }
-  .chip-edit-btn:hover { color:var(--blue); background:var(--blue-bg); }
-
-  /* horizontal comparison table */
-  .pt-wrap {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 12px; overflow-x: auto;
-  }
-  .pt-table { width: 100%; border-collapse: collapse; }
-  .pt-th-label { width: 72px; }
-  .pt-th {
-    padding: 14px 16px 12px; text-align: left;
-    border-left: 1px solid var(--border); border-bottom: 2px solid var(--border);
-    min-width: 140px;
-  }
-  .pt-th-best { border-left-color: var(--green); border-bottom-color: var(--green); }
-  .pt-row-label {
-    padding: 6px 10px; vertical-align: middle;
-    display: flex; flex-direction: column; align-items: flex-start; gap: 1px;
-  }
-  .pt-round-num  { font-family: var(--mono); font-size: 10px; font-weight: 700; color: var(--text2); }
-  .pt-round-pick { font-family: var(--mono); font-size: 9px; color: var(--text3); }
-  .pt-cell {
-    padding: 5px 12px; border-left: 1px solid var(--border);
-    border-bottom: 1px solid rgba(37,53,72,0.5); vertical-align: middle;
-  }
-  .pt-cell.pt-empty { color: var(--text3); text-align: center; font-size: 11px; }
-  .pt-cell-inner { display: flex; align-items: center; gap: 7px; }
-  .pt-name  { font-size: 12px; font-weight: 500; color: var(--text); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .pt-proj  { font-family: var(--mono); font-size: 10px; color: var(--text3); white-space: nowrap; }
-  .pt-round-row:hover td { background: rgba(255,255,255,0.02); }
-  .pt-section-header td { padding: 0; }
-  .pt-section-label {
-    padding: 6px 12px 4px; font-size: 9px; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.1em; color: var(--text3);
-    background: var(--surface2); border-top: 2px solid var(--border);
-    border-bottom: 1px solid var(--border);
-  }
-  .pt-lineup-row td { border-bottom: 1px solid rgba(37,53,72,0.4); }
-  .pt-total-row td, .pt-total-row th { border-top: 2px solid var(--border); padding: 10px 14px; vertical-align: middle; }
-  .pt-total-cell { border-left: 1px solid var(--border); }
-  .pt-total-cell.pt-best { border-left-color: var(--green); background: rgba(0,210,106,0.04); }
-  .pt-total-num { font-family: var(--mono); font-size: 24px; font-weight: 700; color: var(--text2); }
-  .pt-total-cell.pt-best .pt-total-num { color: var(--green); }
-  .pt-total-label { font-family: var(--mono); font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text3); }
-
 </style>
 <body>
 
@@ -1541,68 +1423,13 @@
       </div>
     </div>
 
-    <!-- ── Draft Strategy Planner (collapsible) ──────────────────── -->
-    <div style="margin-top:28px">
-      <button onclick="togglePlannerCard()" id="plannerCardToggle"
-        style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;cursor:pointer;text-align:left">
-        <span>
-          <span class="t1 fw7" style="font-size:13px">🎯 Draft Strategy Planner</span>
-          <span class="t3 fs11" style="margin-left:8px">Simulate your draft pick across multiple strategies — defaults to Balanced</span>
-        </span>
-        <span class="t3 fs12" id="plannerCardChevron">▾</span>
-      </button>
-
-      <div id="plannerCardBody" style="display:none;margin-top:14px">
-        <div class="planner-controls">
-          <div class="df aic" style="gap:16px;flex-wrap:wrap;width:100%">
-            <div class="planner-field">
-              <label>Your Draft Pick</label>
-              <input class="planner-input" id="plannerPick" type="number" min="1" max="20" value="1">
-            </div>
-            <div class="planner-field">
-              <label>League Size</label>
-              <input class="planner-input" id="plannerLeague" type="number" min="8" max="20" value="14">
-            </div>
-            <button class="planner-run-btn" style="margin-left:auto" onclick="runDraftPlanner()">Analyze →</button>
-          </div>
-          <div style="width:100%;border-top:1px solid var(--border);padding-top:12px;margin-top:4px">
-            <div class="df aic" style="gap:8px;flex-wrap:wrap">
-              <span class="t3 fs10 fw6 caps" style="letter-spacing:.08em;flex-shrink:0">Strategies:</span>
-              <div id="strategyChips" class="df" style="gap:6px;flex-wrap:wrap;flex:1"></div>
-              <div class="df" style="gap:6px;flex-shrink:0">
-                <button class="preset-btn" onclick="setAllStrategies(true)">All</button>
-                <button class="preset-btn" onclick="setAllStrategies(false)">Balanced Only</button>
-                <button class="preset-btn" onclick="openStrategyEditor()" style="color:var(--green);border-color:rgba(0,210,106,.35)">+ New</button>
-              </div>
-            </div>
-          </div>
-          <div class="strategy-editor" id="strategyEditor">
-            <div class="df aic" style="gap:10px;margin-bottom:12px;flex-wrap:wrap">
-              <span class="t3 fs10 fw6 caps" style="letter-spacing:.08em;flex-shrink:0">Strategy Name</span>
-              <input type="text" id="strategyNameInput" placeholder="e.g. My Hybrid Strategy" style="max-width:240px;flex:1">
-            </div>
-            <div class="round-target-grid" id="roundTargetGrid"></div>
-            <div class="df aic" style="gap:8px">
-              <button class="editor-save-btn" onclick="saveCustomStrategy()">Save</button>
-              <button class="editor-cancel-btn" onclick="closeStrategyEditor()">Cancel</button>
-              <button class="editor-delete-btn" id="editorDeleteBtn" style="display:none" onclick="deleteCustomStrategy()">Delete Strategy</button>
-            </div>
-          </div>
-        </div>
-        <div id="plannerResults">
-          <div class="planner-empty">Enter your draft pick and click Analyze to compare strategies.</div>
-        </div>
-      </div>
-    </div>
-
     <!-- ── ADP Table ─────────────────────────────────────────── -->
     <div style="margin-top:28px">
       <div style="margin-bottom:12px">
         <div class="t1 fw6" style="font-size:13px;margin-bottom:4px">2026 Consensus ADP</div>
-        <div class="t2 fs11" style="line-height:1.5">Average Draft Position by player — sourced from FantasyPros consensus, enriched with VBD/VORP (value above a replacement-level player). Toggle scoring format or search by name.</div>
+        <div class="t2 fs11" style="line-height:1.5">Average Draft Position by player — sourced from FantasyPros consensus. Tag players with 🔥 Must Get, 🎯 Target, or 🚫 Avoid to guide the Draft Simulator. Tags persist across sessions.</div>
       </div>
-
-      <div id="adpControlsRow" class="df aic" style="gap:10px;flex-wrap:wrap;margin-bottom:12px">
+      <div class="df aic" style="gap:10px;flex-wrap:wrap;margin-bottom:12px">
         <div class="team-btns">
           <button class="team-btn" data-adp="std"  onclick="setAdpScoring('std')">STD</button>
           <button class="team-btn active" data-adp="half" onclick="setAdpScoring('half')">HALF</button>
@@ -1615,16 +1442,22 @@
           <button class="team-btn" data-adppos="WR"  onclick="setAdpPos('WR')">WR</button>
           <button class="team-btn" data-adppos="TE"  onclick="setAdpPos('TE')">TE</button>
         </div>
+        <div class="team-btns">
+          <button class="team-btn active" data-adptag="ALL"     onclick="setAdpTagFilter('ALL')"     title="Show all players">All Tags</button>
+          <button class="team-btn"        data-adptag="tagged"  onclick="setAdpTagFilter('tagged')"  title="Only tagged players">Tagged</button>
+          <button class="team-btn"        data-adptag="mustget" onclick="setAdpTagFilter('mustget')" title="Must Get only">🔥</button>
+          <button class="team-btn"        data-adptag="target"  onclick="setAdpTagFilter('target')"  title="Target only">🎯</button>
+          <button class="team-btn"        data-adptag="avoid"   onclick="setAdpTagFilter('avoid')"   title="Avoid only">🚫</button>
+        </div>
         <input id="adpSearch" type="text" placeholder="Search player..." oninput="renderAdpTable()"
           style="background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:6px 10px;color:var(--text1);font-size:11px;width:160px;outline:none">
       </div>
-      <div style="overflow-x:auto" id="adpTableWrap">
+      <div style="overflow-x:auto">
         <table id="adpTable" style="width:100%;border-collapse:collapse;font-size:11px"></table>
       </div>
     </div>
 
 </div>
-
 
 <!-- ── TRADE SUGGESTIONS PANEL ─────────────────────────────── -->
 <div class="tab-panel" id="panel-suggest">
@@ -1947,7 +1780,7 @@
         <div class="df aic" style="gap:8px">
           <button onclick="testYahooSync()" id="yahooSyncBtn"
             style="padding:10px 20px;border-radius:8px;font-size:13px;font-weight:700;background:var(--blue);color:#fff;border:none;cursor:pointer;opacity:0.4;pointer-events:none">
-            🔄 Sync League
+            🔄 Test Yahoo Sync
           </button>
           <span id="yahooSyncStatus" class="t3 fs11"></span>
         </div>
@@ -3563,7 +3396,7 @@ function switchTab(name) {
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
   document.getElementById(`tab-${name}`).classList.add('active');
   document.getElementById(`panel-${name}`).classList.add('active');
-  if (name === 'map') { renderHeatmap(); renderAdpTable(); initPlannerTab(); }
+  if (name === 'map') { renderHeatmap(); renderAdpTable(); }
   if (name === 'season' && !seasonDataLoaded) initSeasonTab();
   if (name === 'espn') initEspnTab();
   if (name === 'suggest') initSuggestTab();
@@ -5663,15 +5496,6 @@ function setAdpPos(p) {
   renderAdpTable();
 }
 
-// ── Draft Planner collapsible card ──────────────────────────────────────────
-function togglePlannerCard() {
-  const body    = document.getElementById('plannerCardBody');
-  const chevron = document.getElementById('plannerCardChevron');
-  const isOpen  = body.style.display !== 'none';
-  body.style.display = isOpen ? 'none' : 'block';
-  chevron.textContent = isOpen ? '▾' : '▴';
-}
-
 async function loadAdpData(scoring) {
   if (adpCache[scoring]) return adpCache[scoring];
   if (!WORKER_URL) return [];
@@ -5687,32 +5511,108 @@ async function loadAdpData(scoring) {
   }
 }
 
-// ── FantasyPros VBD (Value-Based Drafting) — merged onto the ADP table ─────
-// VBD/VORP measure a player's value above a replacement-level baseline at
-// their position. We fetch it separately and merge it onto ADP rows by
-// normalized player name (reuses the same normalizeName() the hit rate
-// engine uses, so suffix/punctuation differences between sources don't
-// cause silent match failures).
-let vbdCache = {}; // { half: Map(normalizedName -> {vbd, vorp, vols}), ... }
+// ── VOLS / VORP computation ──────────────────────────────────────────────────
+// VOLS = Value Over Last Starter. Replacement level = the last player who'd
+// actually start in your league. For your 14-team half-PPR setup with
+// 1 QB / 2 RB / 2 WR / 1 TE / 1 FLEX starters, that's QB14, TE14, and roughly
+// RB35 / WR35 (the FLEX adds ~7 more RB and ~7 more WR starters across the
+// league since FLEX skews slightly WR in modern half-PPR).
+//
+// VORP = Value Over Replacement Player. Replacement level shifts deeper, to
+// the worst rosterable starter — i.e. someone you'd grab off waivers as a
+// bye-week fill-in. We add roughly one round below the VOLS line per position.
+//
+// Robustness: instead of using the single player at exactly rank N as the
+// baseline, we use the median projection of a small window around rank N.
+// This way one bad name-match or one missing projection doesn't silently
+// shift the baseline and distort every player below it.
 
-async function loadVbdData(scoring) {
-  if (vbdCache[scoring]) return vbdCache[scoring];
-  if (!WORKER_URL) return new Map();
-  try {
-    const res = await fetch(`${WORKER_URL}/vbd?scoring=${scoring}`);
-    if (!res.ok) return new Map();
-    const data = await res.json();
-    const map = new Map();
-    (data.players || []).forEach(p => {
-      const key = normalizeName(p.name);
-      if (key) map.set(key, { vbd: p.vbd, vorp: p.vorp, vols: p.vols });
-    });
-    vbdCache[scoring] = map;
-    return map;
-  } catch(e) {
-    console.warn('[VBD] fetch failed:', e.message);
-    return new Map();
+// Your league: 14 teams, half-PPR. Starters per team: 1 QB, 2 RB, 2 WR, 1 TE,
+// 1 FLEX (RB/WR/TE). FLEX distribution assumption is half-PPR-leaning:
+// ~50% WR, ~40% RB, ~10% TE on a league-wide average — this isn't perfect,
+// but it's a defensible split that beats ignoring FLEX entirely.
+const VOLS_LAST_STARTER_RANK = {
+  QB: 14,                                    // 1 starter × 14 teams
+  RB: 28 + Math.round(14 * 0.40),            // 2 starters + ~40% of FLEX  ≈ 34
+  WR: 28 + Math.round(14 * 0.50),            // 2 starters + ~50% of FLEX  ≈ 35
+  TE: 14 + Math.round(14 * 0.10),            // 1 starter + ~10% of FLEX   ≈ 15
+};
+// VORP baseline = last starter + one round of buffer (≈14 deeper)
+const VORP_REPLACEMENT_RANK = {
+  QB: VOLS_LAST_STARTER_RANK.QB + 14,        // ≈ 28
+  RB: VOLS_LAST_STARTER_RANK.RB + 14,        // ≈ 48
+  WR: VOLS_LAST_STARTER_RANK.WR + 14,        // ≈ 49
+  TE: VOLS_LAST_STARTER_RANK.TE + 14,        // ≈ 29
+};
+
+// Compute per-position baseline projections from the live ADP + projection data.
+// Returns { QB: {vols: number|null, vorp: number|null}, RB: {...}, ... }
+function computeReplacementBaselines(adpPlayers) {
+  const out = { QB:{vols:null,vorp:null}, RB:{vols:null,vorp:null}, WR:{vols:null,vorp:null}, TE:{vols:null,vorp:null} };
+  ['QB','RB','WR','TE'].forEach(pos => {
+    // Get all players at this position with their projections, sorted by ADP rank
+    const posPlayers = adpPlayers
+      .filter(p => p.pos === pos)
+      .map(p => ({ rank: p.rank, posRank: p.posRank, proj: fpProjections[normalizeName(p.name)]?.fpts || null }))
+      .filter(p => p.posRank != null)
+      .sort((a, b) => a.posRank - b.posRank);
+
+    // Median-of-window helper — pulls 5 players centered on the target rank,
+    // keeps only those with projections, returns the median. If fewer than 2
+    // have projections in the window, returns null (we'd rather show "—" than
+    // a baseline computed from one unreliable data point).
+    const baselineAt = (targetPosRank) => {
+      const windowSize = 5;
+      const low  = Math.max(1, targetPosRank - 2);
+      const high = targetPosRank + 2;
+      const projs = posPlayers
+        .filter(p => p.posRank >= low && p.posRank <= high && p.proj)
+        .map(p => p.proj)
+        .sort((a, b) => a - b);
+      if (projs.length < 2) return null;
+      const mid = Math.floor(projs.length / 2);
+      return projs.length % 2 === 0 ? (projs[mid - 1] + projs[mid]) / 2 : projs[mid];
+    };
+
+    out[pos].vols = baselineAt(VOLS_LAST_STARTER_RANK[pos]);
+    out[pos].vorp = baselineAt(VORP_REPLACEMENT_RANK[pos]);
+  });
+  return out;
+}
+
+// ── Player draft tags (Must Get / Target / Avoid) ──────────────────────────
+// Persisted to localStorage. Read by the Draft Simulator to influence pick
+// selection: 🔥 must-get pulls the player early, 🎯 target reaches modestly,
+// 🚫 avoid skips entirely. Attached to each ADP row so there's one source of
+// truth — no separate Rankings tab to keep in sync.
+const RANK_TAGS_KEY = 'rankingsTags_v1';
+let rankTagMap = (() => {
+  try { return JSON.parse(localStorage.getItem(RANK_TAGS_KEY) || '{}'); }
+  catch(e) { return {}; }
+})();
+
+function persistRankTags() {
+  try { localStorage.setItem(RANK_TAGS_KEY, JSON.stringify(rankTagMap)); } catch(e) {}
+}
+
+// Toggle a tag on a player. Clicking the same tag clears it; clicking a
+// different one replaces it. Caller is responsible for re-rendering.
+function setPlayerTag(name, tag) {
+  if (rankTagMap[name] === tag) {
+    delete rankTagMap[name];
+  } else {
+    rankTagMap[name] = tag;
   }
+  persistRankTags();
+  renderAdpTable();
+}
+
+// Tag filter (top-of-table). 'ALL' shows every row; others narrow to one tag.
+let adpTagFilter = 'ALL';
+function setAdpTagFilter(f) {
+  adpTagFilter = f;
+  document.querySelectorAll('[data-adptag]').forEach(b => b.classList.toggle('active', b.dataset.adptag === f));
+  renderAdpTable();
 }
 
 async function renderAdpTable() {
@@ -5722,46 +5622,82 @@ async function renderAdpTable() {
   const search = (document.getElementById('adpSearch')?.value || '').toLowerCase().trim();
   const POS_COLORS = { QB:'var(--blue)', RB:'var(--green)', WR:'var(--amber)', TE:'#A855F7', K:'var(--text3)', DST:'var(--red)' };
 
-  // Show loading state
+  // Show loading state on first render of this scoring format
   if (!adpCache[adpScoring]) {
-    table.innerHTML = `<tr><td colspan="7" class="t3 fs11 tac" style="padding:24px">⏳ Loading ADP data...</td></tr>`;
+    table.innerHTML = `<tr><td colspan="10" class="t3 fs11 tac" style="padding:24px">⏳ Loading ADP data...</td></tr>`;
   }
 
-  const [players, vbdMap] = await Promise.all([
+  // Pull live ADP + live projections in parallel. Projections come from
+  // fetchFantasyProsProjections() which already runs as part of other flows,
+  // so it may already be warm. If not, this kicks it off.
+  const [players] = await Promise.all([
     loadAdpData(adpScoring),
-    loadVbdData(adpScoring),
+    Object.keys(fpProjections).length ? Promise.resolve() : fetchFantasyProsProjections().catch(() => {}),
   ]);
+
+  // Compute VOLS/VORP baselines once per render (depends on full ADP+proj data,
+  // not the filtered subset — we want league-wide thresholds, not filter-local).
+  const baselines = computeReplacementBaselines(players);
 
   const rows = players.filter(p => {
     if (adpPos !== 'ALL' && p.pos !== adpPos) return false;
     if (search && !p.name.toLowerCase().includes(search)) return false;
+    if (adpTagFilter !== 'ALL') {
+      const tag = rankTagMap[p.name];
+      if (adpTagFilter === 'tagged' && !tag) return false;
+      if (adpTagFilter !== 'tagged' && tag !== adpTagFilter) return false;
+    }
     return true;
   });
 
   if (!rows.length) {
-    table.innerHTML = `<tr><td colspan="7" class="t3 fs11 tac" style="padding:24px">
+    table.innerHTML = `<tr><td colspan="10" class="t3 fs11 tac" style="padding:24px">
       ${players.length === 0
         ? `Could not load ADP data. ${WORKER_URL ? 'Worker may be unreachable.' : 'No worker configured.'}`
-        : 'No players match your search or filter.'}
+        : 'No players match your search, filter, or tag.'}
     </td></tr>`;
     return;
   }
 
-  // VBD coverage note — VBD is scraped from FantasyPros' 12-team baseline
-  // (team-count is computed client-side on their end, so we can't request
-  // 14-team directly). Still directionally useful, just not perfectly tuned
-  // to league size. Surfaced once at the top instead of per-row noise.
-  const vbdHit = rows.filter(r => vbdMap.has(normalizeName(r.name))).length;
+  // Coverage stats for the footer note
+  let projHits = 0;
+  let volsHits = 0;
+  let vorpHits = 0;
 
   const rowsHTML = rows.map(r => {
     const col    = POS_COLORS[r.pos] || 'var(--text3)';
     const round  = Math.ceil(r.adp / TEAMS);
     const pick   = Math.round(r.adp - (round - 1) * TEAMS) || 1;
     const posLbl = r.pos + (r.posRank || '');
-    const vbdRow = vbdMap.get(normalizeName(r.name));
-    const vbdCell  = vbdRow ? vbdRow.vbd  : null;
-    const vorpCell = vbdRow ? vbdRow.vorp : null;
-    return `<tr style="border-bottom:1px solid var(--border)">
+    const proj   = fpProjections[normalizeName(r.name)];
+    const projFpts = proj && proj.fpts ? proj.fpts : null;
+    if (projFpts) projHits++;
+    const projTxt = projFpts != null ? projFpts.toFixed(1) : '—';
+
+    // VOLS / VORP: only compute if we have BOTH this player's projection AND
+    // the position's baseline. Otherwise show "—" rather than a bad number.
+    const baseline = baselines[r.pos];
+    const vols = (projFpts != null && baseline?.vols != null) ? projFpts - baseline.vols : null;
+    const vorp = (projFpts != null && baseline?.vorp != null) ? projFpts - baseline.vorp : null;
+    if (vols != null) volsHits++;
+    if (vorp != null) vorpHits++;
+    // Color-code: positive = green tint, negative = red tint
+    const valColor = v => v == null ? 'var(--text3)' : v > 0 ? '#00D26A' : v < 0 ? '#FF4757' : 'var(--text3)';
+    const valTxt   = v => v == null ? '—' : (v > 0 ? '+' : '') + v.toFixed(0);
+
+    const tag = rankTagMap[r.name];
+    const rowBg = tag === 'mustget' ? 'background:rgba(255,71,87,0.05);'
+                : tag === 'target'  ? 'background:rgba(0,210,106,0.05);'
+                : tag === 'avoid'   ? 'background:rgba(138,155,181,0.05);opacity:0.7;'
+                : '';
+    const tagBtn = (key, emoji, label, color) => {
+      const active = tag === key;
+      return `<button onclick="event.stopPropagation();setPlayerTag('${r.name.replace(/'/g,"\\'")}','${key}')"
+        title="${label}"
+        style="background:${active?color+'33':'transparent'};border:1px solid ${active?color:'var(--border)'};color:${active?color:'var(--text3)'};
+               border-radius:4px;padding:2px 5px;font-size:11px;cursor:pointer;line-height:1;transition:.15s">${emoji}</button>`;
+    };
+    return `<tr style="border-bottom:1px solid var(--border);${rowBg}">
       <td class="t3 mono fs10 tac" style="padding:7px 8px;min-width:40px">${r.rank}</td>
       <td class="t2 fs11" style="padding:7px 8px;font-weight:500">${r.name}</td>
       <td style="padding:7px 8px">
@@ -5770,7 +5706,14 @@ async function renderAdpTable() {
       <td class="t3 fs10 tac mono" style="padding:7px 8px">${r.team || 'FA'}</td>
       <td class="t3 fs10 tac mono" style="padding:7px 8px">${r.bye != null ? r.bye : '—'}</td>
       <td class="t3 fs10 tac mono" style="padding:7px 8px">${r.adp.toFixed(1)}<span class="t3" style="opacity:0.6"> R${round}.${pick}</span></td>
-      <td class="t3 fs10 tac mono" style="padding:7px 8px" title="VBD / VORP — value above a replacement-level player at this position (FantasyPros, 12-team baseline)">${vbdCell != null ? `${vbdCell}<span class="t3" style="opacity:0.6"> / ${vorpCell}</span>` : '—'}</td>
+      <td class="t2 fs10 tac mono" style="padding:7px 8px;font-weight:600">${projTxt}</td>
+      <td class="fs10 tac mono" style="padding:7px 8px;font-weight:600;color:${valColor(vols)}" title="Value Over Last Starter — pts above the last player who'd start at this position in your league">${valTxt(vols)}</td>
+      <td class="fs10 tac mono" style="padding:7px 8px;font-weight:600;color:${valColor(vorp)}" title="Value Over Replacement Player — pts above a deep-bench/waiver-wire alternative">${valTxt(vorp)}</td>
+      <td style="padding:5px 8px;white-space:nowrap">
+        ${tagBtn('mustget', '🔥', 'Must Get — reach early to lock in', '#FF4757')}
+        ${tagBtn('target',  '🎯', 'Target — reach slightly if available', '#00D26A')}
+        ${tagBtn('avoid',   '🚫', 'Avoid — skip in simulations', '#8A9BB5')}
+      </td>
     </tr>`;
   }).join('');
 
@@ -5778,27 +5721,34 @@ async function renderAdpTable() {
     <thead>
       <tr style="border-bottom:2px solid var(--border)">
         <th class="t3 fs9 fw7 caps tac" style="padding:8px;letter-spacing:.06em">Rank</th>
-        <th class="t3 fs9 fw7 caps" style="padding:8px;letter-spacing:.06em;text-align:left">Player</th>
-        <th class="t3 fs9 fw7 caps" style="padding:8px;letter-spacing:.06em">Pos</th>
+        <th class="t3 fs9 fw7 caps"     style="padding:8px;letter-spacing:.06em;text-align:left">Player</th>
+        <th class="t3 fs9 fw7 caps"     style="padding:8px;letter-spacing:.06em">Pos</th>
         <th class="t3 fs9 fw7 caps tac" style="padding:8px;letter-spacing:.06em">Team</th>
         <th class="t3 fs9 fw7 caps tac" style="padding:8px;letter-spacing:.06em">Bye</th>
         <th class="t3 fs9 fw7 caps tac" style="padding:8px;letter-spacing:.06em">ADP / Round</th>
-        <th class="t3 fs9 fw7 caps tac" style="padding:8px;letter-spacing:.06em" title="Value above replacement (12-team baseline)">VBD / VORP</th>
+        <th class="t3 fs9 fw7 caps tac" style="padding:8px;letter-spacing:.06em" title="FantasyPros consensus full-season projection (Half-PPR)">Proj Pts</th>
+        <th class="t3 fs9 fw7 caps tac" style="padding:8px;letter-spacing:.06em" title="Value Over Last Starter — your league's starter thresholds">VOLS</th>
+        <th class="t3 fs9 fw7 caps tac" style="padding:8px;letter-spacing:.06em" title="Value Over Replacement Player — bench/waiver baseline">VORP</th>
+        <th class="t3 fs9 fw7 caps tac" style="padding:8px;letter-spacing:.06em" title="Tag players to guide the Draft Simulator">Tags</th>
       </tr>
     </thead>
     <tbody>${rowsHTML}</tbody>`;
 
-  // Quiet coverage note under the table — helps explain any "—" cells
-  // without cluttering every row with a tooltip.
-  let note = document.getElementById('adpVbdCoverageNote');
+  // Footer note: projection + VOLS/VORP coverage and tag count
+  let note = document.getElementById('adpFooterNote');
   if (!note) {
     note = document.createElement('div');
-    note.id = 'adpVbdCoverageNote';
+    note.id = 'adpFooterNote';
     note.className = 't3 fs9';
-    note.style.cssText = 'margin-top:8px;padding:0 4px';
+    note.style.cssText = 'margin-top:8px;padding:0 4px;line-height:1.6';
     table.parentElement.appendChild(note);
   }
-  note.textContent = `VBD/VORP matched for ${vbdHit} of ${rows.length} shown players — FantasyPros 12-team baseline, value above a replacement-level player at that position.`;
+  const tagCount = Object.keys(rankTagMap).length;
+  note.innerHTML =
+    `Projections matched for <strong class="t2">${projHits}</strong>/${rows.length} shown players. ` +
+    `VOLS computed for <strong class="t2">${volsHits}</strong>, VORP for <strong class="t2">${vorpHits}</strong>. ` +
+    `Baselines use your league's starter thresholds (1 QB / 2 RB / 2 WR / 1 TE / 1 FLEX × ${TEAMS} teams) with FLEX modeled as ~50% WR / 40% RB / 10% TE.` +
+    (tagCount ? ` &nbsp;·&nbsp; ${tagCount} player${tagCount===1?'':'s'} tagged for the Draft Simulator.` : '');
 }
 
 
@@ -9133,15 +9083,9 @@ function checkYahooHashCredentials() {
       if (el) el.value = leagueId;
     }
 
-    // Auto-switch to the Yahoo platform and auto-sync — the extension already
-    // confirmed valid credentials, so there's no reason to make the user
-    // click again. A brief status message bridges the gap before the sync
-    // button's own "Syncing…" state takes over.
+    // Auto-switch to the Yahoo platform and the League Sync tab
     switchTab('espn');
     setPlatform('yahoo');
-    const yStatusEl = document.getElementById('yahooSyncStatus');
-    if (yStatusEl) yStatusEl.textContent = '✅ Connected — syncing automatically…';
-    if (leagueId) setTimeout(() => testYahooSync(), 400);
   } catch(e) {
     showEspnError('Error reading Yahoo credentials from URL: ' + e.message);
   }
@@ -9539,15 +9483,9 @@ function checkEspnHashCredentials() {
       if (el) el.value = espnLeague;
     }
 
-    // Auto-switch to the League Sync tab and sync immediately — the extension
-    // already confirmed valid credentials, so there's no reason to make the
-    // user click again. A brief status message bridges the gap before the
-    // sync button's own "Syncing…" state takes over.
+    // Auto-switch to the League Sync tab
     switchTab('espn');
     setPlatform('espn');
-    const eStatusEl = document.getElementById('espnSyncStatus');
-    if (eStatusEl) eStatusEl.textContent = '✅ Connected — syncing automatically…';
-    setTimeout(() => syncEspn(), 400);
   } catch(e) {
 
     showEspnError('Error reading credentials from URL: ' + e.message);
@@ -10992,915 +10930,6 @@ initHitRateEngine();
 
 // Fetch Sleeper player ADP data independently — much faster than full hit rate engine
 // This populates the ADP table without waiting for 6 years of hit rate data
-
-// ══════════════════════════════════════════════════════════════════════
-// RANKINGS + DRAFT PLANNER ENGINE (merged from index_2.html)
-// ══════════════════════════════════════════════════════════════════════
-// ── Live Draft Planner player pool ──────────────────────────────────────────
-// Built from data we already fetch live: FantasyPros ADP (rank/name/pos/team/bye),
-// FantasyPros VBD (value3d — value above replacement), and FantasyPros season
-// projections (dsProj — projected fantasy points). No hardcoded player data.
-// Built once per scoring format and cached; degrades gracefully (dsProj/value3d
-// fall back to 0 via `|| 0` everywhere they're used) if a source is unmatched.
-let LIVE_POOL = [];
-let livePoolCache = {};
-
-async function buildLivePool(scoring) {
-  if (livePoolCache[scoring]) { LIVE_POOL = livePoolCache[scoring]; return LIVE_POOL; }
-
-  const [adpPlayers, vbdMap] = await Promise.all([
-    loadAdpData(scoring),
-    loadVbdData(scoring),
-  ]);
-  if (!Object.keys(fpProjections).length) {
-    try { await fetchFantasyProsProjections(); } catch(e) { console.warn('[LivePool] projections fetch failed:', e.message); }
-  }
-
-  const pool = (adpPlayers || [])
-    .filter(p => p.rank)
-    .map(p => {
-      const key  = normalizeName(p.name);
-      const proj = fpProjections[key];
-      const vbd  = vbdMap.get(key);
-      return {
-        rank: p.rank,
-        name: p.name,
-        pos: p.pos,
-        team: p.team,
-        bye: p.bye,
-        adp: p.adp,
-        dsProj: proj ? proj.fpts : null,
-        value3d: vbd ? vbd.vbd : null,
-      };
-    });
-
-  livePoolCache[scoring] = pool;
-  LIVE_POOL = pool;
-  return pool;
-}
-
-
-function initPlannerTab() {
-  buildStrategyChips();
-  buildLivePool(adpScoring).catch(e => console.warn('[Planner] live pool pre-warm failed:', e.message));
-}
-
-// Convert DS ADP string "R.PP" to overall pick number (12-team baseline for ADP)
-function adpToOverall(adpStr) {
-  if (!adpStr) return 9999;
-  const s = adpStr.toString().trim();
-  const dot = s.indexOf('.');
-  if (dot === -1) return parseFloat(s) || 9999;
-  const round = parseInt(s.slice(0, dot));
-  const pick  = parseInt(s.slice(dot + 1));
-  return (round - 1) * 12 + pick;
-}
-
-// Snake-draft overall pick for a given round (1-indexed) and draft position
-function snakePick(round, draftPos, leagueSize) {
-  return round % 2 === 1
-    ? (round - 1) * leagueSize + draftPos
-    : round * leagueSize - draftPos + 1;
-}
-
-// Resolve a player's tier from live ADP rank — roughly 1 tier per 14 picks
-// (one tier ≈ one round in a 14-team league). No hardcoded tier data; this
-// is a transparent approximation rather than a black-box scarcity score.
-function getPlayerTier(p) {
-  return p.rank ? Math.ceil(p.rank / 14) : 99;
-}
-
-// Tier-based scarcity analysis: for each eligible position, score by
-// (tier quality) × (1 / count remaining at that tier). Higher = more urgent.
-// Example: 1 Tier-2 WR vs 7 Tier-2 RBs → WR urgency = 0.5×1 = 0.5, RB = 0.5×0.14 → take WR.
-function tierBasedPickPos(overall, draftedNames, board, eligible) {
-  const src = (board || LIVE_POOL).filter(p => p.rank && !draftedNames.has(p.name));
-
-  let bestPos   = eligible[0];
-  let bestScore = -Infinity;
-
-  for (const pos of eligible) {
-    const avail = src.filter(p => p.pos === pos);
-    if (!avail.length) continue;
-
-    const bestTier     = Math.min(...avail.map(p => getPlayerTier(p)));
-    const countAtTier  = avail.filter(p => getPlayerTier(p) === bestTier).length;
-
-    // Core scarcity formula
-    const score = (1 / bestTier) * (1 / countAtTier);
-
-    if (score > bestScore) { bestScore = score; bestPos = pos; }
-  }
-
-  return bestPos;
-}
-
-// Per-round target position for each strategy
-// Returns a position string, or null for "best available (no DEF/K)"
-const PLANNER_STRATEGIES = [
-  {
-    key: 'balanced',
-    name: 'Control – Balanced',
-    desc: 'Best available each round, no DEF/K',
-    targets: [null, null, null, null, null, null, null, null, null, null],
-  },
-  {
-    key: 'tierbased',
-    name: 'Tier Based',
-    desc: 'Drafts by tier scarcity: scarce tier = higher urgency. Never reaches across tiers; targets positions running out fastest.',
-    isTierBased: true,
-  },
-  {
-    key: 'zeroRB',
-    name: '0 RB',
-    desc: 'No RB rounds 1–5 (best value, QB+TE required); flood RB rounds 6–16; K R10, DEF R11',
-    isFlood: true, bannedEarly: 'RB', floodPos: 'RB',
-  },
-  {
-    key: 'zeroWR',
-    name: '0 WR',
-    desc: 'No WR rounds 1–5 (best value, QB+TE required); flood WR rounds 6–16; K R10, DEF R11',
-    isFlood: true, bannedEarly: 'WR', floodPos: 'WR',
-  },
-  {
-    key: 'heroRB',
-    name: 'Hero RB',
-    desc: 'Elite RB R1, WRs R2–5 (best onzie R1–5), flood RB R6–16; K R10, DEF R11',
-    isHero: true, primaryEarly: 'RB', secondaryEarly: 'WR', primaryLate: 'RB',
-  },
-  {
-    key: 'heroWR',
-    name: 'Hero WR',
-    desc: 'Elite WR R1, RBs R2–5 (best onzie R1–5), flood WR R6–16; K R10, DEF R11',
-    isHero: true, primaryEarly: 'WR', secondaryEarly: 'RB', primaryLate: 'WR',
-  },
-  {
-    key: 'strongRB',
-    name: 'Strong RB',
-    desc: 'Lock RB R1–3, dynamic WR/Onzie R4–5, flood WR R6–16; K R10, DEF R11',
-    isStrong: true, primaryPos: 'RB', secondaryPos: 'WR',
-  },
-  {
-    key: 'strongWR',
-    name: 'Strong WR',
-    desc: 'Lock WR R1–3, dynamic RB/Onzie R4–5, flood RB R6–16; K R10, DEF R11',
-    isStrong: true, primaryPos: 'WR', secondaryPos: 'RB',
-  },
-];
-
-// Select the best available player for a pick — uses rank (±2) as availability window
-function plannerSelectPlayer(overallPick, targetPos, draftedNames, allPlayers) {
-  return allPlayers
-    .filter(p => p.rank && Math.abs(p.rank - overallPick) <= 2)
-    .filter(p => !draftedNames.has(p.name))
-    .filter(p => targetPos ? p.pos === targetPos : (p.pos !== 'DST' && p.pos !== 'K'))
-    .sort((a, b) => (b.dsProj || 0) - (a.dsProj || 0))[0] || null;
-}
-
-// Build optimal starting lineup from a 16-player roster
-// Slots: QB(1), RB(2), WR(2), TE(1), FLEX/RB/WR/TE(1), K(1), DEF(1) = 9 starters
-function plannerBuildLineup(roster) {
-  const byPos = { QB: [], RB: [], WR: [], TE: [], K: [], DEF: [] };
-  roster.forEach(p => { if (byPos[p.pos]) byPos[p.pos].push(p); });
-  Object.values(byPos).forEach(arr => arr.sort((a, b) => (b.dsProj || 0) - (a.dsProj || 0)));
-
-  const lineup = [];
-  const used   = new Set();
-
-  const slots = [
-    { pos: 'QB',  count: 1 },
-    { pos: 'RB',  count: 2 },
-    { pos: 'WR',  count: 2 },
-    { pos: 'TE',  count: 1 },
-    { pos: 'K',   count: 1 },
-    { pos: 'DEF', count: 1 },
-  ];
-
-  for (const slot of slots) {
-    let filled = 0;
-    for (const p of byPos[slot.pos] || []) {
-      if (filled >= slot.count) break;
-      if (!used.has(p.name)) {
-        lineup.push({ ...p, slotLabel: slot.pos });
-        used.add(p.name);
-        filled++;
-      }
-    }
-  }
-
-  // FLEX: best remaining RB/WR/TE
-  const flex = roster
-    .filter(p => ['RB','WR','TE'].includes(p.pos) && !used.has(p.name))
-    .sort((a, b) => (b.dsProj || 0) - (a.dsProj || 0))[0];
-  if (flex) {
-    lineup.push({ ...flex, slotLabel: 'FLEX' });
-    used.add(flex.name);
-  }
-
-  const bench   = roster.filter(p => !used.has(p.name));
-  const totalProj = lineup.reduce((s, p) => s + (p.dsProj || 0), 0);
-  return { lineup, bench, totalProj };
-}
-
-// Gaussian random via Box-Muller transform
-function gaussianRandom(mean = 0, sd = 1) {
-  let u, v;
-  do { u = Math.random(); } while (u === 0);
-  do { v = Math.random(); } while (v === 0);
-  return mean + sd * Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
-}
-
-// Randomize player ranks with noise (SD scales with rank — mid-rounders vary most)
-function randomizeBoard() {
-  return LIVE_POOL
-    .map(p => {
-      if (!p.rank) return p;
-      const sd = Math.max(3, p.rank * 0.15);
-      return { ...p, rank: Math.max(1, Math.round(p.rank + gaussianRandom(0, sd))) };
-    })
-    .sort((a, b) => a.rank - b.rank);
-}
-
-// Find best available player at a position from the remaining board.
-// Respects Rankings-tab tags: Avoid players are skipped unless they've fallen
-// 2+ rounds below their rank; Must Get / Target players get a sort boost.
-function plannerFindBest(overall, pos, draftedNames, allowedPositions, board, leagueSize) {
-  const ls  = leagueSize || 14;
-  const src = board || LIVE_POOL;
-  return src
-    .filter(p => p.rank && !draftedNames.has(p.name))
-    .filter(p => pos ? p.pos === pos : allowedPositions.includes(p.pos))
-    .filter(p => {
-      // Avoid: skip unless they've fallen 2+ full rounds below their rank
-      if (rankTagMap[p.name] === 'avoid') return overall >= (p.rank || 0) + 2 * ls;
-      return true;
-    })
-    .sort((a, b) => {
-      // Boost Must Get / Target players so they're preferred over equal-value BPA
-      const boost = { mustget: 40, target: 15 };
-      const scoreA = (a.value3d || 0) + (boost[rankTagMap[a.name]] || 0);
-      const scoreB = (b.value3d || 0) + (boost[rankTagMap[b.name]] || 0);
-      return scoreB - scoreA;
-    })[0] || null;
-}
-
-// Find the highest-priority Must Get / Target player we should proactively reach for.
-// Must Get: reachable up to 1 full round (leagueSize picks) before their rank.
-// Target:   reachable up to 8 picks before their rank.
-// Returns the player object, or null if none in range.
-function findTaggedReachPlayer(overall, draftedNames, board, leagueSize) {
-  const ls  = leagueSize || 14;
-  const src = (board || LIVE_POOL).filter(p =>
-    p.rank && !draftedNames.has(p.name) &&
-    (rankTagMap[p.name] === 'mustget' || rankTagMap[p.name] === 'target')
-  );
-  // Sort: Must Get first, then by rank (best players first)
-  src.sort((a, b) => {
-    const order = { mustget: 0, target: 1 };
-    const diff  = order[rankTagMap[a.name]] - order[rankTagMap[b.name]];
-    return diff !== 0 ? diff : (a.rank || 999) - (b.rank || 999);
-  });
-  for (const p of src) {
-    const window = rankTagMap[p.name] === 'mustget' ? ls : 8;
-    if (overall >= (p.rank || 999) - window) return p;
-  }
-  return null;
-}
-
-// Drain the board for all picks between the last user pick and the current one.
-// Opponents take BPA (rank order); K/DEF become eligible for opponents in round 10+.
-function simulateOtherPicks(fromPick, toPick, draftedNames, board, leagueSize) {
-  const ls  = leagueSize || 14;
-  const src = board || LIVE_POOL;
-  for (let pick = fromPick + 1; pick < toPick; pick++) {
-    const pickRound = Math.ceil(pick / ls);
-    const allowKDef = pickRound >= 10;
-    const bpa = src
-      .filter(p => p.rank && !draftedNames.has(p.name))
-      .filter(p => allowKDef ? true : (p.pos !== 'DST' && p.pos !== 'K' && p.pos !== 'DEF'))
-      .sort((a, b) => a.rank - b.rank)[0];
-    if (bpa) draftedNames.add(bpa.name);
-  }
-}
-
-// Simulate one strategy for a given draft position
-function plannerSimulate(draftPos, leagueSize, strategy, board) {
-  const draftedNames = new Set();
-  const roster = [];
-  let earlyOnzieDone = false;
-  let lateOnzieDone  = false;
-  let lastUserPick   = 0;
-
-  for (let round = 1; round <= 16; round++) {
-    const overall = snakePick(round, draftPos, leagueSize);
-
-    // Drain board: simulate every pick between last user pick and this one
-    simulateOtherPicks(lastUserPick, overall, draftedNames, board, leagueSize);
-
-    let resolvedTarget;
-
-    // ── Must Get / Target reach override ────────────────────────────────────
-    // If a tagged player is now within reach (Must Get = 1 round, Target = 8 picks),
-    // draft them immediately regardless of strategy — respects user's expressed preference.
-    const taggedReach = findTaggedReachPlayer(overall, draftedNames, board, leagueSize);
-    if (taggedReach) {
-      draftedNames.add(taggedReach.name);
-      roster.push({ ...taggedReach, round, overallPick: overall });
-      lastUserPick = overall;
-      continue;
-    }
-
-    // ── K / DEF override (late rounds) ─────────────────────────────────────
-    // Matches DS behavior: K in rounds 10-12, DEF in rounds 11-13 if not yet drafted
-    const hasK   = roster.some(p => p.pos === 'K');
-    const hasDEF = roster.some(p => p.pos === 'DEF');
-    if (!hasK && round >= 10 && round <= 12) {
-      resolvedTarget = 'K';
-    } else if (!hasDEF && round >= 11 && round <= 13) {
-      resolvedTarget = 'DEF';
-    } else if (strategy.isTierBased) {
-      // ── Tier Based strategy ──────────────────────────────────────────────
-      // Core rule: at each pick, choose the position where the best-available
-      // tier has the fewest players left on the board. Scarcity = urgency.
-      // Onzies (QB, TE) are included once each; K/DEF handled by override above.
-      const hasQB = roster.some(p => p.pos === 'QB');
-      const hasTE = roster.some(p => p.pos === 'TE');
-      const round = Math.ceil(overall / leagueSize);
-
-      // Force onzie if we're running out of rounds to grab one
-      if (!hasQB && round >= 9) {
-        resolvedTarget = 'QB';
-      } else if (!hasTE && round >= 9) {
-        resolvedTarget = 'TE';
-      } else {
-        // Build eligible position list: RB + WR always; QB/TE until filled
-        const eligible = ['RB', 'WR'];
-        if (!hasQB) eligible.push('QB');
-        if (!hasTE) eligible.push('TE');
-
-        resolvedTarget = tierBasedPickPos(overall, draftedNames, board, eligible);
-      }
-
-    } else if (strategy.isHero) {
-      const hasQB = roster.some(p => p.pos === 'QB');
-      const hasTE = roster.some(p => p.pos === 'TE');
-      const neededOnzie = !hasQB ? 'QB' : 'TE'; // which onzie is still missing for late pick
-
-      if (round === 1) {
-        // R1: always the primary elite position
-        resolvedTarget = strategy.primaryEarly;
-
-      } else if (round <= 5) {
-        // Rounds 2–5: secondary position, but take early onzie when it beats the secondary
-        if (!earlyOnzieDone) {
-          const bestSecondary = plannerFindBest(overall, strategy.secondaryEarly, draftedNames, null, board, leagueSize);
-          const bestOnzie     = plannerFindBest(overall, null, draftedNames, ['QB','TE'], board, leagueSize);
-          const forceOnzie    = round === 5;
-          if (forceOnzie || (bestOnzie && (!bestSecondary || (bestOnzie.value3d || 0) >= (bestSecondary.value3d || 0)))) {
-            resolvedTarget = bestOnzie ? bestOnzie.pos : 'TE';
-            earlyOnzieDone = true;
-          } else {
-            resolvedTarget = strategy.secondaryEarly;
-          }
-        } else {
-          resolvedTarget = strategy.secondaryEarly;
-        }
-
-      } else if (round === 6) {
-        // R6: bridge round — always primary late position
-        resolvedTarget = strategy.primaryLate;
-
-      } else {
-        // Rounds 7–10: primary late position, but take late onzie when it beats primary
-        if (!lateOnzieDone && !(hasQB && hasTE)) {
-          const bestPrimary = plannerFindBest(overall, strategy.primaryLate, draftedNames, null, board, leagueSize);
-          const bestOnzie   = plannerFindBest(overall, neededOnzie, draftedNames, null, board, leagueSize);
-          const forceOnzie  = round === 10;
-          if (forceOnzie || (bestOnzie && (!bestPrimary || (bestOnzie.value3d || 0) >= (bestPrimary.value3d || 0)))) {
-            resolvedTarget = neededOnzie;
-            lateOnzieDone = true;
-          } else {
-            resolvedTarget = strategy.primaryLate;
-          }
-        } else {
-          resolvedTarget = strategy.primaryLate;
-        }
-      }
-
-    } else if (strategy.isStrong) {
-      // Strong RB / Strong WR
-      // R1–3: lock primary; R4–5: dynamic secondary/onzie (min 1 secondary by R5);
-      // R6–10: flood secondary, opportunistically take onzie or primary on great value
-      const hasQB = roster.some(p => p.pos === 'QB');
-      const hasTE = roster.some(p => p.pos === 'TE');
-      const secondaryCount = roster.filter(p => p.pos === strategy.secondaryPos).length;
-      const neededOnzie = !hasQB ? 'QB' : 'TE';
-
-      if (round <= 3) {
-        resolvedTarget = strategy.primaryPos;
-
-      } else if (round <= 5) {
-        const roundsLeft   = 5 - round + 1;
-        const onziesNeeded = (!hasQB ? 1 : 0) + (!hasTE ? 1 : 0);
-        // Force onzie if we'd otherwise run out of rounds to fill them
-        if (onziesNeeded >= roundsLeft) {
-          resolvedTarget = neededOnzie;
-        } else if (secondaryCount === 0 && round === 5) {
-          // Must have ≥1 secondary before R6
-          resolvedTarget = strategy.secondaryPos;
-        } else {
-          // Best of secondary vs best onzie
-          const bestSecondary = plannerFindBest(overall, strategy.secondaryPos, draftedNames, null, board, leagueSize);
-          const onzieEligible  = ['QB','TE'].filter(p => !(p==='QB'&&hasQB) && !(p==='TE'&&hasTE));
-          const bestOnzie      = onzieEligible.length
-            ? plannerFindBest(overall, null, draftedNames, onzieEligible, board, leagueSize)
-            : null;
-          if (bestOnzie && bestSecondary && (bestOnzie.value3d||0) > (bestSecondary.value3d||0)) {
-            resolvedTarget = bestOnzie.pos;
-          } else {
-            resolvedTarget = strategy.secondaryPos;
-          }
-        }
-
-      } else {
-        // R6–10: default to secondary; opportunistically grab onzie or primary
-        const bestSecondary = plannerFindBest(overall, strategy.secondaryPos, draftedNames, null, board, leagueSize);
-        const onzieEligible  = ['QB','TE'].filter(p => !(p==='QB'&&hasQB) && !(p==='TE'&&hasTE));
-        const bestOnzie      = onzieEligible.length
-          ? plannerFindBest(overall, null, draftedNames, onzieEligible, board, leagueSize)
-          : null;
-        const bestPrimary    = plannerFindBest(overall, strategy.primaryPos, draftedNames, null, board, leagueSize);
-        const forceOnzie     = round === 10 && onzieEligible.length > 0;
-
-        if (bestOnzie && (forceOnzie || (bestSecondary && (bestOnzie.value3d||0) >= (bestSecondary.value3d||0)))) {
-          resolvedTarget = bestOnzie.pos;
-          lateOnzieDone = true;
-        } else if (secondaryCount >= 3 && bestPrimary && bestSecondary &&
-                   (bestPrimary.value3d||0) > (bestSecondary.value3d||0) * 1.12) {
-          // Good-value shot at primary once we've flooded secondary
-          resolvedTarget = strategy.primaryPos;
-        } else {
-          resolvedTarget = strategy.secondaryPos;
-        }
-      }
-
-    } else if (strategy.isFlood) {
-      // 0 RB / 0 WR: dynamic within constraints
-      const hasQB = roster.some(p => p.pos === 'QB');
-      const hasTE = roster.some(p => p.pos === 'TE');
-
-      if (round <= 5) {
-        // Eligible = everything except banned position, DEF, K, and already-filled onzies
-        const eligible = ['QB','RB','WR','TE'].filter(p =>
-          p !== strategy.bannedEarly &&
-          !(p === 'QB' && hasQB) &&
-          !(p === 'TE' && hasTE)
-        );
-        const roundsLeft   = 5 - round + 1;
-        const onziesNeeded = (!hasQB ? 1 : 0) + (!hasTE ? 1 : 0);
-
-        if (onziesNeeded >= roundsLeft) {
-          // Must take an onzie this round — pick best available by 3D value
-          const neededPos = !hasQB && !hasTE ? null : !hasQB ? 'QB' : 'TE';
-          const bestOnzie = plannerFindBest(overall, neededPos, draftedNames, ['QB','TE'].filter(p => !(p==='QB'&&hasQB) && !(p==='TE'&&hasTE)), board, leagueSize);
-          resolvedTarget = bestOnzie ? bestOnzie.pos : (!hasQB ? 'QB' : 'TE');
-        } else {
-          // Take best available from all eligible positions
-          const best = plannerFindBest(overall, null, draftedNames, eligible, board, leagueSize);
-          resolvedTarget = best ? best.pos : eligible[0];
-        }
-      } else {
-        // Rounds 6–10: flood the target position
-        resolvedTarget = strategy.floodPos;
-      }
-
-    } else if (strategy.isCustom) {
-      // Custom user-defined strategy: one target value per round
-      const target = (strategy.targets[round - 1] || 'DYNAMIC').toUpperCase();
-      const hasQB  = roster.some(p => p.pos === 'QB');
-      const hasTE  = roster.some(p => p.pos === 'TE');
-
-      if (target === 'DYNAMIC') {
-        const eligible = ['QB','RB','WR','TE'].filter(p => !(p==='QB'&&hasQB) && !(p==='TE'&&hasTE));
-        const player = plannerFindBest(overall, null, draftedNames, eligible, board, leagueSize);
-        if (player) { draftedNames.add(player.name); roster.push({ ...player, round, overallPick:overall }); }
-        else roster.push({ name:'(No match)', pos:'?', dsProj:0, round, overallPick:overall });
-        lastUserPick = overall;
-        continue;
-      } else if (target === 'ONZIE') {
-        const onzieEligible = ['QB','TE'].filter(p => !(p==='QB'&&hasQB) && !(p==='TE'&&hasTE));
-        if (onzieEligible.length) {
-          const player = plannerFindBest(overall, null, draftedNames, onzieEligible, board, leagueSize);
-          if (player) { draftedNames.add(player.name); roster.push({ ...player, round, overallPick:overall }); }
-          else roster.push({ name:'(No match)', pos:'QB/TE', dsProj:0, round, overallPick:overall });
-        } else {
-          // Already have QB & TE — grab best non-K/DST
-          const player = plannerFindBest(overall, null, draftedNames, ['RB','WR'], board, leagueSize);
-          if (player) { draftedNames.add(player.name); roster.push({ ...player, round, overallPick:overall }); }
-          else roster.push({ name:'(No match)', pos:'?', dsProj:0, round, overallPick:overall });
-        }
-        lastUserPick = overall;
-        continue;
-      } else if (target === '!ONZIE') {
-        // Not Onzie — RB or WR only
-        const player = plannerFindBest(overall, null, draftedNames, ['RB','WR'], board, leagueSize);
-        if (player) { draftedNames.add(player.name); roster.push({ ...player, round, overallPick:overall }); }
-        else roster.push({ name:'(No match)', pos:'RB/WR', dsProj:0, round, overallPick:overall });
-        lastUserPick = overall;
-        continue;
-      } else if (target === 'DYN_RBWR') {
-        // Dynamic RB/WR — best available between RB and WR only
-        const player = plannerFindBest(overall, null, draftedNames, ['RB','WR'], board, leagueSize);
-        if (player) { draftedNames.add(player.name); roster.push({ ...player, round, overallPick:overall }); }
-        else roster.push({ name:'(No match)', pos:'RB/WR', dsProj:0, round, overallPick:overall });
-        lastUserPick = overall;
-        continue;
-      } else if (target.startsWith('!')) {
-        // Negation: not a specific position
-        const banned = target.slice(1); // 'RB', 'WR', etc.
-        const eligible = ['QB','RB','WR','TE'].filter(p => p !== banned && !(p==='QB'&&hasQB) && !(p==='TE'&&hasTE));
-        const player = plannerFindBest(overall, null, draftedNames, eligible.length ? eligible : ['QB','RB','WR','TE'], board, leagueSize);
-        if (player) { draftedNames.add(player.name); roster.push({ ...player, round, overallPick:overall }); }
-        else roster.push({ name:'(No match)', pos:'?', dsProj:0, round, overallPick:overall });
-        lastUserPick = overall;
-        continue;
-      } else {
-        // Specific position: RB, WR, QB, TE
-        resolvedTarget = target;
-      }
-
-    } else {
-      // Control – Balanced: dynamic best available, QB/TE capped at 1 each
-      const hasQB = roster.filter(p => p.pos === 'QB').length >= 1;
-      const hasTE = roster.filter(p => p.pos === 'TE').length >= 1;
-      const eligible = ['QB','RB','WR','TE'].filter(p => !(p === 'QB' && hasQB) && !(p === 'TE' && hasTE));
-      const player = plannerFindBest(overall, null, draftedNames, eligible, board, leagueSize);
-      if (player) { draftedNames.add(player.name); roster.push({ ...player, round, overallPick: overall }); }
-      else roster.push({ name: '(No match)', pos: '?', dsProj: 0, round, overallPick: overall });
-      lastUserPick = overall;
-      continue;
-    }
-
-    const player = plannerFindBest(overall, resolvedTarget, draftedNames, null, board, leagueSize);
-    if (player) {
-      draftedNames.add(player.name);
-      roster.push({ ...player, round, overallPick: overall });
-    } else {
-      roster.push({ name: '(No match)', pos: resolvedTarget || '?', dsProj: 0, round, overallPick: overall });
-    }
-    lastUserPick = overall;
-  }
-
-  const { lineup, bench, totalProj } = plannerBuildLineup(roster);
-  return { roster, lineup, bench, totalProj };
-}
-
-// Run Monte Carlo: 10 randomized boards per strategy
-function runMonteCarlo(draftPos, leagueSize, strategy, runs = 10) {
-  let bestResult = null;
-  let worstResult = null;
-  let sumProj = 0;
-
-  for (let i = 0; i < runs; i++) {
-    const board  = randomizeBoard();
-    const result = plannerSimulate(draftPos, leagueSize, strategy, board);
-    sumProj += result.totalProj;
-    if (!bestResult || result.totalProj > bestResult.totalProj) bestResult = result;
-    if (!worstResult || result.totalProj < worstResult.totalProj) worstResult = result;
-  }
-
-  return { bestResult, worstResult, bestProj: bestResult.totalProj, floorProj: worstResult.totalProj, avgProj: sumProj / runs };
-}
-
-function posBadge(pos) {
-  return `<span class="planner-pos-badge pos-${pos}">${pos}</span>`;
-}
-
-function plannerCell(p) {
-  if (!p || p.name === '(No match)') return `<td class="pt-cell pt-empty">—</td>`;
-  const tag      = rankTagMap[p.name] || '';
-  const tagEmoji = tag === 'mustget' ? '🔥' : tag === 'target' ? '🎯' : tag === 'avoid' ? '🚫' : '';
-  const tagTitle = tag === 'mustget' ? 'Must Get' : tag === 'target' ? 'Target' : tag === 'avoid' ? 'Avoid' : '';
-  return `<td class="pt-cell">
-    <div class="pt-cell-inner">
-      ${posBadge(p.pos)}
-      <span class="pt-name">${p.name}</span>
-      ${tagEmoji ? `<span title="${tagTitle}" style="font-size:12px;line-height:1;flex-shrink:0">${tagEmoji}</span>` : ''}
-      <span class="pt-proj">${p.dsProj ? p.dsProj.toFixed(0) : '—'}</span>
-    </div>
-  </td>`;
-}
-
-// ── Custom Strategies ────────────────────────────────────────────────────────
-const CUSTOM_STORAGE_KEY = 'plannerCustomStrategies_v1';
-let customStrategies = (() => {
-  try { return JSON.parse(localStorage.getItem(CUSTOM_STORAGE_KEY) || '[]'); }
-  catch(e) { return []; }
-})();
-
-function allStrategies() { return [...PLANNER_STRATEGIES, ...customStrategies]; }
-function persistCustomStrategies() {
-  try { localStorage.setItem(CUSTOM_STORAGE_KEY, JSON.stringify(customStrategies)); } catch(e) {}
-}
-
-const TARGET_OPTIONS = [
-  { value:'DYNAMIC', label:'Dynamic (best avail)' },
-  { value:'RB',      label:'RB' },
-  { value:'WR',      label:'WR' },
-  { value:'QB',      label:'QB' },
-  { value:'TE',      label:'TE' },
-  { value:'ONZIE',   label:'Onzie (QB or TE)' },
-  { value:'!RB',     label:'Not RB' },
-  { value:'!WR',     label:'Not WR' },
-  { value:'!QB',     label:'Not QB' },
-  { value:'!TE',     label:'Not TE' },
-  { value:'!ONZIE',  label:'Not Onzie (RB or WR)' },
-  { value:'DYN_RBWR',label:'Dynamic RB/WR' },
-];
-
-let editingStrategyKey = null;
-
-function openStrategyEditor(key = null) {
-  editingStrategyKey = key;
-  const existing = key ? customStrategies.find(s => s.key === key) : null;
-  const targets   = existing ? existing.targets : Array(10).fill('DYNAMIC');
-  document.getElementById('strategyNameInput').value = existing ? existing.name : '';
-  document.getElementById('editorDeleteBtn').style.display = key ? '' : 'none';
-  document.getElementById('roundTargetGrid').innerHTML = Array.from({length:10}, (_,i) => `
-    <div class="round-target-row">
-      <label>Round ${i+1}</label>
-      <select id="roundTarget${i}">
-        ${TARGET_OPTIONS.map(o => `<option value="${o.value}"${targets[i]===o.value?' selected':''}>${o.label}</option>`).join('')}
-      </select>
-    </div>`).join('');
-  document.getElementById('strategyEditor').classList.add('open');
-  document.getElementById('strategyNameInput').focus();
-}
-
-function closeStrategyEditor() {
-  document.getElementById('strategyEditor').classList.remove('open');
-  editingStrategyKey = null;
-}
-
-function saveCustomStrategy() {
-  const name = document.getElementById('strategyNameInput').value.trim();
-  if (!name) { showToast('Enter a strategy name'); return; }
-  const targets = Array.from({length:10}, (_,i) => document.getElementById(`roundTarget${i}`).value);
-  if (editingStrategyKey) {
-    const idx = customStrategies.findIndex(s => s.key === editingStrategyKey);
-    if (idx !== -1) customStrategies[idx] = { ...customStrategies[idx], name, targets };
-  } else {
-    const newKey = `custom_${Date.now()}`;
-    customStrategies.push({ key:newKey, name, isCustom:true, targets });
-    enabledStrategies.add(newKey);
-  }
-  persistCustomStrategies();
-  closeStrategyEditor();
-  buildStrategyChips();
-  showToast('Strategy saved');
-}
-
-function deleteCustomStrategy() {
-  if (!editingStrategyKey) return;
-  if (!confirm(`Delete "${customStrategies.find(s=>s.key===editingStrategyKey)?.name}"?`)) return;
-  customStrategies = customStrategies.filter(s => s.key !== editingStrategyKey);
-  enabledStrategies.delete(editingStrategyKey);
-  persistCustomStrategies();
-  closeStrategyEditor();
-  buildStrategyChips();
-  showToast('Strategy deleted');
-}
-
-// ── Strategy toggles ─────────────────────────────────────────────────────────
-let enabledStrategies = new Set(['balanced']); // default: Balanced only — user must opt in to add more
-
-function buildStrategyChips() {
-  const wrap = document.getElementById('strategyChips');
-  if (!wrap) return;
-  const builtIn = PLANNER_STRATEGIES.map(s => `
-    <button id="chip-${s.key}" onclick="toggleStrategy('${s.key}')"
-      class="preset-btn${enabledStrategies.has(s.key)?' active':''}" style="font-size:11px"
-    >${s.name}</button>`).join('');
-  const custom = customStrategies.map(s => `
-    <span class="custom-chip-wrap">
-      <button id="chip-${s.key}" onclick="toggleStrategy('${s.key}')"
-        class="preset-btn${enabledStrategies.has(s.key)?' active':''}"
-        style="font-size:11px;border-radius:4px 0 0 4px"
-      >${s.name}</button><button class="chip-edit-btn" onclick="openStrategyEditor('${s.key}')" title="Edit strategy">✏</button>
-    </span>`).join('');
-  wrap.innerHTML = builtIn + custom;
-}
-
-function toggleStrategy(key) {
-  if (enabledStrategies.has(key)) {
-    if (enabledStrategies.size === 1) return;
-    enabledStrategies.delete(key);
-  } else {
-    enabledStrategies.add(key);
-  }
-  document.getElementById(`chip-${key}`)?.classList.toggle('active', enabledStrategies.has(key));
-}
-
-function setAllStrategies(on) {
-  allStrategies().forEach(s => {
-    if (on) enabledStrategies.add(s.key);
-    else if (enabledStrategies.size > 1) enabledStrategies.delete(s.key);
-  });
-  if (!on) enabledStrategies.add(PLANNER_STRATEGIES[0].key);
-  buildStrategyChips();
-}
-
-async function runDraftPlanner() {
-  const pick       = parseInt(document.getElementById('plannerPick').value) || 1;
-  const leagueSize = parseInt(document.getElementById('plannerLeague').value) || 14;
-  const container  = document.getElementById('plannerResults');
-
-  if (!LIVE_POOL || !LIVE_POOL.length) {
-    container.innerHTML = '<div class="planner-empty">⏳ Loading live player pool (ADP + projections + VBD)...</div>';
-    try {
-      await buildLivePool(adpScoring);
-    } catch(e) {
-      container.innerHTML = '<div class="planner-empty">Could not load live player data. Check your connection and try again.</div>';
-      return;
-    }
-  }
-
-  if (!LIVE_POOL || !LIVE_POOL.length) {
-    container.innerHTML = '<div class="planner-empty">Player data not loaded yet. Please wait a moment and try again.</div>';
-    return;
-  }
-
-  const activeStrategies = allStrategies().filter(s => enabledStrategies.has(s.key));
-
-  const results = activeStrategies.map(s => {
-    const mc = runMonteCarlo(pick, leagueSize, s, 50);
-    return { strategy: s, result: mc.bestResult, worstResult: mc.worstResult, bestProj: mc.bestProj, floorProj: mc.floorProj, avgProj: mc.avgProj };
-  }).sort((a, b) => b.avgProj - a.avgProj); // sort by avg across 10 runs
-
-  const best = results[0]; // winner = highest average
-  const snakePicks = Array.from({length:16}, (_,i) => snakePick(i+1, pick, leagueSize));
-
-  // Build round rows — one row per round, all strategies side by side
-  const roundRows = Array.from({length:16}, (_, i) => {
-    const round = i + 1;
-    const cells = results.map(r => plannerCell(r.result.roster[i]));
-    return `<tr class="pt-round-row">
-      <td class="pt-row-label">
-        <span class="pt-round-num">R${round}</span>
-        <span class="pt-round-pick">#${snakePicks[i]}</span>
-      </td>
-      ${cells.join('')}
-    </tr>`;
-  }).join('');
-
-  // Build lineup rows — one row per slot
-  const slotOrder = ['QB','RB','RB','WR','WR','TE','FLEX','K','DEF'];
-  const lineupRows = slotOrder.map((slot, i) => {
-    const cells = results.map(r => plannerCell(r.result.lineup[i]));
-    return `<tr class="pt-lineup-row">
-      <td class="pt-row-label"><span class="planner-slot-label">${slot}</span></td>
-      ${cells.join('')}
-    </tr>`;
-  }).join('');
-
-  // Total footer — best + avg per strategy column (10 MC runs)
-  const totalFooter = `<tfoot>
-    <tr class="pt-total-row">
-      <td class="pt-row-label"><span class="pt-total-label">PROJ PTS</span></td>
-      ${results.map(r => `<td class="pt-total-cell${r === best ? ' pt-best' : ''}">
-        <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
-          <span style="font-size:10px;color:var(--text3);font-weight:500;text-transform:uppercase;letter-spacing:.5px">best run</span>
-          <span class="pt-total-num">${r.bestProj.toFixed(0)}</span>
-          <span style="font-size:10px;color:var(--text3);font-weight:500;text-transform:uppercase;letter-spacing:.5px">avg (50 runs)</span>
-          <span style="font-size:18px;color:var(--text1);font-weight:800">${r.avgProj.toFixed(0)}</span>
-          <span style="font-size:10px;color:var(--text3);font-weight:500;text-transform:uppercase;letter-spacing:.5px;margin-top:2px">floor (worst run)</span>
-          <span style="font-size:13px;color:var(--red);font-weight:700">${r.floorProj.toFixed(0)}</span>
-          ${r === best ? '<span class="planner-winner-badge" style="margin-top:3px">⚡ Best</span>' : ''}
-        </div>
-      </td>`).join('')}
-    </tr>
-  </tfoot>`;
-
-  // Build insight callouts
-  const insights = [];
-
-  // Any non-winner whose best run beats the winner's avg
-  results.slice(1).forEach(r => {
-    if (r.bestProj > best.avgProj) {
-      const diff = (r.bestProj - best.avgProj).toFixed(0);
-      insights.push({
-        icon: '⚡',
-        color: '#f59e0b',
-        bg: 'rgba(245,158,11,0.08)',
-        border: 'rgba(245,158,11,0.3)',
-        text: `<strong>${r.strategy.name}</strong>'s best run (<strong>${r.bestProj.toFixed(0)} pts</strong>) beat the winner's avg of <strong>${best.avgProj.toFixed(0)} pts</strong> by <strong>+${diff}</strong> — high upside, inconsistent floor.`,
-      });
-    }
-  });
-
-  // Largest avg gap between 1st and 2nd place
-  if (results.length >= 2) {
-    const gap = results[0].avgProj - results[1].avgProj;
-    if (gap >= 10) {
-      insights.push({
-        icon: '🏆',
-        color: '#22c55e',
-        bg: 'rgba(34,197,94,0.07)',
-        border: 'rgba(34,197,94,0.25)',
-        text: `<strong>${results[0].strategy.name}</strong> leads by <strong>+${gap.toFixed(0)} avg pts</strong> over the next best strategy — a dominant result across all 10 simulations.`,
-      });
-    }
-  }
-
-  // Strategy where best and avg are close (consistent = tight range)
-  results.forEach(r => {
-    const spread = r.bestProj - r.avgProj;
-    if (spread <= 5 && spread >= 0) {
-      insights.push({
-        icon: '🎯',
-        color: '#6366f1',
-        bg: 'rgba(99,102,241,0.07)',
-        border: 'rgba(99,102,241,0.25)',
-        text: `<strong>${r.strategy.name}</strong> is highly consistent — best run is only <strong>${spread.toFixed(0)} pts</strong> above its avg, meaning little variance across simulations.`,
-      });
-    }
-  });
-
-  const insightHtml = insights.length ? `
-    <div style="margin-top:16px;display:flex;flex-direction:column;gap:8px">
-      <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.7px;margin-bottom:2px">📊 Sim Insights</div>
-      ${insights.map(ins => `
-        <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 14px;background:${ins.bg};border:1px solid ${ins.border};border-radius:8px;font-size:12px;line-height:1.5;color:var(--text2)">
-          <span style="font-size:15px;flex-shrink:0;margin-top:1px">${ins.icon}</span>
-          <span>${ins.text}</span>
-        </div>`).join('')}
-    </div>` : '';
-
-  container.innerHTML = `
-    <div style="margin-bottom:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-      <div style="font-size:12px;font-weight:700;color:var(--text2)">
-        📍 Pick ${pick} of ${leagueSize} &nbsp;·&nbsp;
-        <span style="color:var(--text3);font-family:var(--mono);font-size:11px">
-          Snake picks: ${snakePicks.join(', ')}
-        </span>
-        &nbsp;·&nbsp;
-        <span style="color:var(--accent);font-size:11px;font-weight:600">🎲 50 simulations / strategy — roster shown is best run</span>
-      </div>
-    </div>
-    <div class="pt-wrap">
-      <table class="pt-table">
-        <thead>
-          <tr>
-            <th class="pt-th-label"></th>
-            ${results.map(r => `<th class="pt-th${r === best ? ' pt-th-best' : ''}">
-              <div class="planner-strategy-name">${r.strategy.name}</div>
-              <div style="font-size:10px;color:var(--text3);font-weight:400;margin-top:2px">${r.strategy.desc}</div>
-            </th>`).join('')}
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="pt-section-header"><td colspan="${results.length + 1}" class="pt-section-label">Draft Picks</td></tr>
-          ${roundRows}
-          <tr class="pt-section-header"><td colspan="${results.length + 1}" class="pt-section-label">Starting Lineup</td></tr>
-          ${lineupRows}
-        </tbody>
-        ${totalFooter}
-      </table>
-    </div>
-    ${insightHtml}`;
-}
-
-// ── END DRAFT PLANNER ─────────────────────────────────────────────────────
-
-// ── RANKINGS TAB ──────────────────────────────────────────────────────────────
-
-// DS tier data extracted from mock draft results (Overall Tier / Pos. Tier)
-
-const RANK_TAGS_KEY = 'rankingsTags_v1';
-let rankTagMap = (() => {
-  try { return JSON.parse(localStorage.getItem(RANK_TAGS_KEY) || '{}'); }
-  catch(e) { return {}; }
-})();
-
-function persistRankTags() {
-  try { localStorage.setItem(RANK_TAGS_KEY, JSON.stringify(rankTagMap)); } catch(e) {}
-}
-
-// Sets a player's draft-strategy tag (mustget/target/avoid). Currently only
-// consumed by the Draft Planner's scoring logic (plannerFindBest,
-// findTaggedReachPlayer) — there's no dedicated tagging UI yet since the old
-// Rankings tab (which provided one) was removed along with the hardcoded
-// Draft Sharks data it depended on. A live-data tagging UI is a candidate
-// for a future pass.
-function setPlayerTag(name, tag) {
-  if (rankTagMap[name] === tag) {
-    delete rankTagMap[name]; // click same tag again = remove it
-  } else {
-    rankTagMap[name] = tag;
-  }
-  persistRankTags();
-}
-
 </script>
 </body>
 </html>
