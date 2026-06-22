@@ -1513,11 +1513,43 @@
         </div>
 
         <!-- Draft Strategy Card -->
-        <div id="mockStrategyCard" style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:0">
           <div class="t3 fs9 fw7 caps" style="letter-spacing:.09em;margin-bottom:10px">📋 Draft Strategy</div>
           <div id="mockStrategyContent" class="t3 fs11" style="line-height:1.7">
             Select your draft slot to generate a personalized strategy.
           </div>
+        </div>
+      </div>
+
+      <!-- Draft Strategy Simulator -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+          <div>
+            <div class="t3 fs9 fw7 caps" style="letter-spacing:.09em;margin-bottom:2px">🎲 Draft Strategy Simulator</div>
+            <div class="t3 fs10">Select strategies to compare, then run Monte Carlo. Each strategy simulates 50 drafts — results show the most likely roster you'd land.</div>
+          </div>
+          <button onclick="runStrategySimulator()" id="mockSimRunBtn"
+            style="background:var(--blue);color:#fff;border:none;border-radius:8px;padding:9px 20px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--sans);white-space:nowrap;opacity:0.4;pointer-events:none">
+            ⚡ Run Sim
+          </button>
+        </div>
+
+        <!-- Strategy chips -->
+        <div id="mockSimChips" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px"></div>
+
+        <!-- Loading state -->
+        <div id="mockSimLoading" style="display:none;text-align:center;padding:24px">
+          <div class="t3 fs11" id="mockSimLoadingText">Running simulations…</div>
+          <div style="margin-top:10px;height:4px;background:var(--surface2);border-radius:2px;overflow:hidden;max-width:300px;margin-left:auto;margin-right:auto">
+            <div id="mockSimProgressBar" style="height:100%;background:var(--blue);width:0%;transition:width 0.2s;border-radius:2px"></div>
+          </div>
+        </div>
+
+        <!-- Results -->
+        <div id="mockSimResults" style="display:none"></div>
+
+        <div id="mockSimPlaceholder" class="t3 fs10 tac" style="padding:16px;color:var(--text3)">
+          Select your draft slot above, then choose strategies to compare.
         </div>
       </div>
 
@@ -11176,6 +11208,10 @@ function initMockDraftTab() {
     // silently fall back to adp-only note
   }
   updateMockModeNote();
+
+  // Build strategy simulator chips
+  buildSimChips();
+  updateSimRunBtn();
 }
 
 function setMockMode(mode) {
@@ -11462,6 +11498,7 @@ function onMockSlotChange() {
 }
 
 // ── Draft Strategy Generator ───────────────────────────────────────────────
+// ── Rich Draft Strategy Card ───────────────────────────────────────────────
 function generateDraftStrategy() {
   const el = document.getElementById('mockStrategyContent');
   if (!el) return;
@@ -11469,85 +11506,753 @@ function generateDraftStrategy() {
   const slot = mockState.mySlot;
   if (!slot) return;
 
-  const adpPlayers = Object.values(adpCache).flat();
-  const hasAdp = adpPlayers.length > 0;
+  const pool    = adpCache[SCORING] || adpCache['half'] || [];
+  const hasAdp  = pool.length > 0;
   const hasTend = !!(espnData?.history?.length);
 
-  // Slot tier
-  const slotTier = slot <= 4 ? 'early' : slot <= 8 ? 'mid' : slot <= 11 ? 'late-mid' : 'late';
-  const slotDesc = {
-    early:     'top-4 pick',
-    mid:       'middle pick',
-    'late-mid':'late-middle pick',
-    late:      'late pick (great for zero-RB or late QB strategies)',
-  }[slotTier];
-
-  // Pick numbers across rounds (snake)
-  const myPicks = [];
+  // ── Pick numbers across all rounds ───────────────────────────────────────
+  const myPickNums = [];
   for (let r = 0; r < mockState.mockRounds; r++) {
     const snakeSlot = r % 2 === 0 ? slot : (TEAMS + 1 - slot);
-    const overall   = r * TEAMS + snakeSlot;
-    myPicks.push({ round: r + 1, overall, snakeSlot });
+    myPickNums.push({ round: r + 1, overall: r * TEAMS + snakeSlot });
   }
 
-  // League tendency by round for key positions
-  const leagueTend = {};
+  // Turn pairs: consecutive picks (end of one round + start of the next)
+  const turnPairs = [];
+  for (let i = 0; i < myPickNums.length - 1; i++) {
+    const gap = myPickNums[i + 1].overall - myPickNums[i].overall;
+    if (gap <= TEAMS + 2) turnPairs.push([myPickNums[i], myPickNums[i + 1]]);
+  }
+
+  // ── Slot classification ───────────────────────────────────────────────────
+  const slotTier = slot <= 3 ? 'top-3' : slot <= 6 ? 'early-mid' : slot <= 9 ? 'late-mid' : slot <= 11 ? 'late' : 'tail';
+  const slotLabel = { 'top-3':'top-3 pick', 'early-mid':'early-middle pick', 'late-mid':'late-middle pick', 'late':'late pick', 'tail':'tail pick' }[slotTier];
+
+  // ── League tendency by round ──────────────────────────────────────────────
+  const tend = {};
   if (hasTend) {
-    ['QB','RB','WR','TE'].forEach(pos => {
-      leagueTend[pos] = POS_DATA?.[pos]?.leagueTendency || {};
+    ['QB','RB','WR','TE','K','DEF'].forEach(pos => {
+      tend[pos] = POS_DATA?.[pos]?.leagueTendency || {};
     });
   }
 
-  // Build strategy lines
-  const lines = [];
+  // ── ADP value analysis: what positions have positive VOLS at each of my picks
+  const pickInsights = [];
+  if (hasAdp) {
+    myPickNums.slice(0, 8).forEach(({ round, overall }) => {
+      // Players available around this pick (±3 ADP)
+      const nearby = pool.filter(p => Math.abs(p.adp - overall) <= 4);
+      const byPos  = {};
+      nearby.forEach(p => {
+        const pos = p.pos === 'DST' ? 'DEF' : p.pos;
+        if (!byPos[pos]) byPos[pos] = [];
+        byPos[pos].push(p);
+      });
+      const topPos = Object.entries(byPos)
+        .filter(([pos]) => ['RB','WR','QB','TE'].includes(pos))
+        .map(([pos, players]) => ({ pos, name: players[0]?.name, adp: players[0]?.adp }))
+        .sort((a, b) => a.adp - b.adp)
+        .slice(0, 2);
+      if (topPos.length) pickInsights.push({ round, overall, topPos });
+    });
+  }
 
-  // Round 1 read
-  const r1tend = hasTend
-    ? (['RB','WR','TE','QB'].map(p => ({ p, t: leagueTend[p]?.[1] || 0 })).sort((a,b) => b.t - a.t))
-    : [];
-  const r1top = r1tend[0];
-  if (r1top && r1top.t >= 30) {
-    lines.push(`Your league floods <strong>${r1top.p}</strong> in round 1 (~${r1top.t}% of picks). With a ${slotDesc}, expect most elite ${r1top.p}s gone by your turn — target the best available ${r1top.p === 'RB' ? 'WR/RB' : 'RB/WR'} by ADP.`);
+  // ── QB scarcity threshold ─────────────────────────────────────────────────
+  const qbScarcityPick = (() => {
+    const qbs = pool.filter(p => p.pos === 'QB').sort((a, b) => a.adp - b.adp);
+    const qb5 = qbs[4]; // 5th QB off the board
+    return qb5 ? Math.round(qb5.adp) : null;
+  })();
+
+  // ── TE premium threshold ──────────────────────────────────────────────────
+  const tePremiumPick = (() => {
+    const tes = pool.filter(p => p.pos === 'TE').sort((a, b) => a.adp - b.adp);
+    const te3 = tes[2]; // cliff after top-2 TEs
+    return te3 ? Math.round(te3.adp) : null;
+  })();
+
+  // ── Build HTML sections ───────────────────────────────────────────────────
+  const POS_C = { QB:'#FF6B6B', RB:'#00D26A', WR:'#4A90E2', TE:'#F5A623' };
+  const posPill = (pos) => `<span style="font-size:9px;font-weight:700;color:${POS_C[pos]||'var(--text3)'};background:${POS_C[pos]||'#fff'}1A;border:1px solid ${POS_C[pos]||'#fff'}44;padding:1px 6px;border-radius:3px">${pos}</span>`;
+
+  let html = '';
+
+  // — Pick slate header —
+  const pickNums = myPickNums.map(p => p.overall);
+  const turnStr  = turnPairs.length ? ` · Turn pairs: <strong class="t1">${turnPairs.map(([a,b]) => `${a.overall}+${b.overall}`).join(', ')}</strong>` : '';
+  html += `<div style="background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:10px 12px;margin-bottom:10px">
+    <div class="t3 fs9 fw7 caps" style="letter-spacing:.07em;margin-bottom:4px">Your Picks (Slot ${slot} of ${TEAMS})</div>
+    <div class="mono t2 fs10" style="line-height:1.8">${pickNums.join(' · ')}${turnStr}</div>
+  </div>`;
+
+  // — Slot-specific opener —
+  const slotAdvice = {
+    'top-3':      `With a <strong>${slotLabel}</strong> you control the draft. You'll land one of the top-3 RBs or WRs by ADP — your round 2 pick at <strong>${myPickNums[1]?.overall}</strong> is the real decision point. Two elite skill players in rounds 1–2 sets your ceiling.`,
+    'early-mid':  `A <strong>${slotLabel}</strong> gives you flexibility — the top RBs and WRs thin out by pick ${slot}, but your turn pair at <strong>${myPickNums[0]?.overall}+${myPickNums[1]?.overall}</strong> means you can plan ahead. Target the best available in round 1, then fill the positional gap in round 2.`,
+    'late-mid':   `From a <strong>${slotLabel}</strong>, your round 1 value depends on who falls. Your turn pair at <strong>${myPickNums[0]?.overall}+${myPickNums[1]?.overall}</strong> is your biggest advantage — back-to-back picks let you stack complementary positions. Plan both picks together.`,
+    'late':       `A <strong>${slotLabel}</strong> at pick ${slot} means the top RBs are gone — but you get two picks before anyone else with your turn pair at <strong>${myPickNums[0]?.overall}+${myPickNums[1]?.overall}</strong>. Zero RB and Strong WR strategies thrive here. Stack WRs early, flood skill position depth.`,
+    'tail':       `The <strong>${slotLabel}</strong> (pick ${slot}) is an underrated position — your back-to-back turn at <strong>${myPickNums[0]?.overall}+${myPickNums[1]?.overall}</strong> gives you two immediate picks. Zero RB is highly viable; target the top WRs and use the turn to grab your best RB option.`,
+  }[slotTier];
+  html += `<div style="margin-bottom:10px;padding:10px 12px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--blue)">${slotAdvice}</div>`;
+
+  // — Round-by-round value windows (first 6 picks) —
+  if (pickInsights.length) {
+    html += `<div style="margin-bottom:10px">
+      <div class="t3 fs9 fw7 caps" style="letter-spacing:.07em;margin-bottom:6px">Value Windows at Your Picks</div>`;
+    pickInsights.forEach(({ round, overall, topPos }) => {
+      const tendStr = hasTend
+        ? ` <span class="t3" style="font-size:9px">· Lg: ${['RB','WR','QB','TE'].map(p => tend[p]?.[round] >= 15 ? `${p} ${tend[p][round]}%` : null).filter(Boolean).join(', ') || '—'}</span>`
+        : '';
+      html += `<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border)">
+        <span class="mono t3 fs9" style="min-width:56px">Rd${round} · ${overall}</span>
+        <span>${topPos.map(p => `${posPill(p.pos)} <span class="t2 fs10">${p.name?.split(' ').slice(-1)[0]||''}</span>`).join(' ')}</span>
+        ${tendStr}
+      </div>`;
+    });
+    html += `</div>`;
+  }
+
+  // — Key thresholds —
+  const thresholds = [];
+  if (qbScarcityPick) thresholds.push(`⚡ <strong>QB cliff</strong> around pick <strong>${qbScarcityPick}</strong> — QB5 goes here. Wait until ${qbScarcityPick <= myPickNums[3]?.overall ? 'round 4–5' : 'rounds 6–8'} unless a top-3 QB falls.`);
+  if (tePremiumPick)  thresholds.push(`📍 <strong>TE premium</strong> ends at pick ~<strong>${tePremiumPick}</strong>. After TE3, it's streaming territory — either grab one of the top-2 early or wait until round 7+.`);
+  if (thresholds.length) {
+    html += `<div style="margin-bottom:10px">
+      <div class="t3 fs9 fw7 caps" style="letter-spacing:.07em;margin-bottom:6px">Key Thresholds</div>
+      ${thresholds.map(t => `<div style="font-size:10px;line-height:1.6;margin-bottom:5px;padding:7px 10px;background:var(--surface2);border-radius:6px">${t}</div>`).join('')}
+    </div>`;
+  }
+
+  // — League tendency signals —
+  if (hasTend) {
+    const signals = [];
+    // TE run
+    const teTend = [3,4,5].map(r => tend['TE']?.[r] || 0);
+    const peakTERound = teTend.indexOf(Math.max(...teTend)) + 3;
+    const peakTE = Math.max(...teTend);
+    if (peakTE >= 20) signals.push(`⚠️ <strong>TE run</strong> in round ${peakTERound} (~${peakTE}% of picks). Grab a premium TE before then or plan to stream.`);
+    // QB timing
+    const qbEarly = (tend['QB']?.[2] || 0) + (tend['QB']?.[3] || 0);
+    if (qbEarly >= 25) signals.push(`🏈 <strong>Early QB</strong> culture — ~${Math.round(qbEarly/2)}% of rounds 2–3 go QB. Consider whether you want to compete for one or exploit the positional value gap.`);
+    else signals.push(`⏳ <strong>Late QB</strong> market — your leaguemates wait on QB. Rounds 5–7 still yield solid starters with VOLS upside.`);
+    // K/DEF drain
+    const kRound = [10,11,12,13].find(r => (tend['K']?.[r] || 0) >= 20) || null;
+    if (kRound) signals.push(`🎯 K/DEF typically go rounds ${kRound}–${kRound+1} in your league. Don't reach earlier.`);
+
+    if (signals.length) {
+      html += `<div style="margin-bottom:6px">
+        <div class="t3 fs9 fw7 caps" style="letter-spacing:.07em;margin-bottom:6px">League Tendency Signals</div>
+        ${signals.map(s => `<div style="font-size:10px;line-height:1.6;margin-bottom:5px;padding:7px 10px;background:rgba(74,144,226,0.06);border:1px solid rgba(74,144,226,0.18);border-radius:6px">${s}</div>`).join('')}
+      </div>`;
+    }
   } else {
-    lines.push(`From slot ${slot}, you have a ${slotDesc}. Prioritize the single best player available by ADP — round 1 should always be BPA (Best Player Available).`);
+    html += `<div style="font-size:10px;padding:7px 10px;background:rgba(74,144,226,0.06);border:1px solid rgba(74,144,226,0.18);border-radius:6px;margin-bottom:6px">
+      <span style="color:#4A90E2">💡 Sync your ESPN league</span> to unlock tendency signals — when your leaguemates run on TEs, how early QBs go, and more.
+    </div>`;
   }
 
-  // Rounds 2-3 read
-  const r2tend = hasTend
-    ? (['RB','WR','TE','QB'].map(p => ({ p, t: leagueTend[p]?.[2] || 0 })).sort((a,b) => b.t - a.t))
-    : [];
-  if (r2tend[0]?.t >= 35) {
-    lines.push(`Rounds 2–3: your league runs heavy <strong>${r2tend[0].p}</strong> (~${r2tend[0].t}% in round 2). If you waited at ${r2tend[0].p} in round 1, this is your window — they dry up fast.`);
-  } else {
-    lines.push(`Rounds 2–3: continue stacking skill positions. RBs and WRs with high VOLS are the priority — check the ADP table for green VOLS numbers.`);
+  el.innerHTML = html;
+
+  // Also update sim run button state
+  updateSimRunBtn();
+}
+
+// ── Strategy Simulator ────────────────────────────────────────────────────────
+
+const MOCK_STRATEGIES = [
+  {
+    key: 'balanced',
+    name: 'Balanced',
+    desc: 'BPA each round, no positional lock',
+    color: '#8A9BB5',
+    isBalanced: true,
+  },
+  {
+    key: 'strongRB',
+    name: 'Heavy RB',
+    desc: 'Lock RB rounds 1–3, pivot WR rounds 4–6',
+    color: '#00D26A',
+    isStrong: true, primaryPos: 'RB', secondaryPos: 'WR',
+  },
+  {
+    key: 'heroRB',
+    name: 'Hero RB',
+    desc: 'Elite RB round 1, WR rounds 2–5, flood RB round 6+',
+    color: '#00A854',
+    isHero: true, primaryEarly: 'RB', secondaryEarly: 'WR', primaryLate: 'RB',
+  },
+  {
+    key: 'zeroRB',
+    name: 'Zero RB',
+    desc: 'No RB rounds 1–5, flood RB from round 6',
+    color: '#FF6B6B',
+    isFlood: true, bannedEarly: 'RB', floodPos: 'RB',
+  },
+  {
+    key: 'strongWR',
+    name: 'Heavy WR',
+    desc: 'Lock WR rounds 1–3, pivot RB rounds 4–6',
+    color: '#4A90E2',
+    isStrong: true, primaryPos: 'WR', secondaryPos: 'RB',
+  },
+  {
+    key: 'zeroWR',
+    name: 'Zero WR',
+    desc: 'No WR rounds 1–5, flood WR from round 6',
+    color: '#F5A623',
+    isFlood: true, bannedEarly: 'WR', floodPos: 'WR',
+  },
+  {
+    key: 'earlyQB',
+    name: 'Early QB',
+    desc: 'Lock elite QB by round 3, build around them',
+    color: '#A78BFA',
+    isEarlyQB: true,
+  },
+];
+
+let mockSimEnabled = new Set(['balanced','strongRB','heroRB','zeroRB','strongWR']);
+
+function buildSimChips() {
+  const wrap = document.getElementById('mockSimChips');
+  if (!wrap) return;
+  wrap.innerHTML = MOCK_STRATEGIES.map(s => {
+    const on = mockSimEnabled.has(s.key);
+    return `<button onclick="toggleSimStrategy('${s.key}')" id="simChip_${s.key}"
+      title="${s.desc}"
+      style="padding:5px 12px;border-radius:16px;font-size:11px;font-weight:600;cursor:pointer;font-family:var(--sans);
+             border:1px solid ${on ? s.color : 'var(--border2)'};
+             background:${on ? s.color+'22' : 'var(--surface2)'};
+             color:${on ? s.color : 'var(--text3)'};
+             transition:all .15s">
+      ${s.name}
+    </button>`;
+  }).join('');
+}
+
+function toggleSimStrategy(key) {
+  if (mockSimEnabled.has(key)) mockSimEnabled.delete(key);
+  else mockSimEnabled.add(key);
+  buildSimChips();
+  updateSimRunBtn();
+}
+
+function updateSimRunBtn() {
+  const btn = document.getElementById('mockSimRunBtn');
+  if (!btn) return;
+  const hasSlot = !!mockState.mySlot;
+  const hasPool = (adpCache[SCORING] || adpCache['half'] || []).length > 0;
+  const hasStrat = mockSimEnabled.size > 0;
+  const ready = hasSlot && hasPool && hasStrat;
+  btn.style.opacity       = ready ? '1' : '0.4';
+  btn.style.pointerEvents = ready ? 'auto' : 'none';
+  const ph = document.getElementById('mockSimPlaceholder');
+  if (ph) ph.style.display = ready ? 'none' : 'block';
+}
+
+// ── Gaussian random (Box-Muller) ──────────────────────────────────────────
+function simGaussian(mean = 0, sd = 1) {
+  let u, v;
+  do { u = Math.random(); } while (u === 0);
+  do { v = Math.random(); } while (v === 0);
+  return mean + sd * Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+}
+
+// ── Randomize ADP pool with rank noise ────────────────────────────────────
+// SD scales with ADP — early picks have tighter consensus, late picks vary more
+function simRandomizePool(pool) {
+  return pool
+    .map(p => {
+      const sd = Math.max(2, p.adp * 0.12);
+      return { ...p, simAdp: Math.max(1, p.adp + simGaussian(0, sd)) };
+    })
+    .sort((a, b) => a.simAdp - b.simAdp);
+}
+
+// ── Find best available at position(s) from a randomized pool ─────────────
+function simFindBest(pool, draftedNames, positions) {
+  const posArr = Array.isArray(positions) ? positions : [positions];
+  return pool.find(p => {
+    const pos = p.pos === 'DST' ? 'DEF' : p.pos;
+    return !draftedNames.has(p.name) && posArr.includes(pos);
+  }) || null;
+}
+
+function simFindBestDynamic(pool, draftedNames, eligible) {
+  return pool.find(p => {
+    const pos = p.pos === 'DST' ? 'DEF' : p.pos;
+    return !draftedNames.has(p.name) && eligible.includes(pos);
+  }) || null;
+}
+
+// ── Drain opponent picks between user picks ───────────────────────────────
+function simDrainOpponents(fromPick, toPick, pool, draftedNames, numTeams) {
+  const round10Start = 9 * numTeams + 1;
+  for (let pick = fromPick + 1; pick < toPick; pick++) {
+    const bpa = pool.find(p => {
+      const pos = p.pos === 'DST' ? 'DEF' : p.pos;
+      const allowKDef = pick >= round10Start;
+      if (!allowKDef && (pos === 'K' || pos === 'DEF')) return false;
+      return !draftedNames.has(p.name);
+    });
+    if (bpa) draftedNames.add(bpa.name);
+  }
+}
+
+// ── Snake pick number for a given round + slot ────────────────────────────
+function simSnakePick(round, draftPos, numTeams) {
+  return round % 2 === 1
+    ? (round - 1) * numTeams + draftPos
+    : round * numTeams - draftPos + 1;
+}
+
+// ── Run one draft simulation for a strategy ───────────────────────────────
+function simRunOne(draftPos, numTeams, numRounds, strategy, pool) {
+  const draftedNames = new Set();
+  const roster       = [];
+  let lastUserPick   = 0;
+  let earlyOnzieDone = false;
+  let lateOnzieDone  = false;
+
+  for (let round = 1; round <= numRounds; round++) {
+    const overall = simSnakePick(round, draftPos, numTeams);
+    simDrainOpponents(lastUserPick, overall, pool, draftedNames, numTeams);
+    lastUserPick = overall;
+
+    const hasQB  = roster.some(p => p.pos === 'QB');
+    const hasTE  = roster.some(p => p.pos === 'TE');
+    const hasK   = roster.some(p => p.pos === 'K');
+    const hasDEF = roster.some(p => p.pos === 'DEF');
+
+    // Tags: 🔥 must-get reach — if a tagged player is within reach, grab them
+    const taggedReach = (() => {
+      const window = numTeams;
+      return pool.find(p =>
+        !draftedNames.has(p.name) &&
+        (rankTagMap[p.name] === 'mustget') &&
+        overall >= (p.simAdp || p.adp) - window
+      ) || null;
+    })();
+    if (taggedReach) {
+      draftedNames.add(taggedReach.name);
+      roster.push({ ...taggedReach, round, overall, pos: taggedReach.pos === 'DST' ? 'DEF' : taggedReach.pos });
+      continue;
+    }
+
+    // K/DEF late override
+    if (!hasK   && round >= 13) { const p = simFindBest(pool, draftedNames, ['K']);   if (p) { draftedNames.add(p.name); roster.push({ ...p, round, overall, pos: 'K' });   continue; } }
+    if (!hasDEF && round >= 14) { const p = simFindBest(pool, draftedNames, ['DEF']); if (p) { draftedNames.add(p.name); roster.push({ ...p, round, overall, pos: 'DEF' }); continue; } }
+
+    let picked = null;
+
+    if (strategy.isEarlyQB) {
+      // ── Early QB ─────────────────────────────────────────────────────────
+      if (!hasQB && round <= 3) {
+        picked = simFindBest(pool, draftedNames, ['QB']);
+      } else if (round <= 7) {
+        const eligible = ['RB','WR'].concat(!hasTE ? ['TE'] : []);
+        picked = simFindBestDynamic(pool, draftedNames, eligible);
+      } else {
+        const eligible = ['RB','WR','TE'].concat(!hasQB ? ['QB'] : []);
+        picked = simFindBestDynamic(pool, draftedNames, eligible);
+      }
+
+    } else if (strategy.isHero) {
+      // ── Hero RB / Hero WR ─────────────────────────────────────────────────
+      const neededOnzie = !hasQB ? 'QB' : 'TE';
+      if (round === 1) {
+        picked = simFindBest(pool, draftedNames, [strategy.primaryEarly]);
+      } else if (round <= 5) {
+        if (!earlyOnzieDone) {
+          const bestSec   = simFindBest(pool, draftedNames, [strategy.secondaryEarly]);
+          const bestOnzie = simFindBestDynamic(pool, draftedNames, ['QB','TE'].filter(p => !(p==='QB'&&hasQB) && !(p==='TE'&&hasTE)));
+          if (round === 5 && (!hasQB || !hasTE)) { picked = bestOnzie; earlyOnzieDone = true; }
+          else if (bestOnzie && bestSec && (bestOnzie.proj||0) >= (bestSec.proj||0)) { picked = bestOnzie; earlyOnzieDone = true; }
+          else picked = bestSec;
+        } else {
+          picked = simFindBest(pool, draftedNames, [strategy.secondaryEarly]);
+        }
+      } else if (round === 6) {
+        picked = simFindBest(pool, draftedNames, [strategy.primaryLate]);
+      } else {
+        if (!lateOnzieDone && (!hasQB || !hasTE)) {
+          const bestPrimary = simFindBest(pool, draftedNames, [strategy.primaryLate]);
+          const bestOnzie   = simFindBest(pool, draftedNames, [neededOnzie]);
+          if (round >= 9 || (bestOnzie && bestPrimary && (bestOnzie.proj||0) >= (bestPrimary.proj||0))) {
+            picked = bestOnzie; lateOnzieDone = true;
+          } else picked = bestPrimary;
+        } else {
+          picked = simFindBest(pool, draftedNames, [strategy.primaryLate]);
+        }
+      }
+
+    } else if (strategy.isStrong) {
+      // ── Strong RB / Strong WR ─────────────────────────────────────────────
+      const secCount    = roster.filter(p => p.pos === strategy.secondaryPos).length;
+      const neededOnzie = !hasQB ? 'QB' : 'TE';
+      const onzieElg    = ['QB','TE'].filter(p => !(p==='QB'&&hasQB) && !(p==='TE'&&hasTE));
+      if (round <= 3) {
+        picked = simFindBest(pool, draftedNames, [strategy.primaryPos]);
+      } else if (round <= 5) {
+        const roundsLeft   = 5 - round + 1;
+        const onziesNeeded = (!hasQB ? 1 : 0) + (!hasTE ? 1 : 0);
+        if (onziesNeeded >= roundsLeft) {
+          picked = simFindBestDynamic(pool, draftedNames, onzieElg);
+        } else if (secCount === 0 && round === 5) {
+          picked = simFindBest(pool, draftedNames, [strategy.secondaryPos]);
+        } else {
+          const bestSec   = simFindBest(pool, draftedNames, [strategy.secondaryPos]);
+          const bestOnzie = onzieElg.length ? simFindBestDynamic(pool, draftedNames, onzieElg) : null;
+          picked = (bestOnzie && bestSec && (bestOnzie.proj||0) > (bestSec.proj||0)) ? bestOnzie : bestSec;
+        }
+      } else {
+        const bestSec   = simFindBest(pool, draftedNames, [strategy.secondaryPos]);
+        const bestOnzie = onzieElg.length ? simFindBestDynamic(pool, draftedNames, onzieElg) : null;
+        const bestPrim  = simFindBest(pool, draftedNames, [strategy.primaryPos]);
+        const forceOnzie = round === 10 && onzieElg.length > 0;
+        if (bestOnzie && (forceOnzie || (bestSec && (bestOnzie.proj||0) >= (bestSec.proj||0)))) {
+          picked = bestOnzie; lateOnzieDone = true;
+        } else if (secCount >= 3 && bestPrim && bestSec && (bestPrim.proj||0) > (bestSec.proj||0) * 1.1) {
+          picked = bestPrim;
+        } else {
+          picked = bestSec;
+        }
+      }
+
+    } else if (strategy.isFlood) {
+      // ── Zero RB / Zero WR ─────────────────────────────────────────────────
+      if (round <= 5) {
+        const eligible = ['QB','RB','WR','TE'].filter(p =>
+          p !== strategy.bannedEarly &&
+          !(p === 'QB' && hasQB) &&
+          !(p === 'TE' && hasTE)
+        );
+        const onziesNeeded = (!hasQB ? 1 : 0) + (!hasTE ? 1 : 0);
+        const roundsLeft   = 5 - round + 1;
+        if (onziesNeeded >= roundsLeft) {
+          const onzieElg = ['QB','TE'].filter(p => !(p==='QB'&&hasQB) && !(p==='TE'&&hasTE));
+          picked = simFindBestDynamic(pool, draftedNames, onzieElg);
+        } else {
+          picked = simFindBestDynamic(pool, draftedNames, eligible);
+        }
+      } else {
+        picked = simFindBest(pool, draftedNames, [strategy.floodPos]);
+      }
+
+    } else {
+      // ── Balanced BPA ──────────────────────────────────────────────────────
+      const eligible = ['QB','RB','WR','TE']
+        .filter(p => !(p === 'QB' && hasQB && roster.filter(r=>r.pos==='QB').length >= 1)
+                  && !(p === 'TE' && hasTE && roster.filter(r=>r.pos==='TE').length >= 1));
+      picked = simFindBestDynamic(pool, draftedNames, eligible);
+    }
+
+    // Fallback — something always gets drafted
+    if (!picked) {
+      picked = simFindBestDynamic(pool, draftedNames, ['RB','WR','QB','TE','K','DEF']);
+    }
+    if (picked) {
+      draftedNames.add(picked.name);
+      roster.push({ ...picked, round, overall, pos: picked.pos === 'DST' ? 'DEF' : picked.pos });
+    }
   }
 
-  // TE run warning
-  const teTend3 = leagueTend['TE']?.[3] || 0;
-  const teTend4 = leagueTend['TE']?.[4] || 0;
-  if (hasTend && (teTend3 + teTend4) >= 30) {
-    lines.push(`⚠️ TE run warning: your league historically grabs TE in rounds 3–4 (~${Math.round((teTend3+teTend4)/2)}% of picks). Consider grabbing one early or waiting for the round 7–9 value tier.`);
+  // Fill K and DEF if missing
+  ['K','DEF'].forEach(pos => {
+    if (!roster.some(p => p.pos === pos)) {
+      const p = simFindBest(pool, draftedNames, [pos]);
+      if (p) { draftedNames.add(p.name); roster.push({ ...p, round: mockState.mockRounds, overall: 999, pos }); }
+    }
+  });
+
+  return { roster, totalProj: calcOptimalLineupProj(roster.map(p => ({ ...p, proj: p.proj }))) };
+}
+
+// ── Run Monte Carlo for all enabled strategies ────────────────────────────
+async function runStrategySimulator() {
+  if (!mockState.mySlot) { showToast('Select your draft slot first'); return; }
+
+  const pool = adpCache[SCORING] || adpCache['half'] || [];
+  if (!pool.length) { showToast('Load ADP data first — go to Draft Map tab'); return; }
+
+  // Attach FP projections to pool
+  const enrichedPool = pool.map(p => {
+    const fp  = getFPProjection(p.name);
+    return { ...p, proj: fp?.fpts || p.adp ? Math.max(0, 300 - p.adp * 2) : 0 };
+  });
+
+  const strategies = MOCK_STRATEGIES.filter(s => mockSimEnabled.has(s.key));
+  const RUNS       = 50;
+
+  document.getElementById('mockSimResults').style.display  = 'none';
+  document.getElementById('mockSimLoading').style.display  = 'block';
+  document.getElementById('mockSimPlaceholder').style.display = 'none';
+
+  // Run async with progress updates
+  const results = [];
+  let done = 0;
+  const total = strategies.length * RUNS;
+
+  for (const strategy of strategies) {
+    let sumProj = 0;
+    let bestRun = null, worstRun = null;
+    const allRosters = [];
+
+    for (let i = 0; i < RUNS; i++) {
+      const board  = simRandomizePool(enrichedPool);
+      const result = simRunOne(mockState.mySlot, TEAMS, mockState.mockRounds, strategy, board);
+      sumProj += result.totalProj;
+      if (!bestRun  || result.totalProj > bestRun.totalProj)  bestRun  = result;
+      if (!worstRun || result.totalProj < worstRun.totalProj) worstRun = result;
+      allRosters.push(result.roster);
+      done++;
+
+      // Update progress bar every 10 runs
+      if (i % 10 === 0) {
+        const pct = Math.round((done / total) * 100);
+        const bar = document.getElementById('mockSimProgressBar');
+        const txt = document.getElementById('mockSimLoadingText');
+        if (bar) bar.style.width = pct + '%';
+        if (txt) txt.textContent = `Running ${strategy.name}… ${RUNS} sims each`;
+        await new Promise(r => setTimeout(r, 0)); // yield to browser
+      }
+    }
+
+    // Most common player per round across all runs
+    const medianRoster = buildMedianRoster(allRosters, mockState.mockRounds);
+
+    results.push({
+      strategy,
+      avgProj:   Math.round(sumProj / RUNS * 10) / 10,
+      bestProj:  Math.round(bestRun.totalProj * 10) / 10,
+      floorProj: Math.round(worstRun.totalProj * 10) / 10,
+      bestRun,
+      medianRoster,
+    });
   }
 
-  // QB note
-  const qbTend1 = leagueTend['QB']?.[1] || 0;
-  const qbTend2 = leagueTend['QB']?.[2] || 0;
-  if (hasTend && (qbTend1 + qbTend2) < 15) {
-    lines.push(`QBs: your league typically waits — less than ${Math.round((qbTend1+qbTend2)/2)}% of rounds 1–2 are QBs. You can safely target rounds 4–6 for a QB1 with VOLS upside.`);
-  } else if (hasTend && qbTend2 >= 20) {
-    lines.push(`QBs: your leaguemates jump early (~${qbTend2}% in round 2). Decide now whether you're going early QB (rounds 2–3) or streaming from round 7+.`);
-  } else {
-    lines.push(`QBs: consider mid rounds (4–6) unless a top-3 QB falls to you. In half-PPR, QB scarcity sets in quickly after the top 5.`);
+  // Sort by avg projected points descending
+  results.sort((a, b) => b.avgProj - a.avgProj);
+
+  document.getElementById('mockSimLoading').style.display  = 'none';
+  document.getElementById('mockSimResults').style.display  = 'block';
+
+  renderSimResults(results);
+}
+
+// ── Most common player per round across N rosters ─────────────────────────
+function buildMedianRoster(allRosters, numRounds) {
+  const byRound = {};
+  for (let r = 1; r <= numRounds; r++) byRound[r] = {};
+  allRosters.forEach(roster => {
+    roster.forEach(p => {
+      if (!byRound[p.round]) return;
+      byRound[p.round][p.name] = (byRound[p.round][p.name] || 0) + 1;
+    });
+  });
+  const median = [];
+  for (let r = 1; r <= numRounds; r++) {
+    const counts = byRound[r];
+    if (!Object.keys(counts).length) continue;
+    const topName = Object.entries(counts).sort((a, b) => b[1] - a[1])[0]?.[0];
+    const sample  = allRosters[0]?.find(p => p.round === r && p.name === topName)
+                 || allRosters.find(r2 => r2.find(p => p.name === topName))?.find(p => p.name === topName);
+    if (sample) median.push({ ...sample, freq: counts[topName], totalRuns: allRosters.length });
+  }
+  return median;
+}
+
+// ── Render simulator results ───────────────────────────────────────────────
+function renderSimResults(results) {
+  const container  = document.getElementById('mockSimResults');
+  const slot       = mockState.mySlot;
+  const snakePicks = [];
+  for (let r = 0; r < mockState.mockRounds; r++) {
+    const s = r % 2 === 0 ? slot : (TEAMS + 1 - slot);
+    snakePicks.push(r * TEAMS + s);
   }
 
-  // Late round wisdom
-  lines.push(`Rounds 10+: lock in a K and DEF late (rounds ${Math.min(14, mockState.mockRounds-2)}–${mockState.mockRounds}). Use middle rounds for upside RB/WR handcuffs and high-ceiling backups.`);
+  const best = results[0];
+  const POS_C = { QB:'#FF6B6B', RB:'#00D26A', WR:'#4A90E2', TE:'#F5A623', K:'#A78BFA', DEF:'#64748b' };
 
-  if (!hasTend) {
-    lines.push(`<span style="color:#4A90E2">💡 Sync your ESPN league to get tendency-driven advice specific to how YOUR leaguemates actually draft.</span>`);
+  const simPosBadge = (pos) => {
+    const c = POS_C[pos] || 'var(--text3)';
+    return `<span style="font-size:9px;font-weight:700;color:${c};background:${c}1A;border:1px solid ${c}44;padding:1px 5px;border-radius:3px;flex-shrink:0">${pos}</span>`;
+  };
+
+  // ── Summary stat cards ────────────────────────────────────────────────────
+  const statCards = results.map((r, idx) => {
+    const isWinner = idx === 0;
+    const border   = isWinner ? `border-color:${r.strategy.color}` : '';
+    return `<div style="background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:12px;${border}">
+      <div style="font-size:10px;font-weight:700;color:${r.strategy.color};margin-bottom:4px">${isWinner ? '🏆 ' : ''}${r.strategy.name}</div>
+      <div style="font-size:9px;color:var(--text3);margin-bottom:8px;line-height:1.4">${r.strategy.desc}</div>
+      <div style="display:flex;gap:10px">
+        <div style="text-align:center;flex:1">
+          <div class="mono fw7" style="font-size:16px;color:${isWinner?r.strategy.color:'var(--text1)'}">${r.avgProj}</div>
+          <div class="t3 fs8">Avg Pts</div>
+        </div>
+        <div style="text-align:center;flex:1">
+          <div class="mono" style="font-size:13px;color:var(--green)">${r.bestProj}</div>
+          <div class="t3 fs8">Ceiling</div>
+        </div>
+        <div style="text-align:center;flex:1">
+          <div class="mono" style="font-size:13px;color:var(--red)">${r.floorProj}</div>
+          <div class="t3 fs8">Floor</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // ── Round-by-round table ──────────────────────────────────────────────────
+  const numRounds = mockState.mockRounds;
+  const roundRows = Array.from({ length: numRounds }, (_, i) => {
+    const round = i + 1;
+    const pick  = snakePicks[i];
+    const cells = results.map(r => {
+      const p = r.medianRoster.find(mp => mp.round === round);
+      if (!p) return `<td style="padding:6px 8px;border-bottom:1px solid var(--border);text-align:center"><span class="t3 fs9">—</span></td>`;
+      const tag      = rankTagMap[p.name] || '';
+      const tagEmoji = tag === 'mustget' ? '🔥' : tag === 'target' ? '🎯' : tag === 'avoid' ? '🚫' : '';
+      const freq     = Math.round((p.freq / p.totalRuns) * 100);
+      const freqColor = freq >= 60 ? 'var(--green)' : freq >= 35 ? 'var(--amber)' : 'var(--text3)';
+      return `<td style="padding:6px 8px;border-bottom:1px solid var(--border)">
+        <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap">
+          ${simPosBadge(p.pos)}
+          <span class="t1 fs10 fw6" style="flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${tagEmoji}${p.name}</span>
+        </div>
+        <div style="display:flex;gap:6px;margin-top:2px;align-items:center">
+          <span class="t3 mono fs8">${p.proj ? Math.round(p.proj)+'pts' : ''}</span>
+          <span class="mono fs8" style="color:${freqColor}">${freq}%</span>
+        </div>
+      </td>`;
+    }).join('');
+    const isMyTurn = pick !== undefined;
+    return `<tr style="background:${isMyTurn?'rgba(0,210,106,0.03)':'transparent'}">
+      <td style="padding:6px 8px;border-bottom:1px solid var(--border);white-space:nowrap">
+        <span class="mono t3 fs9">Rd${round}</span>
+        <span class="mono t3 fs8" style="margin-left:4px;color:var(--green)">·${pick}</span>
+      </td>
+      ${cells}
+    </tr>`;
+  }).join('');
+
+  // ── Starters summary rows ─────────────────────────────────────────────────
+  const LINEUP_SLOTS = [
+    { label:'QB',   pos:['QB'],         count:1 },
+    { label:'RB1',  pos:['RB'],         count:1 },
+    { label:'RB2',  pos:['RB'],         count:2 },
+    { label:'WR1',  pos:['WR'],         count:1 },
+    { label:'WR2',  pos:['WR'],         count:2 },
+    { label:'TE',   pos:['TE'],         count:1 },
+    { label:'FLEX', pos:['RB','WR','TE'], count:3, isFlex:true },
+    { label:'K',    pos:['K'],          count:1 },
+    { label:'DEF',  pos:['DEF'],        count:1 },
+  ];
+
+  const lineupRows = LINEUP_SLOTS.map(slot => {
+    const cells = results.map(r => {
+      const byPos  = {};
+      r.medianRoster.forEach(p => {
+        if (!byPos[p.pos]) byPos[p.pos] = [];
+        byPos[p.pos].push(p);
+      });
+      let player = null;
+      if (slot.isFlex) {
+        const flexCands = ['RB','WR','TE'].flatMap(pos => (byPos[pos]||[]).slice(2));
+        player = flexCands.sort((a, b) => (b.proj||0) - (a.proj||0))[0] || null;
+      } else {
+        player = (byPos[slot.pos[0]] || [])[slot.count - 1] || null;
+      }
+      if (!player) return `<td style="padding:5px 8px;border-bottom:1px solid var(--border)"><span class="t3 fs9">—</span></td>`;
+      return `<td style="padding:5px 8px;border-bottom:1px solid var(--border)">
+        <div style="display:flex;align-items:center;gap:5px">
+          ${simPosBadge(player.pos)}
+          <span class="t2 fs10" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${player.name}</span>
+        </div>
+        <div class="mono t3 fs8" style="margin-top:1px">${player.proj ? Math.round(player.proj)+'pts' : ''}</div>
+      </td>`;
+    }).join('');
+    return `<tr>
+      <td style="padding:5px 8px;border-bottom:1px solid var(--border)"><span class="t3 fs9 fw7">${slot.label}</span></td>
+      ${cells}
+    </tr>`;
+  }).join('');
+
+  // ── Total row ─────────────────────────────────────────────────────────────
+  const totalCells = results.map(r =>
+    `<td style="padding:7px 8px;font-weight:700;background:var(--surface2)">
+      <span class="mono" style="color:${r===best?r.strategy.color:'var(--text1)'};font-size:13px">${r.avgProj}</span>
+      <span class="t3 fs9" style="margin-left:4px">avg</span>
+    </td>`
+  ).join('');
+
+  // ── Insights ──────────────────────────────────────────────────────────────
+  const insights = [];
+  if (results.length >= 2) {
+    const gap = results[0].avgProj - results[1].avgProj;
+    if (gap >= 8) insights.push({ icon:'🏆', color:'var(--green)', bg:'rgba(0,210,106,0.07)', border:'rgba(0,210,106,0.25)',
+      text:`<strong>${results[0].strategy.name}</strong> leads by <strong>+${gap.toFixed(0)} avg pts</strong> — a dominant result across all ${RUNS} sims.` });
   }
+  results.forEach(r => {
+    const spread = r.bestProj - r.avgProj;
+    if (spread <= 8) insights.push({ icon:'🎯', color:'#6366f1', bg:'rgba(99,102,241,0.07)', border:'rgba(99,102,241,0.25)',
+      text:`<strong>${r.strategy.name}</strong> is highly consistent — ceiling is only <strong>+${spread.toFixed(0)} pts</strong> above avg across ${RUNS} sims.` });
+  });
+  results.slice(1).forEach(r => {
+    if (r.bestProj > results[0].avgProj + 10) insights.push({ icon:'⚡', color:'var(--amber)', bg:'rgba(245,166,35,0.07)', border:'rgba(245,166,35,0.25)',
+      text:`<strong>${r.strategy.name}</strong>'s best run (<strong>${r.bestProj} pts</strong>) beats the winner's avg by <strong>+${(r.bestProj-results[0].avgProj).toFixed(0)}</strong> — high upside, inconsistent floor.` });
+  });
 
-  el.innerHTML = lines.map(l => `<div style="margin-bottom:9px;padding-left:10px;border-left:2px solid var(--border2)">${l}</div>`).join('');
+  container.innerHTML = `
+    <div style="margin-bottom:14px">
+      <div class="t2 fs11 fw6" style="margin-bottom:3px">📍 Pick ${slot} of ${TEAMS} · Snake picks: ${snakePicks.join(', ')}</div>
+      <div class="t3 fs9">🎲 ${RUNS} simulations per strategy · Roster shown is most common player per round · % = how often that player appeared</div>
+    </div>
+
+    <!-- Stat cards -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:14px">
+      ${statCards}
+    </div>
+
+    <!-- Main table -->
+    <div style="overflow-x:auto;margin-bottom:14px">
+      <table style="width:100%;border-collapse:collapse;font-size:11px">
+        <thead>
+          <tr style="border-bottom:2px solid var(--border)">
+            <th class="t3 fs9 fw7" style="padding:7px 8px;text-align:left;white-space:nowrap">Round</th>
+            ${results.map(r => `<th style="padding:7px 8px;text-align:left;min-width:160px">
+              <div style="font-size:10px;font-weight:700;color:${r.strategy.color}">${r===best?'🏆 ':''}${r.strategy.name}</div>
+              <div class="t3 fs8" style="font-weight:400;margin-top:1px">${r.strategy.desc}</div>
+            </th>`).join('')}
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);background:var(--surface2)">
+            <th class="t3 fs8 fw6" style="padding:4px 8px;text-align:left">Draft Picks</th>
+            ${results.map(() => '<th></th>').join('')}
+          </tr>
+        </thead>
+        <tbody>
+          ${roundRows}
+          <tr style="border-top:2px solid var(--border);background:var(--surface2)">
+            <td class="t3 fs9 fw7" style="padding:5px 8px">Starters</td>
+            ${results.map(() => '<td></td>').join('')}
+          </tr>
+          ${lineupRows}
+          <tr style="border-top:2px solid var(--border)">
+            <td class="t3 fs9 fw7" style="padding:7px 8px;background:var(--surface2)">Proj Pts</td>
+            ${totalCells}
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    ${insights.length ? `<div style="display:flex;flex-direction:column;gap:7px">
+      <div class="t3 fs9 fw7 caps" style="letter-spacing:.07em">📊 Sim Insights</div>
+      ${insights.map(ins => `<div style="display:flex;align-items:flex-start;gap:9px;padding:9px 12px;background:${ins.bg};border:1px solid ${ins.border};border-radius:8px;font-size:11px;line-height:1.5;color:var(--text2)">
+        <span style="font-size:14px;flex-shrink:0">${ins.icon}</span><span>${ins.text}</span>
+      </div>`).join('')}
+    </div>` : ''}
+  `;
 }
 
 // ── Build per-manager tendency map ────────────────────────────────────────
