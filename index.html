@@ -11571,61 +11571,79 @@ function botMockPick(slotIdx) {
   const ownerId  = slotInfo.ownerId;
   const POSITIONS = ['QB','RB','WR','TE','K','DEF'];
 
-  // Get per-manager tendency for this round (if available + league mode)
+  // ── Build positional tendency weights for this manager + round ────────────
+  // Used as a SCORING MULTIPLIER on ADP-ranked candidates, not as a free
+  // position selector. A player must be competitive on ADP before tendency
+  // can push them up — bots won't skip CMC (#6 overall) to grab a WR.
   let posWeights = null;
-  if (mockState.mode === 'league' && ownerId && mockState.managerTend[ownerId]) {
-    const tend = mockState.managerTend[ownerId];
-    posWeights = {};
-    POSITIONS.forEach(pos => {
-      posWeights[pos] = tend[pos]?.[round] || 0;
-    });
-    // If no tendency data for this round, fall through to league-wide
-    const totalWeight = Object.values(posWeights).reduce((s, v) => s + v, 0);
-    if (totalWeight === 0) posWeights = null;
+
+  if (mockState.mode === 'league') {
+    // Try per-manager first
+    if (ownerId && mockState.managerTend[ownerId]) {
+      const tend = mockState.managerTend[ownerId];
+      const w = {};
+      POSITIONS.forEach(pos => { w[pos] = tend[pos]?.[round] || 0; });
+      const total = Object.values(w).reduce((s, v) => s + v, 0);
+      if (total > 0) posWeights = w;
+    }
+    // Fall back to league-wide tendency
+    if (!posWeights) {
+      const w = {};
+      POSITIONS.forEach(pos => { w[pos] = POS_DATA?.[pos]?.leagueTendency?.[round] || 0; });
+      const total = Object.values(w).reduce((s, v) => s + v, 0);
+      if (total > 0) posWeights = w;
+    }
   }
 
-  // League-wide tendency fallback
-  if (!posWeights && mockState.mode === 'league') {
-    posWeights = {};
-    POSITIONS.forEach(pos => {
-      posWeights[pos] = POS_DATA?.[pos]?.leagueTendency?.[round] || 0;
-    });
-    const totalWeight = Object.values(posWeights).reduce((s, v) => s + v, 0);
-    if (totalWeight === 0) posWeights = null;
-  }
-
-  // Filter out 🚫 avoid tags from bot's options (bots respect user's tag research)
+  // Filter out 🚫 avoid tags (bots respect user's tag research)
   const eligible = mockState.available.filter(p => p.tag !== 'avoid');
+  if (!eligible.length && mockState.available.length) {
+    // All remaining players are tagged avoid — just pick by ADP
+    recordMockPick(slotIdx, mockState.available[0]);
+    return;
+  }
+
+  // ── ADP-anchored scoring ──────────────────────────────────────────────────
+  // Consider only players within a realistic reach window:
+  //   - Rounds 1–3: top 6 available (high-value picks, stay close to consensus)
+  //   - Rounds 4–8: top 8 available (some positional flexibility)
+  //   - Rounds 9+:  top 12 available (bots fill needs, more variance)
+  const windowSize = round <= 3 ? 6 : round <= 8 ? 8 : 12;
+  const window     = eligible.slice(0, windowSize);
 
   let picked = null;
 
-  if (posWeights) {
-    // Weighted random position selection
-    const totalW = Object.values(posWeights).reduce((s, v) => s + v, 0);
-    let rand = Math.random() * totalW;
-    let chosenPos = null;
-    for (const pos of POSITIONS) {
-      rand -= (posWeights[pos] || 0);
-      if (rand <= 0) { chosenPos = pos; break; }
-    }
-    chosenPos = chosenPos || POSITIONS[0];
+  if (posWeights && window.length > 0) {
+    // Normalize tendency weights to 0–1 range
+    const maxW = Math.max(...Object.values(posWeights), 1);
 
-    // Pick best available at that position by ADP
-    const atPos = eligible.filter(p => p.pos === chosenPos || (chosenPos === 'DEF' && p.pos === 'D/ST'));
-    if (atPos.length) {
-      // Add slight randomness: pick from top-3 at position
-      const pool = atPos.slice(0, 3);
-      picked = pool[Math.floor(Math.random() * pool.length)];
-    }
+    // Score each candidate in the ADP window:
+    //   base score   = (windowSize - index) / windowSize  → 1.0 for #1, near 0 for last
+    //   tendency mult = 1.0 + (normalizedWeight * 0.4)   → up to 40% boost from tendency
+    // This means tendency can push a player from slot 3 to slot 1 in the window,
+    // but CANNOT pull a player from outside the window past everyone inside it.
+    const scored = window.map((p, idx) => {
+      const pos       = p.pos === 'D/ST' ? 'DEF' : p.pos;
+      const baseScore = (windowSize - idx) / windowSize;
+      const tendW     = (posWeights[pos] || 0) / maxW;
+      const score     = baseScore * (1.0 + tendW * 0.40);
+      return { p, score };
+    });
+
+    // Add small noise so identical-score players don't always resolve the same way
+    scored.forEach(s => { s.score += Math.random() * 0.05; });
+    scored.sort((a, b) => b.score - a.score);
+
+    // Pick from top 2 of scored candidates for a touch of variance
+    const topN = scored.slice(0, 2);
+    picked = topN[Math.floor(Math.random() * topN.length)].p;
   }
 
-  // Fallback: pure ADP top available
-  if (!picked && eligible.length) {
-    const pool = eligible.slice(0, 3);
-    picked = pool[Math.floor(Math.random() * Math.max(1, Math.min(3, pool.length)))];
+  // Pure ADP fallback (ADP-only mode, or no tendency data)
+  if (!picked) {
+    picked = window[0] || eligible[0] || mockState.available[0];
   }
 
-  if (!picked && mockState.available.length) picked = mockState.available[0];
   if (!picked) { finishMockDraft(); return; }
 
   recordMockPick(slotIdx, picked);
