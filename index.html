@@ -11717,32 +11717,29 @@ function botMockPick(slotIdx) {
     return;
   }
 
-  // ── ROUND 1 PICKS 1–12: position-aware top-3 model ──────────────────────
-  // Real round-1 drafts run very close to consensus with minor positional
-  // preference swaps. The model works like this:
+  // ── ROUND 1 PICKS 1–12: ADP proximity + tendency as a soft nudge ────────
+  // Round 1 is almost entirely ADP order. Tendency is a thumb on the scale —
+  // a WR-heavy bot is more likely to take the top WR in the window, but can
+  // still easily take the top RB sitting there. It's a preference, not a rule.
   //
-  //   1. Determine which position the bot is leaning toward (from tendency
-  //      weights, or just the top available position if ADP-only mode).
-  //   2. Constrain the pick to the top 3 available AT THAT POSITION — so a
-  //      bot who wants an RB can pick RB1, RB2, or RB3, but not RB7.
-  //   3. Among those 3, pick by ADP proximity — earlier ADP = more likely.
-  //   4. Picks 1–4: skip tendency entirely, just pick from ADP top-2 overall.
-  //      The very first picks of a draft are almost always chalk.
+  // ADP window (how close to #1 available a player must be to even be considered):
+  //   Picks 1–4:  ≤1.5 ADP gap  (essentially chalk — #1 or #2 overall max)
+  //   Picks 5–8:  ≤3.0 ADP gap  (swap between two similarly-ranked players)
+  //   Picks 9–12: ≤5.0 ADP gap  (slightly more variance late in round 1)
   if (round === 1 && pickInRound <= 12) {
+    const topPlayer = eligible[0];
+    const adpGap    = pickInRound <= 4 ? 1.5
+                    : pickInRound <= 8 ? 3.0
+                    :                    5.0;
 
-    // Picks 1–4: almost pure ADP, tiny variance only between #1 and #2 overall
-    if (pickInRound <= 4) {
-      const top2 = eligible.slice(0, 2);
-      // 80% chance of pure #1, 20% chance of #2 (if they exist)
-      const pick = (top2.length > 1 && Math.random() < 0.20) ? top2[1] : top2[0];
-      recordMockPick(slotIdx, pick || eligible[0]);
+    const tier = eligible.filter(p => (p.adp - topPlayer.adp) <= adpGap);
+
+    if (tier.length === 1) {
+      recordMockPick(slotIdx, tier[0]);
       return;
     }
 
-    // Picks 5–12: tendency influences WHICH position, top-3 at that position
-    // constrains HOW FAR the bot can reach within it.
-
-    // Build tendency weights (same as later rounds)
+    // Build tendency weights for this manager + round 1 (soft influence only)
     let r1weights = null;
     if (mockState.mode === 'league') {
       if (ownerId && mockState.managerTend[ownerId]) {
@@ -11760,48 +11757,31 @@ function botMockPick(slotIdx) {
       }
     }
 
-    // Determine the bot's preferred position for this pick
-    let preferredPos = null;
-    if (r1weights) {
-      // Weighted random draw from tendency weights
-      const totalW = Object.values(r1weights).reduce((s, v) => s + v, 0);
-      let rand = Math.random() * totalW;
-      for (const pos of POSITIONS) {
-        rand -= (r1weights[pos] || 0);
-        if (rand <= 0) { preferredPos = pos; break; }
-      }
+    // Score each tier member:
+    //   Base weight = ADP rank within tier (55% for #1, 30% for #2, 15% for #3)
+    //   Tendency nudge = +20% on base if this player's position matches the
+    //                    bot's strongest tendency. Small enough that it can't
+    //                    make a lower-ranked player more likely than #1 overall,
+    //                    but enough to visibly tilt the distribution.
+    const baseWeights = [0.55, 0.30, 0.15];
+    const maxTendW = r1weights ? Math.max(...Object.values(r1weights), 1) : 1;
+
+    const scored = tier.map((p, idx) => {
+      const base   = baseWeights[idx] ?? 0.05;
+      const pos    = p.pos === 'D/ST' ? 'DEF' : p.pos;
+      const tendW  = r1weights ? (r1weights[pos] || 0) / maxTendW : 0;
+      // Nudge: up to +20% of the base score from tendency
+      return { p, weight: base * (1 + tendW * 0.20) };
+    });
+
+    const totalW = scored.reduce((s, v) => s + v.weight, 0);
+    let rand = Math.random() * totalW;
+    let pick = tier[0];
+    for (const s of scored) {
+      rand -= s.weight;
+      if (rand <= 0) { pick = s.p; break; }
     }
-
-    // If we have a preferred position, restrict to top 3 available at it.
-    // Guard: if the top-3 at that position are ranked way outside the round-1
-    // value zone (ADP > 28 for a 14-team league), fall back to pure ADP top-2
-    // so bots don't reach for a late-round TE in round 1.
-    const adpR1Cutoff = TEAMS * 1.5; // ~21 for 14-team — nothing beyond here in Rd1
-    if (preferredPos) {
-      const atPos = eligible
-        .filter(p => (p.pos === preferredPos || (preferredPos === 'DEF' && p.pos === 'D/ST'))
-                  && p.adp <= adpR1Cutoff)
-        .slice(0, 3); // hard cap: top 3 at this position only
-
-      if (atPos.length) {
-        // Weight toward earlier ADP within the top-3: index 0 = 60%, 1 = 30%, 2 = 10%
-        const weights = [0.60, 0.30, 0.10].slice(0, atPos.length);
-        const totalW  = weights.reduce((s, v) => s + v, 0);
-        let rand = Math.random() * totalW;
-        let pick = atPos[0];
-        for (let i = 0; i < atPos.length; i++) {
-          rand -= weights[i];
-          if (rand <= 0) { pick = atPos[i]; break; }
-        }
-        recordMockPick(slotIdx, pick);
-        return;
-      }
-    }
-
-    // Fallback: top-2 overall by ADP (no viable position match)
-    const top2 = eligible.slice(0, 2);
-    const pick  = (top2.length > 1 && Math.random() < 0.25) ? top2[1] : top2[0];
-    recordMockPick(slotIdx, pick || eligible[0]);
+    recordMockPick(slotIdx, pick);
     return;
   }
 
