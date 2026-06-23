@@ -5144,7 +5144,7 @@ function runTradeForTarget(myId, theirId, slotId) {
             : rank <= Math.ceil(total * 0.40) ? 'var(--amber)' : 'var(--red)';
         return `<div class="df aic" style="gap:8px;padding:7px 0;border-bottom:1px solid var(--border)">
           <span class="mono fs9 fw7 fsh0" style="color:${col};border:1px solid ${col}44;padding:1px 5px;border-radius:3px">${p.pos}</span>
-          <span class="t1 fs11 f1" style="font-weight:500">${p.name}</span>
+          <span class="t1 fs11 f1" style="font-weight:500">${cleanDisplayName(p.name)}</span>
           <span class="t3 mono fs10">${(p.proj||0).toFixed(1)}/gm</span>
           <span class="mono fs9" style="color:${rankCol}">${p.pos}${rank}/${total}</span>
         </div>`;
@@ -5919,7 +5919,14 @@ async function renderAdpTable() {
     };
     return `<tr style="border-bottom:1px solid var(--border);${rowBg}">
       <td class="t3 mono fs10 tac" style="padding:7px 8px;min-width:40px">${r.rank}</td>
-      <td class="t2 fs11" style="padding:7px 8px;font-weight:500">${r.name}</td>
+      <td style="padding:5px 8px;white-space:nowrap">
+        <div style="display:flex;align-items:center;gap:4px">
+          ${tagBtn('mustget', '🔥', 'Must Get — reach early to lock in', '#FF4757')}
+          ${tagBtn('target',  '🎯', 'Target — reach slightly if available', '#00D26A')}
+          ${tagBtn('avoid',   '🚫', 'Avoid — skip in simulations', '#8A9BB5')}
+        </div>
+      </td>
+      <td class="t2 fs11" style="padding:7px 8px;font-weight:500">${cleanDisplayName(r.name)}</td>
       <td style="padding:7px 8px">
         <span class="mono fs9 fw7" style="color:${col};background:${col}18;border:1px solid ${col}33;padding:1px 6px;border-radius:3px">${posLbl}</span>
       </td>
@@ -5929,11 +5936,6 @@ async function renderAdpTable() {
       <td class="t2 fs10 tac mono" style="padding:7px 8px;font-weight:600">${projTxt}</td>
       <td class="fs10 tac mono" style="padding:7px 8px;font-weight:600;color:${valColor(vols)}" title="Value Over Last Starter — pts above the last player who'd start at this position in your league">${valTxt(vols)}</td>
       <td class="fs10 tac mono" style="padding:7px 8px;font-weight:600;color:${valColor(vorp)}" title="Value Over Replacement Player — pts above a deep-bench/waiver-wire alternative">${valTxt(vorp)}</td>
-      <td style="padding:5px 8px;white-space:nowrap">
-        ${tagBtn('mustget', '🔥', 'Must Get — reach early to lock in', '#FF4757')}
-        ${tagBtn('target',  '🎯', 'Target — reach slightly if available', '#00D26A')}
-        ${tagBtn('avoid',   '🚫', 'Avoid — skip in simulations', '#8A9BB5')}
-      </td>
     </tr>`;
   }).join('');
 
@@ -5941,6 +5943,7 @@ async function renderAdpTable() {
     <thead>
       <tr style="border-bottom:2px solid var(--border)">
         <th class="t3 fs9 fw7 caps tac" style="padding:8px;letter-spacing:.06em">Rank</th>
+        <th class="t3 fs9 fw7 caps tac" style="padding:8px;letter-spacing:.06em" title="Tag players to guide the Draft Simulator">Tags</th>
         <th class="t3 fs9 fw7 caps"     style="padding:8px;letter-spacing:.06em;text-align:left">Player</th>
         <th class="t3 fs9 fw7 caps"     style="padding:8px;letter-spacing:.06em">Pos</th>
         <th class="t3 fs9 fw7 caps tac" style="padding:8px;letter-spacing:.06em">Team</th>
@@ -5949,7 +5952,6 @@ async function renderAdpTable() {
         <th class="t3 fs9 fw7 caps tac" style="padding:8px;letter-spacing:.06em" title="FantasyPros consensus full-season projection (Half-PPR)">Proj Pts</th>
         <th class="t3 fs9 fw7 caps tac" style="padding:8px;letter-spacing:.06em" title="Value Over Last Starter — your league's starter thresholds">VOLS</th>
         <th class="t3 fs9 fw7 caps tac" style="padding:8px;letter-spacing:.06em" title="Value Over Replacement Player — bench/waiver baseline">VORP</th>
-        <th class="t3 fs9 fw7 caps tac" style="padding:8px;letter-spacing:.06em" title="Tag players to guide the Draft Simulator">Tags</th>
       </tr>
     </thead>
     <tbody>${rowsHTML}</tbody>`;
@@ -8590,7 +8592,7 @@ function renderSeasonList(side) {
     const fp = fpProjections[p.playerId]; const color = POSCOLOR[p.pos] || 'var(--text3)';
     return `<div class="df aic" style="gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">
       <span style="font-size:9px;font-weight:700;color:${color};width:28px">${p.pos}</span>
-      <div class="t1 fs11 f1" >${p.name}</div>
+      <div class="t1 fs11 f1">${cleanDisplayName(p.name)}</div>
       <span class="mono fs10" style="color:var(--green)">${fp?.projPPG?.toFixed(1)||'—'} PPG</span>
       <button onclick="removeSeasonPlayerManual(${p.id},'${side}')" class="t3" style="background:none;border:none;cursor:pointer;font-size:14px;padding:0 4px">×</button>
     </div>`;
@@ -8645,7 +8647,7 @@ function submitManualTradeAnalysis() {
         <span style="font-size:10px;font-weight:600;color:${sideColor};width:60px;flex-shrink:0">${sideLabel}</span>
         <span style="font-size:9px;font-weight:700;color:${posColor};width:24px;flex-shrink:0">${p.pos}</span>
         <div class="f1" >
-          <div class="t1 fs12 fw6" >${p.name}</div>
+          <div class="t1 fs12 fw6">${cleanDisplayName(p.name)}</div>
           <div class="t3 fs10" >${ppg.toFixed(1)} PPG projected · ${fp.team || ''}</div>
         </div>
         <div style="font-family:var(--mono);font-size:22px;font-weight:700;color:${scoreColor}">${score}</div>
@@ -9166,6 +9168,16 @@ function normalizeName(name) {
     .replace(/\s+/g, ' ')
     .trim();
   return NAME_ALIASES[result] || result;
+}
+
+// ── Clean display name — strips Jr./Sr./II/III/IV/V for UI presentation ──
+// Keeps the raw p.name intact for tag lookups and data matching.
+// Use this everywhere a player name is rendered to the user.
+function cleanDisplayName(name) {
+  return (name || '')
+    .replace(/,?\s+(jr\.?|sr\.?|ii+|iv|v)\s*$/i, '')
+    .replace(/\.\s*$/, '')
+    .trim();
 }
 
 // Look up a player's FantasyPros projection by name
@@ -11517,17 +11529,32 @@ function generateDraftStrategy() {
     myPickNums.push({ round: r + 1, overall: r * TEAMS + snakeSlot });
   }
 
-  // Turn pairs: consecutive picks (end of one round + start of the next)
+  // ── Slot classification (14-team specific) ────────────────────────────────
+  // Turn advantage only exists at the literal end of the snake (slots 12–14)
+  // where you pick twice before anyone else gets another pick.
+  // Slot 11 picks 11 then 18 — 7 picks apart, no back-to-back.
+  const slotTier  = slot <= 3  ? 'top-3'
+                  : slot <= 6  ? 'early'
+                  : slot <= 9  ? 'mid'
+                  : slot <= 11 ? 'late-mid'
+                  :              'turn';
+  const slotLabel = {
+    'top-3':    'top-3 pick',
+    'early':    'early pick',
+    'mid':      'middle pick',
+    'late-mid': 'late-middle pick',
+    'turn':     'back-end pick',
+  }[slotTier];
+
+  // ── Turn pair detection ───────────────────────────────────────────────────
+  // Only flag genuine back-to-back picks — gap of 2 or fewer picks between
+  // consecutive pick numbers. Slot 11 picks 11+18 (gap=7) — NOT a turn pair.
+  // Slots 13+14 pick e.g. 13+15 or 14+14 — those are real turn pairs.
   const turnPairs = [];
   for (let i = 0; i < myPickNums.length - 1; i++) {
     const gap = myPickNums[i + 1].overall - myPickNums[i].overall;
-    if (gap <= TEAMS + 2) turnPairs.push([myPickNums[i], myPickNums[i + 1]]);
+    if (gap <= 2) turnPairs.push([myPickNums[i], myPickNums[i + 1]]);
   }
-
-  // ── Slot classification ───────────────────────────────────────────────────
-  const slotTier = slot <= 3 ? 'top-3' : slot <= 6 ? 'early-mid' : slot <= 9 ? 'late-mid' : slot <= 11 ? 'late' : 'tail';
-  const slotLabel = { 'top-3':'top-3 pick', 'early-mid':'early-middle pick', 'late-mid':'late-middle pick', 'late':'late pick', 'tail':'tail pick' }[slotTier];
-
   // ── League tendency by round ──────────────────────────────────────────────
   const tend = {};
   if (hasTend) {
@@ -11586,12 +11613,13 @@ function generateDraftStrategy() {
   </div>`;
 
   // — Slot-specific opener —
+  const r2pick = myPickNums[1]?.overall;
   const slotAdvice = {
-    'top-3':      `With a <strong>${slotLabel}</strong> you control the draft. You'll land one of the top-3 RBs or WRs by ADP — your round 2 pick at <strong>${myPickNums[1]?.overall}</strong> is the real decision point. Two elite skill players in rounds 1–2 sets your ceiling.`,
-    'early-mid':  `A <strong>${slotLabel}</strong> gives you flexibility — the top RBs and WRs thin out by pick ${slot}, but your turn pair at <strong>${myPickNums[0]?.overall}+${myPickNums[1]?.overall}</strong> means you can plan ahead. Target the best available in round 1, then fill the positional gap in round 2.`,
-    'late-mid':   `From a <strong>${slotLabel}</strong>, your round 1 value depends on who falls. Your turn pair at <strong>${myPickNums[0]?.overall}+${myPickNums[1]?.overall}</strong> is your biggest advantage — back-to-back picks let you stack complementary positions. Plan both picks together.`,
-    'late':       `A <strong>${slotLabel}</strong> at pick ${slot} means the top RBs are gone — but you get two picks before anyone else with your turn pair at <strong>${myPickNums[0]?.overall}+${myPickNums[1]?.overall}</strong>. Zero RB and Strong WR strategies thrive here. Stack WRs early, flood skill position depth.`,
-    'tail':       `The <strong>${slotLabel}</strong> (pick ${slot}) is an underrated position — your back-to-back turn at <strong>${myPickNums[0]?.overall}+${myPickNums[1]?.overall}</strong> gives you two immediate picks. Zero RB is highly viable; target the top WRs and use the turn to grab your best RB option.`,
+    'top-3':    `With a <strong>${slotLabel}</strong> you control the draft. You'll land one of the top-3 RBs or WRs — the field is yours. Your round 2 pick at <strong>${r2pick}</strong> is the key decision: lock in a second elite skill player and your ceiling is set early.`,
+    'early':    `An <strong>${slotLabel}</strong> at ${slot} means the cream of the crop is available. You'll likely get a top-5 RB or WR. The gap between your pick ${myPickNums[0].overall} and round 2 pick ${r2pick} is ${r2pick - myPickNums[0].overall} picks — plan what position you'll need to address on the way back.`,
+    'mid':      `A <strong>${slotLabel}</strong> at ${slot} puts you in value-hunting territory. The elite tier thins out, but your pick ${myPickNums[0].overall} often lands a strong RB2 or WR1 who outperforms their slot. Your next pick at ${r2pick} is ${r2pick - myPickNums[0].overall} picks later — plan your round 2 target now.`,
+    'late-mid': `A <strong>${slotLabel}</strong> at ${slot} means the consensus top RBs are likely gone by your turn. Focus on best available WR or the best remaining RB. Your round 2 pick is ${r2pick} — ${r2pick - myPickNums[0].overall} picks away, with all ${TEAMS - slot} later slots picking twice before you get back. Zero RB is viable here.`,
+    'turn':     `A <strong>${slotLabel}</strong> at ${slot} gives you a genuine back-to-back advantage — you pick at ${myPickNums[0].overall} and again at ${r2pick} with only ${r2pick - myPickNums[0].overall - 1} pick${r2pick - myPickNums[0].overall - 1 === 1 ? '' : 's'} in between. Plan both picks as a unit. Zero RB and Heavy WR thrive here — stack two elite WRs at the turn, then flood RB from round 3.`,
   }[slotTier];
   html += `<div style="margin-bottom:10px;padding:10px 12px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--blue)">${slotAdvice}</div>`;
 
@@ -11770,31 +11798,70 @@ function simRandomizePool(pool) {
 }
 
 // ── Find best available at position(s) from a randomized pool ─────────────
-function simFindBest(pool, draftedNames, positions) {
+function simFindBest(pool, draftedNames, positions, avoidTags = true) {
   const posArr = Array.isArray(positions) ? positions : [positions];
   return pool.find(p => {
     const pos = p.pos === 'DST' ? 'DEF' : p.pos;
-    return !draftedNames.has(p.name) && posArr.includes(pos);
+    if (draftedNames.has(p.name)) return false;
+    if (avoidTags && rankTagMap[p.name] === 'avoid') return false;
+    return posArr.includes(pos);
   }) || null;
 }
 
-function simFindBestDynamic(pool, draftedNames, eligible) {
+function simFindBestDynamic(pool, draftedNames, eligible, avoidTags = true) {
   return pool.find(p => {
     const pos = p.pos === 'DST' ? 'DEF' : p.pos;
-    return !draftedNames.has(p.name) && eligible.includes(pos);
+    if (draftedNames.has(p.name)) return false;
+    if (avoidTags && rankTagMap[p.name] === 'avoid') return false;
+    return eligible.includes(pos);
   }) || null;
 }
 
 // ── Drain opponent picks between user picks ───────────────────────────────
+// Uses league tendency weights to simulate realistic positional drain —
+// if your league runs heavy RB in round 1, RBs drain faster, not pure BPA.
+// Opponents don't respect your avoid tags (they draft freely).
 function simDrainOpponents(fromPick, toPick, pool, draftedNames, numTeams) {
   const round10Start = 9 * numTeams + 1;
+  const hasTend      = ['RB','WR','QB','TE'].some(pos => POS_DATA?.[pos]?.leagueTendency);
+
   for (let pick = fromPick + 1; pick < toPick; pick++) {
-    const bpa = pool.find(p => {
-      const pos = p.pos === 'DST' ? 'DEF' : p.pos;
-      const allowKDef = pick >= round10Start;
-      if (!allowKDef && (pos === 'K' || pos === 'DEF')) return false;
-      return !draftedNames.has(p.name);
-    });
+    const pickRound = Math.ceil(pick / numTeams);
+    const allowKDef = pick >= round10Start;
+
+    // Build league tendency weights for this round
+    let chosenPos = null;
+    if (hasTend && pickRound <= 16) {
+      const ELIGIBLE_POS = ['RB','WR','QB','TE'].concat(allowKDef ? ['K','DEF'] : []);
+      const weights = {};
+      ELIGIBLE_POS.forEach(pos => {
+        weights[pos] = POS_DATA?.[pos]?.leagueTendency?.[pickRound] || 0;
+      });
+      const totalW = Object.values(weights).reduce((s, v) => s + v, 0);
+      if (totalW > 0) {
+        let rand = Math.random() * totalW;
+        for (const pos of ELIGIBLE_POS) {
+          rand -= (weights[pos] || 0);
+          if (rand <= 0) { chosenPos = pos; break; }
+        }
+      }
+    }
+
+    // Draft best available at tendency-chosen position; BPA fallback if exhausted
+    let bpa = null;
+    if (chosenPos) {
+      bpa = pool.find(p => {
+        const pos = p.pos === 'DST' ? 'DEF' : p.pos;
+        return !draftedNames.has(p.name) && pos === chosenPos;
+      });
+    }
+    if (!bpa) {
+      bpa = pool.find(p => {
+        const pos = p.pos === 'DST' ? 'DEF' : p.pos;
+        if (!allowKDef && (pos === 'K' || pos === 'DEF')) return false;
+        return !draftedNames.has(p.name);
+      });
+    }
     if (bpa) draftedNames.add(bpa.name);
   }
 }
@@ -11824,13 +11891,24 @@ function simRunOne(draftPos, numTeams, numRounds, strategy, pool) {
     const hasK   = roster.some(p => p.pos === 'K');
     const hasDEF = roster.some(p => p.pos === 'DEF');
 
-    // Tags: 🔥 must-get reach — if a tagged player is within reach, grab them
+    // ── Tags: 🔥 must-get and 🎯 target reach overrides ─────────────────────
+    // If a tagged player is within reach, grab them before strategy logic runs.
+    //   mustget: reach up to 1 full round (numTeams picks) early
+    //   target:  reach up to half a round (numTeams/2 picks) early
+    // 🚫 avoid players are already filtered in simFindBest/simFindBestDynamic.
+    // Opponents can draft avoid players freely — they're your tags, not theirs.
     const taggedReach = (() => {
-      const window = numTeams;
+      const mustGetWindow = numTeams;        // 1 full round reach
+      const targetWindow  = numTeams * 0.5;  // half round reach
+      // Must Get first (higher priority), then Target
       return pool.find(p =>
         !draftedNames.has(p.name) &&
-        (rankTagMap[p.name] === 'mustget') &&
-        overall >= (p.simAdp || p.adp) - window
+        rankTagMap[p.name] === 'mustget' &&
+        overall >= (p.simAdp || p.adp) - mustGetWindow
+      ) || pool.find(p =>
+        !draftedNames.has(p.name) &&
+        rankTagMap[p.name] === 'target' &&
+        overall >= (p.simAdp || p.adp) - targetWindow
       ) || null;
     })();
     if (taggedReach) {
@@ -11977,8 +12055,9 @@ async function runStrategySimulator() {
 
   // Attach FP projections to pool
   const enrichedPool = pool.map(p => {
-    const fp  = getFPProjection(p.name);
-    return { ...p, proj: fp?.fpts || p.adp ? Math.max(0, 300 - p.adp * 2) : 0 };
+    const fp = getFPProjection(p.name);
+    const proj = fp?.fpts ?? Math.max(0, 300 - p.adp * 2); // fpts if available, else ADP-decay fallback
+    return { ...p, proj };
   });
 
   const strategies = MOCK_STRATEGIES.filter(s => mockSimEnabled.has(s.key));
@@ -12168,7 +12247,7 @@ function renderSimResults(results) {
       return `<td style="padding:5px 8px;border-bottom:1px solid var(--border)">
         <div style="display:flex;align-items:center;gap:5px">
           ${simPosBadge(player.pos)}
-          <span class="t2 fs10" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${player.name}</span>
+          <span class="t2 fs10" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${cleanDisplayName(player.name)}</span>
         </div>
         <div class="mono t3 fs8" style="margin-top:1px">${player.proj ? Math.round(player.proj)+'pts' : ''}</div>
       </td>`;
@@ -12616,11 +12695,19 @@ function renderMockBoard() {
   for (let r = 0; r < mockState.mockRounds; r++) {
     html += `<tr style="border-top:1px solid var(--border)"><td class="t3 mono" style="padding:4px 6px;font-size:9px;text-align:center;font-weight:700">${r+1}</td>`;
     for (let s = 0; s < TEAMS; s++) {
-      // In snake draft: even rounds go left→right, odd go right→left
+      // boardSlot = which drafter (0-based) sits in visual column s this round.
+      // Even rounds go left→right (slot 0 first), odd rounds go right→left (slot TEAMS-1 first).
       const boardSlot = r % 2 === 0 ? s : TEAMS - 1 - s;
-      const overallIdx = r * TEAMS + s;
-      const pick = mockState.picks.find(p => p.overallPick === overallIdx + 1);
-      const isMe  = boardSlot === mySlot0;
+
+      // The pick number (1-based) that boardSlot makes in round r+1.
+      // In a snake: even rounds pick in slot order, odd rounds reverse.
+      // The pick sequence within a round is determined by the column position s
+      // (0 = first pick of the round, TEAMS-1 = last pick of the round).
+      const overallPick = r * TEAMS + s + 1; // 1-based pick number for this cell
+      const overallIdx  = overallPick - 1;   // 0-based index
+
+      const pick      = mockState.picks.find(p => p.overallPick === overallPick);
+      const isMe      = boardSlot === mySlot0;
       const isCurrent = overallIdx === currentMockPickIndex() && !mockState.finished;
 
       let cellBg = isMe ? 'rgba(0,210,106,0.05)' : 'transparent';
@@ -12629,8 +12716,7 @@ function renderMockBoard() {
       let cellContent = '';
       if (pick) {
         const col   = MOCK_POS_COLOR[pick.player.pos] || 'var(--text3)';
-        // Show full name, wrapping naturally within the fixed cell width
-        const name  = pick.player.name;
+        const name  = cleanDisplayName(pick.player.name);
         cellContent = `<div style="font-size:7.5px;font-weight:600;color:${col};line-height:1.2;word-break:break-word;padding:0 2px">${name}</div>
                        <div style="font-size:7px;color:${col};opacity:0.75;margin-top:1px">${pick.player.pos}</div>`;
       } else if (isCurrent) {
@@ -12686,7 +12772,7 @@ function renderMockAvailablePlayers() {
       style="display:flex;align-items:center;padding:6px 12px;border-bottom:1px solid var(--border);gap:8px;${isMyTurn ? 'cursor:pointer' : 'opacity:0.75'}">
       <span style="font-size:9px;font-weight:700;color:${col};background:${col}1A;border:1px solid ${col}44;padding:1px 5px;border-radius:3px;min-width:28px;text-align:center">${p.pos}</span>
       <div style="flex:1;min-width:0">
-        <div class="t1" style="font-size:10px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${tag} ${p.name}</div>
+        <div class="t1" style="font-size:10px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${tag} ${cleanDisplayName(p.name)}</div>
         <div class="t3" style="font-size:9px">${p.team || ''} ${p.bye ? `· Bye ${p.bye}` : ''}</div>
       </div>
       <div style="text-align:right;flex-shrink:0">
@@ -12766,7 +12852,7 @@ function renderMockResults() {
         return `<div style="padding:8px;border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:flex-start">
           <span style="font-size:9px;font-weight:700;color:${col};background:${col}1A;border:1px solid ${col}44;padding:1px 5px;border-radius:3px;flex-shrink:0">${s.pick.player.pos}</span>
           <div>
-            <div class="t1 fs11 fw6">${s.pick.player.name}</div>
+            <div class="t1 fs11 fw6">${cleanDisplayName(s.pick.player.name)}</div>
             <div class="t3 fs9">Rd ${s.pick.round}, Pick ${s.pick.pickInRound} · ADP ~Rd ${Math.ceil(s.pick.player.adp/TEAMS)} · Got ${s.diff} round${s.diff===1?'':'s'} early value</div>
             ${s.tendNote ? `<div class="t3 fs9" style="margin-top:2px;color:#4A90E2">${s.tendNote}</div>` : ''}
           </div>
@@ -12781,7 +12867,7 @@ function renderMockResults() {
         return `<div style="padding:8px;border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:flex-start">
           <span style="font-size:9px;font-weight:700;color:${col};background:${col}1A;border:1px solid ${col}44;padding:1px 5px;border-radius:3px;flex-shrink:0">${r.pick.player.pos}</span>
           <div>
-            <div class="t1 fs11 fw6">${r.pick.player.name}</div>
+            <div class="t1 fs11 fw6">${cleanDisplayName(r.pick.player.name)}</div>
             <div class="t3 fs9">Rd ${r.pick.round}, Pick ${r.pick.pickInRound} · ADP ~Rd ${Math.ceil(r.pick.player.adp/TEAMS)} · Reached ${Math.abs(r.diff)} round${Math.abs(r.diff)===1?'':'s'} early</div>
             ${r.tendNote ? `<div class="t3 fs9" style="margin-top:2px;color:#4A90E2">${r.tendNote}</div>` : ''}
           </div>
@@ -12820,7 +12906,7 @@ function renderMockResults() {
             const volsColor = (p.vols || 0) > 0 ? 'var(--green)' : (p.vols || 0) < -5 ? 'var(--red)' : 'var(--text3)';
             return `<tr style="border-bottom:1px solid var(--border)">
               <td class="t3 mono tac" style="padding:7px 8px">${pick.round}.${pick.pickInRound}</td>
-              <td class="t1 fw6" style="padding:7px 8px">${p.name}</td>
+              <td class="t1 fw6" style="padding:7px 8px">${cleanDisplayName(p.name)}</td>
               <td style="padding:7px 8px;text-align:center">
                 <span style="font-size:9px;font-weight:700;color:${col};background:${col}1A;border:1px solid ${col}44;padding:1px 6px;border-radius:3px">${p.pos}</span>
               </td>
@@ -12874,7 +12960,7 @@ function renderMockResults() {
 
             return `<tr style="border-bottom:1px solid var(--border)">
               <td class="t3 mono tac" style="padding:7px 8px">${pick.round}.${pick.pickInRound}</td>
-              <td class="t1 fw6" style="padding:7px 8px">${p.name}</td>
+              <td class="t1 fw6" style="padding:7px 8px">${cleanDisplayName(p.name)}</td>
               <td style="padding:7px 8px;text-align:center">
                 <span style="font-size:9px;font-weight:700;color:${col};background:${col}1A;border:1px solid ${col}44;padding:1px 6px;border-radius:3px">${p.pos}</span>
               </td>
