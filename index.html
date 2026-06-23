@@ -11509,12 +11509,10 @@ function onMockSlotChange() {
   }
 }
 
-// ── Draft Strategy Generator ───────────────────────────────────────────────
 // ── Rich Draft Strategy Card ───────────────────────────────────────────────
 function generateDraftStrategy() {
   const el = document.getElementById('mockStrategyContent');
   if (!el) return;
-
   const slot = mockState.mySlot;
   if (!slot) return;
 
@@ -11522,166 +11520,276 @@ function generateDraftStrategy() {
   const hasAdp  = pool.length > 0;
   const hasTend = !!(espnData?.history?.length);
 
-  // ── Pick numbers across all rounds ───────────────────────────────────────
+  // ── Pick slate across all rounds ──────────────────────────────────────────
   const myPickNums = [];
   for (let r = 0; r < mockState.mockRounds; r++) {
     const snakeSlot = r % 2 === 0 ? slot : (TEAMS + 1 - slot);
     myPickNums.push({ round: r + 1, overall: r * TEAMS + snakeSlot });
   }
 
-  // ── Slot classification (14-team specific) ────────────────────────────────
-  // Turn advantage only exists at the literal end of the snake (slots 12–14)
-  // where you pick twice before anyone else gets another pick.
-  // Slot 11 picks 11 then 18 — 7 picks apart, no back-to-back.
-  const slotTier  = slot <= 3  ? 'top-3'
-                  : slot <= 6  ? 'early'
-                  : slot <= 9  ? 'mid'
-                  : slot <= 11 ? 'late-mid'
-                  :              'turn';
-  const slotLabel = {
-    'top-3':    'top-3 pick',
-    'early':    'early pick',
-    'mid':      'middle pick',
-    'late-mid': 'late-middle pick',
-    'turn':     'back-end pick',
-  }[slotTier];
-
-  // ── Turn pair detection ───────────────────────────────────────────────────
-  // Only flag genuine back-to-back picks — gap of 2 or fewer picks between
-  // consecutive pick numbers. Slot 11 picks 11+18 (gap=7) — NOT a turn pair.
-  // Slots 13+14 pick e.g. 13+15 or 14+14 — those are real turn pairs.
+  // Turn pairs: genuine back-to-back only (gap ≤ 2)
   const turnPairs = [];
   for (let i = 0; i < myPickNums.length - 1; i++) {
     const gap = myPickNums[i + 1].overall - myPickNums[i].overall;
     if (gap <= 2) turnPairs.push([myPickNums[i], myPickNums[i + 1]]);
   }
-  // ── League tendency by round ──────────────────────────────────────────────
+
+  // Slot tier
+  const slotTier = slot <= 3 ? 'top-3' : slot <= 6 ? 'early' : slot <= 9 ? 'mid' : slot <= 11 ? 'late-mid' : 'turn';
+
+  // League tendency by round
   const tend = {};
-  if (hasTend) {
-    ['QB','RB','WR','TE','K','DEF'].forEach(pos => {
-      tend[pos] = POS_DATA?.[pos]?.leagueTendency || {};
-    });
-  }
+  if (hasTend) ['QB','RB','WR','TE','K','DEF'].forEach(pos => {
+    tend[pos] = POS_DATA?.[pos]?.leagueTendency || {};
+  });
 
-  // ── ADP value analysis: what positions have positive VOLS at each of my picks
-  const pickInsights = [];
-  if (hasAdp) {
-    myPickNums.slice(0, 8).forEach(({ round, overall }) => {
-      // Players available around this pick (±3 ADP)
-      const nearby = pool.filter(p => Math.abs(p.adp - overall) <= 4);
-      const byPos  = {};
-      nearby.forEach(p => {
+  // ── ADP-driven analysis helpers ───────────────────────────────────────────
+  const byPos = {};
+  pool.forEach(p => {
+    const pos = p.pos === 'DST' ? 'DEF' : p.pos;
+    if (!byPos[pos]) byPos[pos] = [];
+    byPos[pos].push(p);
+  });
+  ['QB','RB','WR','TE','K','DEF'].forEach(pos => {
+    if (byPos[pos]) byPos[pos].sort((a, b) => a.adp - b.adp);
+  });
+
+  // Players likely available at a given overall pick (ADP within 1.5 picks, or
+  // players whose ADP is ≥ pick − 1 and not already taken by earlier slots)
+  const likelyAvailAt = (overallPick, positions) => {
+    return pool
+      .filter(p => {
         const pos = p.pos === 'DST' ? 'DEF' : p.pos;
-        if (!byPos[pos]) byPos[pos] = [];
-        byPos[pos].push(p);
-      });
-      const topPos = Object.entries(byPos)
-        .filter(([pos]) => ['RB','WR','QB','TE'].includes(pos))
-        .map(([pos, players]) => ({ pos, name: players[0]?.name, adp: players[0]?.adp }))
-        .sort((a, b) => a.adp - b.adp)
-        .slice(0, 2);
-      if (topPos.length) pickInsights.push({ round, overall, topPos });
-    });
-  }
+        if (positions && !positions.includes(pos)) return false;
+        // Likely available if ADP ≥ (pick - 2) — accounts for slight randomness
+        return p.adp >= overallPick - 2 && p.adp <= overallPick + 3;
+      })
+      .sort((a, b) => a.adp - b.adp)
+      .slice(0, 4);
+  };
 
-  // ── QB scarcity threshold ─────────────────────────────────────────────────
-  const qbScarcityPick = (() => {
-    const qbs = pool.filter(p => p.pos === 'QB').sort((a, b) => a.adp - b.adp);
-    const qb5 = qbs[4]; // 5th QB off the board
-    return qb5 ? Math.round(qb5.adp) : null;
-  })();
+  // How many of a position are gone by pick N (their ADP < N)
+  const goneByPick = (pos, pickNum) =>
+    (byPos[pos] || []).filter(p => p.adp < pickNum).length;
 
-  // ── TE premium threshold ──────────────────────────────────────────────────
-  const tePremiumPick = (() => {
-    const tes = pool.filter(p => p.pos === 'TE').sort((a, b) => a.adp - b.adp);
-    const te3 = tes[2]; // cliff after top-2 TEs
-    return te3 ? Math.round(te3.adp) : null;
-  })();
+  // Best available player at a position at or after a given pick
+  const bestAvailAt = (pos, pickNum, n = 1) =>
+    (byPos[pos] || []).filter(p => p.adp >= pickNum - 1).slice(0, n);
 
-  // ── Build HTML sections ───────────────────────────────────────────────────
+  // ── Pick 1: what's specifically available ─────────────────────────────────
+  const p1 = myPickNums[0].overall;
+  const p2 = myPickNums[1].overall;
+  const p2gap = p2 - p1;
+
+  const atP1 = likelyAvailAt(p1, ['RB','WR','QB','TE']);
+  const rbsGoneByP1 = goneByPick('RB', p1);
+  const wrsGoneByP1 = goneByPick('WR', p1);
+  const rbsLeft = bestAvailAt('RB', p1, 3);
+  const wrsLeft = bestAvailAt('WR', p1, 3);
+
+  // ── Round 2: what's specifically available ────────────────────────────────
+  const atP2 = likelyAvailAt(p2, ['RB','WR','QB','TE']);
+  const rbsGoneByP2 = goneByPick('RB', p2);
+  const wrsGoneByP2 = goneByPick('WR', p2);
+  const rbsAtP2 = bestAvailAt('RB', p2, 3);
+  const wrsAtP2 = bestAvailAt('WR', p2, 3);
+
+  // ── QB / TE thresholds ────────────────────────────────────────────────────
+  const qbs = byPos['QB'] || [];
+  const tes  = byPos['TE'] || [];
+  const qb5Pick  = qbs[4]  ? Math.round(qbs[4].adp)  : null;
+  const te1 = tes[0], te2 = tes[1], te3 = tes[2];
+  const tePremiumPick = te3 ? Math.round(te3.adp) : null;
+
+  // ── Styling helpers ───────────────────────────────────────────────────────
   const POS_C = { QB:'#FF6B6B', RB:'#00D26A', WR:'#4A90E2', TE:'#F5A623' };
-  const posPill = (pos) => `<span style="font-size:9px;font-weight:700;color:${POS_C[pos]||'var(--text3)'};background:${POS_C[pos]||'#fff'}1A;border:1px solid ${POS_C[pos]||'#fff'}44;padding:1px 6px;border-radius:3px">${pos}</span>`;
+  const pill = (pos) => `<span style="font-size:9px;font-weight:700;color:${POS_C[pos]||'var(--text3)'};background:${POS_C[pos]||'#fff'}1A;border:1px solid ${POS_C[pos]||'#fff'}44;padding:1px 5px;border-radius:3px">${pos}</span>`;
+  const bold = (t) => `<strong class="t1">${t}</strong>`;
+  const name = (p) => p ? bold(cleanDisplayName(p.name)) : '—';
+  const nameList = (players) => players.map(p => `${pill(p.pos === 'DST' ? 'DEF' : p.pos)} ${name(p)}`).join('  ');
 
   let html = '';
 
-  // — Pick slate header —
-  const pickNums = myPickNums.map(p => p.overall);
-  const turnStr  = turnPairs.length ? ` · Turn pairs: <strong class="t1">${turnPairs.map(([a,b]) => `${a.overall}+${b.overall}`).join(', ')}</strong>` : '';
+  // ── Pick slate ────────────────────────────────────────────────────────────
+  const turnStr = turnPairs.length
+    ? ` · Back-to-back: <strong class="t1">${turnPairs.map(([a,b]) => `${a.overall}+${b.overall}`).join(', ')}</strong>`
+    : '';
   html += `<div style="background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:10px 12px;margin-bottom:10px">
-    <div class="t3 fs9 fw7 caps" style="letter-spacing:.07em;margin-bottom:4px">Your Picks (Slot ${slot} of ${TEAMS})</div>
-    <div class="mono t2 fs10" style="line-height:1.8">${pickNums.join(' · ')}${turnStr}</div>
+    <div class="t3 fs9 fw7 caps" style="letter-spacing:.07em;margin-bottom:4px">Your Picks — Slot ${slot} of ${TEAMS}</div>
+    <div class="mono t2 fs10" style="line-height:1.8">${myPickNums.map(p => p.overall).join(' · ')}${turnStr}</div>
   </div>`;
 
-  // — Slot-specific opener —
-  const r2pick = myPickNums[1]?.overall;
-  const slotAdvice = {
-    'top-3':    `With a <strong>${slotLabel}</strong> you control the draft. You'll land one of the top-3 RBs or WRs — the field is yours. Your round 2 pick at <strong>${r2pick}</strong> is the key decision: lock in a second elite skill player and your ceiling is set early.`,
-    'early':    `An <strong>${slotLabel}</strong> at ${slot} means the cream of the crop is available. You'll likely get a top-5 RB or WR. The gap between your pick ${myPickNums[0].overall} and round 2 pick ${r2pick} is ${r2pick - myPickNums[0].overall} picks — plan what position you'll need to address on the way back.`,
-    'mid':      `A <strong>${slotLabel}</strong> at ${slot} puts you in value-hunting territory. The elite tier thins out, but your pick ${myPickNums[0].overall} often lands a strong RB2 or WR1 who outperforms their slot. Your next pick at ${r2pick} is ${r2pick - myPickNums[0].overall} picks later — plan your round 2 target now.`,
-    'late-mid': `A <strong>${slotLabel}</strong> at ${slot} means the consensus top RBs are likely gone by your turn. Focus on best available WR or the best remaining RB. Your round 2 pick is ${r2pick} — ${r2pick - myPickNums[0].overall} picks away, with all ${TEAMS - slot} later slots picking twice before you get back. Zero RB is viable here.`,
-    'turn':     `A <strong>${slotLabel}</strong> at ${slot} gives you a genuine back-to-back advantage — you pick at ${myPickNums[0].overall} and again at ${r2pick} with only ${r2pick - myPickNums[0].overall - 1} pick${r2pick - myPickNums[0].overall - 1 === 1 ? '' : 's'} in between. Plan both picks as a unit. Zero RB and Heavy WR thrive here — stack two elite WRs at the turn, then flood RB from round 3.`,
-  }[slotTier];
-  html += `<div style="margin-bottom:10px;padding:10px 12px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--blue)">${slotAdvice}</div>`;
+  // ── Specific Round 1 read ─────────────────────────────────────────────────
+  if (hasAdp) {
+    let r1Text = '';
 
-  // — Round-by-round value windows (first 6 picks) —
-  if (pickInsights.length) {
-    html += `<div style="margin-bottom:10px">
-      <div class="t3 fs9 fw7 caps" style="letter-spacing:.07em;margin-bottom:6px">Value Windows at Your Picks</div>`;
-    pickInsights.forEach(({ round, overall, topPos }) => {
-      const tendStr = hasTend
-        ? ` <span class="t3" style="font-size:9px">· Lg: ${['RB','WR','QB','TE'].map(p => tend[p]?.[round] >= 15 ? `${p} ${tend[p][round]}%` : null).filter(Boolean).join(', ') || '—'}</span>`
-        : '';
-      html += `<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border)">
-        <span class="mono t3 fs9" style="min-width:56px">Rd${round} · ${overall}</span>
-        <span>${topPos.map(p => `${posPill(p.pos)} <span class="t2 fs10">${p.name?.split(' ').slice(-1)[0]||''}</span>`).join(' ')}</span>
-        ${tendStr}
-      </div>`;
-    });
-    html += `</div>`;
-  }
+    if (slotTier === 'top-3') {
+      const top3 = pool.slice(0, 3);
+      r1Text = `You control round 1 — ${nameList(top3.slice(0,2))} are likely available. Take the best player on your board; position strategy starts in round 2.`;
 
-  // — Key thresholds —
-  const thresholds = [];
-  if (qbScarcityPick) thresholds.push(`⚡ <strong>QB cliff</strong> around pick <strong>${qbScarcityPick}</strong> — QB5 goes here. Wait until ${qbScarcityPick <= myPickNums[3]?.overall ? 'round 4–5' : 'rounds 6–8'} unless a top-3 QB falls.`);
-  if (tePremiumPick)  thresholds.push(`📍 <strong>TE premium</strong> ends at pick ~<strong>${tePremiumPick}</strong>. After TE3, it's streaming territory — either grab one of the top-2 early or wait until round 7+.`);
-  if (thresholds.length) {
-    html += `<div style="margin-bottom:10px">
-      <div class="t3 fs9 fw7 caps" style="letter-spacing:.07em;margin-bottom:6px">Key Thresholds</div>
-      ${thresholds.map(t => `<div style="font-size:10px;line-height:1.6;margin-bottom:5px;padding:7px 10px;background:var(--surface2);border-radius:6px">${t}</div>`).join('')}
+    } else if (slotTier === 'early') {
+      const likelyGone = pool.filter(p => p.adp < p1).slice(0, slot - 1);
+      const stillHere  = atP1.slice(0, 3);
+      r1Text = `By pick ${p1}, expect ${likelyGone.map(p => bold(cleanDisplayName(p.name))).join(', ')} gone. Likely available: ${nameList(stillHere)}. Take the best of those — round 2 is ${p2gap} picks away at ${bold(p2)}.`;
+
+    } else if (slotTier === 'mid') {
+      const likelyGone = pool.filter(p => p.adp < p1 - 1).slice(0, Math.min(slot - 1, 6));
+      const stillHere  = atP1.slice(0, 3);
+      r1Text = `By pick ${p1}, the top ${rbsGoneByP1} RBs and ${wrsGoneByP1} WRs are likely gone. Players falling to you: ${nameList(stillHere)}. With ${p2gap} picks before round 2 at ${bold(p2)}, plan your positional complement now.`;
+
+    } else if (slotTier === 'late-mid') {
+      // Specific: name who's gone and who's left
+      const rbNames = rbsLeft.slice(0,2).map(p => bold(cleanDisplayName(p.name))).join(', ') || 'few options';
+      const wrNames = wrsLeft.slice(0,2).map(p => bold(cleanDisplayName(p.name))).join(', ') || 'few options';
+      const topFall = atP1.slice(0, 2);
+      r1Text = `By pick ${p1}, roughly ${rbsGoneByP1} RBs and ${wrsGoneByP1} WRs are off the board. Best remaining RBs: ${rbNames}. Best remaining WRs: ${wrNames}.`
+        + (topFall.length ? ` The most likely picks at ${p1}: ${nameList(topFall)}.` : '')
+        + ` Your round 2 pick is ${bold(p2)} — ${p2gap} picks away, with ${TEAMS - slot} teams picking twice before you get back.`;
+
+    } else { // turn
+      const topFall = atP1.slice(0, 2);
+      const turnP2  = atP2.slice(0, 2);
+      r1Text = `Pick ${p1}: ${nameList(topFall)}. Pick ${p2} (${p2gap === 1 ? 'immediately after' : `${p2gap} picks later`}): ${nameList(turnP2)}. Plan both picks as a unit — this is your biggest leverage point of the draft.`;
+    }
+
+    html += `<div style="margin-bottom:10px;padding:10px 12px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--blue)">
+      <div class="t3 fs9 fw7 caps" style="letter-spacing:.07em;margin-bottom:5px">Round 1 Read</div>
+      <div style="font-size:11px;line-height:1.7">${r1Text}</div>
     </div>`;
   }
 
-  // — League tendency signals —
-  if (hasTend) {
-    const signals = [];
-    // TE run
-    const teTend = [3,4,5].map(r => tend['TE']?.[r] || 0);
-    const peakTERound = teTend.indexOf(Math.max(...teTend)) + 3;
-    const peakTE = Math.max(...teTend);
-    if (peakTE >= 20) signals.push(`⚠️ <strong>TE run</strong> in round ${peakTERound} (~${peakTE}% of picks). Grab a premium TE before then or plan to stream.`);
-    // QB timing
-    const qbEarly = (tend['QB']?.[2] || 0) + (tend['QB']?.[3] || 0);
-    if (qbEarly >= 25) signals.push(`🏈 <strong>Early QB</strong> culture — ~${Math.round(qbEarly/2)}% of rounds 2–3 go QB. Consider whether you want to compete for one or exploit the positional value gap.`);
-    else signals.push(`⏳ <strong>Late QB</strong> market — your leaguemates wait on QB. Rounds 5–7 still yield solid starters with VOLS upside.`);
-    // K/DEF drain
-    const kRound = [10,11,12,13].find(r => (tend['K']?.[r] || 0) >= 20) || null;
-    if (kRound) signals.push(`🎯 K/DEF typically go rounds ${kRound}–${kRound+1} in your league. Don't reach earlier.`);
+  // ── Round 2 specific read ─────────────────────────────────────────────────
+  if (hasAdp && slotTier !== 'top-3') {
+    const rbP2names = rbsAtP2.slice(0,2).map(p => `${pill('RB')} ${name(p)}`).join('  ');
+    const wrP2names = wrsAtP2.slice(0,2).map(p => `${pill('WR')} ${name(p)}`).join('  ');
+    const teAtP2    = bestAvailAt('TE', p2, 1)[0];
+    const qbAtP2    = bestAvailAt('QB', p2, 1)[0];
 
-    if (signals.length) {
-      html += `<div style="margin-bottom:6px">
-        <div class="t3 fs9 fw7 caps" style="letter-spacing:.07em;margin-bottom:6px">League Tendency Signals</div>
-        ${signals.map(s => `<div style="font-size:10px;line-height:1.6;margin-bottom:5px;padding:7px 10px;background:rgba(74,144,226,0.06);border:1px solid rgba(74,144,226,0.18);border-radius:6px">${s}</div>`).join('')}
+    let r2Text = `At pick ${bold(p2)}: `;
+    const parts = [];
+    if (rbsAtP2.length) parts.push(`RBs available — ${rbP2names}`);
+    if (wrsAtP2.length) parts.push(`WRs — ${wrP2names}`);
+    if (teAtP2 && te2 && teAtP2.adp <= p2 + 4) parts.push(`${pill('TE')} ${name(teAtP2)} still around`);
+    if (qbAtP2 && qbAtP2.adp <= p2 + 2) parts.push(`${pill('QB')} ${name(qbAtP2)} could fall here`);
+    r2Text += parts.join(' · ');
+
+    // Round 2 positional advice based on what you took in round 1
+    const r2hint = slotTier === 'late-mid' || slotTier === 'turn'
+      ? ` If you took WR in round 1, the RBs above are your best shot at an RB1. If you took RB, ${wrsAtP2[0] ? bold(cleanDisplayName(wrsAtP2[0].name)) : 'the top WR available'} is your target.`
+      : ` Stack the complementary position to what you took in round 1.`;
+    r2Text += r2hint;
+
+    html += `<div style="margin-bottom:10px;padding:10px 12px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--green)">
+      <div class="t3 fs9 fw7 caps" style="letter-spacing:.07em;margin-bottom:5px">Round 2 Read</div>
+      <div style="font-size:11px;line-height:1.7">${r2Text}</div>
+    </div>`;
+  }
+
+  // ── Value windows at your picks (rounds 3–8) ──────────────────────────────
+  if (hasAdp) {
+    const laterPicks = myPickNums.slice(2, 8); // rounds 3–8
+    const rows = laterPicks.map(({ round, overall }) => {
+      const nearby = pool.filter(p => p.adp >= overall - 2 && p.adp <= overall + 3);
+      const top2   = nearby
+        .filter(p => ['QB','RB','WR','TE'].includes(p.pos === 'DST' ? 'DEF' : p.pos))
+        .sort((a, b) => a.adp - b.adp)
+        .slice(0, 3);
+      if (!top2.length) return '';
+      const tendBits = hasTend
+        ? ['RB','WR','QB','TE']
+            .map(p => tend[p]?.[round] >= 15 ? `<span class="t3" style="color:#4A90E2">${p} ${tend[p][round]}%</span>` : null)
+            .filter(Boolean).join(' ')
+        : '';
+      return `<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border)">
+        <span class="mono t3 fs9" style="min-width:54px;flex-shrink:0">Rd${round} · ${overall}</span>
+        <span style="flex:1">${nameList(top2)}</span>
+        ${tendBits ? `<span style="font-size:9px;white-space:nowrap">${tendBits}</span>` : ''}
+      </div>`;
+    }).filter(Boolean).join('');
+
+    if (rows) {
+      html += `<div style="margin-bottom:10px">
+        <div class="t3 fs9 fw7 caps" style="letter-spacing:.07em;margin-bottom:4px">Value Windows at Your Picks${hasTend ? ' <span class="t3 fw4" style="font-size:9px">· colored % = league tendency</span>' : ''}</div>
+        ${rows}
       </div>`;
     }
+  }
+
+  // ── Key thresholds ────────────────────────────────────────────────────────
+  {
+    const thresholds = [];
+
+    // QB cliff — with specific names
+    if (qb5Pick) {
+      const qb5name = qbs[4] ? bold(cleanDisplayName(qbs[4].name)) : 'QB5';
+      const qb6name = qbs[5] ? ` then a gap to ${bold(cleanDisplayName(qbs[5].name))} at ${Math.round(qbs[5].adp)}` : '';
+      const myQBpick = myPickNums.find(p => p.overall >= qb5Pick - 4 && p.overall <= qb5Pick + 10);
+      const timing   = myQBpick ? ` Your pick ${bold(myQBpick.overall)} (round ${myQBpick.round}) hits right in this window.` : '';
+      thresholds.push(`⚡ <strong>QB cliff at pick ~${qb5Pick}</strong> — ${qb5name} is QB5${qb6name}. After that, streaming territory.${timing}`);
+    }
+
+    // TE premium — with specific names
+    if (te1 && te2) {
+      const gap = te3 ? Math.round(te3.adp - te2.adp) : 20;
+      const teStr = gap >= 8
+        ? `${name(te1)} (ADP ${Math.round(te1.adp)}) and ${name(te2)} (ADP ${Math.round(te2.adp)}) are elite — then a ${gap}-pick gap to ${te3 ? name(te3) : 'the next tier'}.`
+        : `${name(te1)} and ${name(te2)} lead a tight tier — cliff starts around pick ${tePremiumPick}.`;
+      const teInRange = te1.adp >= p1 - 2 && te1.adp <= p1 + 6;
+      const teHint    = teInRange ? ` ${name(te1)} could fall to you at pick ${p1}.` : (te1.adp < p1 ? ` Both likely gone by your pick.` : '');
+      thresholds.push(`📍 <strong>TE premium:</strong> ${teStr}${teHint} After the top-2, wait until rounds 7–9.`);
+    }
+
+    // Zero RB viability for late slots
+    if ((slotTier === 'late-mid' || slotTier === 'turn') && wrsLeft.length >= 2) {
+      const topWRs = wrsLeft.slice(0, 2).map(p => bold(cleanDisplayName(p.name))).join(' and ');
+      const rbR3 = bestAvailAt('RB', myPickNums[2]?.overall || p2 + TEAMS, 2);
+      const rbHint = rbR3.length ? ` By round 3 (pick ${myPickNums[2]?.overall}), ${rbR3.map(p => bold(cleanDisplayName(p.name))).join(' and ')} should be there as your first RB.` : '';
+      thresholds.push(`🔄 <strong>Zero RB is viable from slot ${slot}.</strong> Stack ${topWRs} in rounds 1–2.${rbHint}`);
+    }
+
+    if (thresholds.length) {
+      html += `<div style="margin-bottom:10px">
+        <div class="t3 fs9 fw7 caps" style="letter-spacing:.07em;margin-bottom:6px">Key Thresholds</div>
+        ${thresholds.map(t => `<div style="font-size:10px;line-height:1.6;margin-bottom:6px;padding:8px 10px;background:var(--surface2);border-radius:6px">${t}</div>`).join('')}
+      </div>`;
+    }
+  }
+
+  // ── League tendency signals ───────────────────────────────────────────────
+  if (hasTend) {
+    const signals = [];
+    const teTend     = [3,4,5].map(r => tend['TE']?.[r] || 0);
+    const peakTERound = teTend.indexOf(Math.max(...teTend)) + 3;
+    const peakTE      = Math.max(...teTend);
+    const myPickAtRun = myPickNums.find(p => p.round === peakTERound);
+    if (peakTE >= 20) {
+      const teRunHint = myPickAtRun
+        ? ` Your pick ${myPickAtRun.overall} is in this round — ${peakTE >= 35 ? 'consider jumping early or waiting it out entirely' : 'factor this into your TE timing'}.`
+        : '';
+      signals.push(`⚠️ <strong>TE run in round ${peakTERound}</strong> (~${peakTE}% of your league's picks). ${te1 ? `${name(te1)} and ${name(te2)} go early — after them it's a run on the ${peakTERound === 3 ? 'TE2' : 'mid-tier'} group.` : ''}${teRunHint}`);
+    }
+    const qbEarly = (tend['QB']?.[2] || 0) + (tend['QB']?.[3] || 0);
+    const qb1name = qbs[0] ? bold(cleanDisplayName(qbs[0].name)) : 'the top QB';
+    if (qbEarly >= 25) {
+      signals.push(`🏈 <strong>Early QB culture</strong> — ~${Math.round(qbEarly / 2)}% of rounds 2–3 go QB in your league. If you want ${qb1name} or ${qbs[1] ? bold(cleanDisplayName(qbs[1].name)) : 'QB2'}, you may need to go rounds 2–3.`);
+    } else {
+      const qbR5 = bestAvailAt('QB', myPickNums[3]?.overall || 60, 2);
+      signals.push(`⏳ <strong>Late QB market</strong> — your leaguemates typically wait. ${qbR5.length ? `${name(qbR5[0])} and ${name(qbR5[1])} should still be available in rounds 4–6.` : 'Rounds 5–7 still yield solid starters.'}`);
+    }
+    const kRound = [10,11,12,13].find(r => (tend['K']?.[r] || 0) >= 20);
+    if (kRound) signals.push(`🎯 K/DEF run in rounds ${kRound}–${kRound + 1} in your league. Don't touch them before round 12.`);
+
+    html += `<div style="margin-bottom:6px">
+      <div class="t3 fs9 fw7 caps" style="letter-spacing:.07em;margin-bottom:6px">League Signals</div>
+      ${signals.map(s => `<div style="font-size:10px;line-height:1.6;margin-bottom:5px;padding:8px 10px;background:rgba(74,144,226,0.06);border:1px solid rgba(74,144,226,0.18);border-radius:6px">${s}</div>`).join('')}
+    </div>`;
   } else {
-    html += `<div style="font-size:10px;padding:7px 10px;background:rgba(74,144,226,0.06);border:1px solid rgba(74,144,226,0.18);border-radius:6px;margin-bottom:6px">
-      <span style="color:#4A90E2">💡 Sync your ESPN league</span> to unlock tendency signals — when your leaguemates run on TEs, how early QBs go, and more.
+    html += `<div style="font-size:10px;padding:8px 10px;background:rgba(74,144,226,0.06);border:1px solid rgba(74,144,226,0.18);border-radius:6px;margin-bottom:6px">
+      <span style="color:#4A90E2">💡 Sync your ESPN league</span> to unlock league-specific signals — TE run timing, QB culture, and more tailored to how your leaguemates actually draft.
     </div>`;
   }
 
   el.innerHTML = html;
-
-  // Also update sim run button state
   updateSimRunBtn();
 }
 
@@ -12048,70 +12156,78 @@ function simRunOne(draftPos, numTeams, numRounds, strategy, pool) {
 
 // ── Run Monte Carlo for all enabled strategies ────────────────────────────
 async function runStrategySimulator() {
+  console.log('[SIM] fired — mySlot:', mockState.mySlot, 'SCORING:', SCORING, 'adpCache half size:', (adpCache['half']||[]).length, 'adpCache SCORING size:', (adpCache[SCORING]||[]).length, 'enabled:', [...mockSimEnabled]);
   if (!mockState.mySlot) { showToast('Select your draft slot first'); return; }
 
   const pool = adpCache[SCORING] || adpCache['half'] || [];
+  console.log('[SIM] pool size:', pool.length);
   if (!pool.length) { showToast('Load ADP data first — go to Draft Map tab'); return; }
+
+  const strategies = MOCK_STRATEGIES.filter(s => mockSimEnabled.has(s.key));
+  console.log('[SIM] strategies to run:', strategies.map(s=>s.key));
 
   // Attach FP projections to pool
   const enrichedPool = pool.map(p => {
     const fp = getFPProjection(p.name);
-    const proj = fp?.fpts ?? Math.max(0, 300 - p.adp * 2); // fpts if available, else ADP-decay fallback
+    const proj = fp?.fpts ?? Math.max(0, 300 - p.adp * 2);
     return { ...p, proj };
   });
 
-  const strategies = MOCK_STRATEGIES.filter(s => mockSimEnabled.has(s.key));
-  const RUNS       = 50;
+  const RUNS = 50;
 
   document.getElementById('mockSimResults').style.display  = 'none';
   document.getElementById('mockSimLoading').style.display  = 'block';
   document.getElementById('mockSimPlaceholder').style.display = 'none';
 
-  // Run async with progress updates
   const results = [];
   let done = 0;
   const total = strategies.length * RUNS;
 
-  for (const strategy of strategies) {
-    let sumProj = 0;
-    let bestRun = null, worstRun = null;
-    const allRosters = [];
+  try {
+    for (const strategy of strategies) {
+      let sumProj = 0;
+      let bestRun = null, worstRun = null;
+      const allRosters = [];
 
-    for (let i = 0; i < RUNS; i++) {
-      const board  = simRandomizePool(enrichedPool);
-      const result = simRunOne(mockState.mySlot, TEAMS, mockState.mockRounds, strategy, board);
-      sumProj += result.totalProj;
-      if (!bestRun  || result.totalProj > bestRun.totalProj)  bestRun  = result;
-      if (!worstRun || result.totalProj < worstRun.totalProj) worstRun = result;
-      allRosters.push(result.roster);
-      done++;
+      for (let i = 0; i < RUNS; i++) {
+        const board  = simRandomizePool(enrichedPool);
+        const result = simRunOne(mockState.mySlot, TEAMS, mockState.mockRounds, strategy, board);
+        sumProj += result.totalProj;
+        if (!bestRun  || result.totalProj > bestRun.totalProj)  bestRun  = result;
+        if (!worstRun || result.totalProj < worstRun.totalProj) worstRun = result;
+        allRosters.push(result.roster);
+        done++;
 
-      // Update progress bar every 10 runs
-      if (i % 10 === 0) {
-        const pct = Math.round((done / total) * 100);
-        const bar = document.getElementById('mockSimProgressBar');
-        const txt = document.getElementById('mockSimLoadingText');
-        if (bar) bar.style.width = pct + '%';
-        if (txt) txt.textContent = `Running ${strategy.name}… ${RUNS} sims each`;
-        await new Promise(r => setTimeout(r, 0)); // yield to browser
+        if (i % 10 === 0) {
+          const pct = Math.round((done / total) * 100);
+          const bar = document.getElementById('mockSimProgressBar');
+          const txt = document.getElementById('mockSimLoadingText');
+          if (bar) bar.style.width = pct + '%';
+          if (txt) txt.textContent = `Running ${strategy.name}… (${done}/${total})`;
+          await new Promise(r => setTimeout(r, 0));
+        }
       }
+
+      console.log(`[SIM] ${strategy.key} done — avgProj=${(sumProj/RUNS).toFixed(1)} bestRun roster size=${bestRun?.roster?.length}`);
+      const medianRoster = buildMedianRoster(allRosters, mockState.mockRounds);
+      results.push({
+        strategy,
+        avgProj:   Math.round(sumProj / RUNS * 10) / 10,
+        bestProj:  Math.round(bestRun.totalProj * 10) / 10,
+        floorProj: Math.round(worstRun.totalProj * 10) / 10,
+        bestRun,
+        medianRoster,
+      });
     }
-
-    // Most common player per round across all runs
-    const medianRoster = buildMedianRoster(allRosters, mockState.mockRounds);
-
-    results.push({
-      strategy,
-      avgProj:   Math.round(sumProj / RUNS * 10) / 10,
-      bestProj:  Math.round(bestRun.totalProj * 10) / 10,
-      floorProj: Math.round(worstRun.totalProj * 10) / 10,
-      bestRun,
-      medianRoster,
-    });
+  } catch(err) {
+    console.error('[SIM] ERROR:', err);
+    showToast('Sim error: ' + err.message);
+    document.getElementById('mockSimLoading').style.display = 'none';
+    return;
   }
 
-  // Sort by avg projected points descending
   results.sort((a, b) => b.avgProj - a.avgProj);
+  console.log('[SIM] all done, rendering results for', results.length, 'strategies');
 
   document.getElementById('mockSimLoading').style.display  = 'none';
   document.getElementById('mockSimResults').style.display  = 'block';
@@ -12657,6 +12773,8 @@ function recordMockPick(slotIdx, player) {
   const round       = currentMockRound();
   const pickInRnd   = currentMockPickInRound();
 
+  console.log(`[PICK] overall=${overallPick} round=${round} pickInRound=${pickInRnd} slot=${slotIdx} (slot+1=${slotIdx+1}) mySlot=${mockState.mySlot} player=${player.name}`);
+
   mockState.picks.push({
     slot:        slotIdx,
     round,
@@ -12695,20 +12813,13 @@ function renderMockBoard() {
   for (let r = 0; r < mockState.mockRounds; r++) {
     html += `<tr style="border-top:1px solid var(--border)"><td class="t3 mono" style="padding:4px 6px;font-size:9px;text-align:center;font-weight:700">${r+1}</td>`;
     for (let s = 0; s < TEAMS; s++) {
-      // boardSlot = which drafter (0-based) sits in visual column s this round.
-      // Even rounds go left→right (slot 0 first), odd rounds go right→left (slot TEAMS-1 first).
-      const boardSlot = r % 2 === 0 ? s : TEAMS - 1 - s;
-
-      // The pick number (1-based) that boardSlot makes in round r+1.
-      // In a snake: even rounds pick in slot order, odd rounds reverse.
-      // The pick sequence within a round is determined by the column position s
-      // (0 = first pick of the round, TEAMS-1 = last pick of the round).
-      const overallPick = r * TEAMS + s + 1; // 1-based pick number for this cell
-      const overallIdx  = overallPick - 1;   // 0-based index
-
-      const pick      = mockState.picks.find(p => p.overallPick === overallPick);
-      const isMe      = boardSlot === mySlot0;
-      const isCurrent = overallIdx === currentMockPickIndex() && !mockState.finished;
+      const boardSlot  = r % 2 === 0 ? s : TEAMS - 1 - s;
+      const overallPick = r * TEAMS + s + 1;
+      const overallIdx  = overallPick - 1;
+      const pick        = mockState.picks.find(p => p.overallPick === overallPick);
+      const isMe        = boardSlot === mySlot0;
+      const isCurrent   = overallIdx === currentMockPickIndex() && !mockState.finished;
+      if (r < 2) console.log(`[BOARD] r=${r} s=${s} boardSlot=${boardSlot} overallPick=${overallPick} isMe=${isMe} isCurrent=${isCurrent} hasPick=${!!pick} pick=${pick?.player?.name||''}`);
 
       let cellBg = isMe ? 'rgba(0,210,106,0.05)' : 'transparent';
       if (isCurrent) cellBg = 'rgba(0,210,106,0.12)';
