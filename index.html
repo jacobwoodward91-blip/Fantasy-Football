@@ -12158,15 +12158,12 @@ const SIM_RUNS = 50; // number of Monte Carlo simulations per strategy
 
 // ── Run Monte Carlo for all enabled strategies ────────────────────────────
 async function runStrategySimulator() {
-  console.log('[SIM] fired — mySlot:', mockState.mySlot, 'SCORING:', SCORING, 'adpCache half size:', (adpCache['half']||[]).length, 'adpCache SCORING size:', (adpCache[SCORING]||[]).length, 'enabled:', [...mockSimEnabled]);
   if (!mockState.mySlot) { showToast('Select your draft slot first'); return; }
 
   const pool = adpCache[SCORING] || adpCache['half'] || [];
-  console.log('[SIM] pool size:', pool.length);
   if (!pool.length) { showToast('Load ADP data first — go to Draft Map tab'); return; }
 
   const strategies = MOCK_STRATEGIES.filter(s => mockSimEnabled.has(s.key));
-  console.log('[SIM] strategies to run:', strategies.map(s=>s.key));
 
   // Attach FP projections to pool
   const enrichedPool = pool.map(p => {
@@ -12210,7 +12207,6 @@ async function runStrategySimulator() {
         }
       }
 
-      console.log(`[SIM] ${strategy.key} done — avgProj=${(sumProj/RUNS).toFixed(1)} bestRun roster size=${bestRun?.roster?.length}`);
       const medianRoster = buildMedianRoster(allRosters, mockState.mockRounds);
       results.push({
         strategy,
@@ -12229,7 +12225,6 @@ async function runStrategySimulator() {
   }
 
   results.sort((a, b) => b.avgProj - a.avgProj);
-  console.log('[SIM] all done, rendering results for', results.length, 'strategies');
 
   document.getElementById('mockSimLoading').style.display  = 'none';
   document.getElementById('mockSimResults').style.display  = 'block';
@@ -12775,7 +12770,6 @@ function recordMockPick(slotIdx, player) {
   const round       = currentMockRound();
   const pickInRnd   = currentMockPickInRound();
 
-  console.log(`[PICK] overall=${overallPick} round=${round} pickInRound=${pickInRnd} slot=${slotIdx} (slot+1=${slotIdx+1}) mySlot=${mockState.mySlot} player=${player.name}`);
 
   mockState.picks.push({
     slot:        slotIdx,
@@ -12812,21 +12806,31 @@ function renderMockBoard() {
 
   let html = `<thead><tr><th style="padding:4px 6px;font-size:8px;color:var(--text3);text-align:left;width:28px">Rd</th>${slotHeaders}</tr></thead><tbody>`;
 
-  // Precompute which visual cell (r,s) the current pick cursor sits in
-  const curIdx   = currentMockPickIndex();
-  const curRound = Math.floor(curIdx / TEAMS);            // 0-based round
-  const curPos   = curIdx % TEAMS;                        // 0-based position within round
-  // In even rounds the s-th column IS the curPos-th pick; in odd rounds it's reversed
-  const curS     = curRound % 2 === 0 ? curPos : TEAMS - 1 - curPos;
+  // Precompute which (r,s) cell the current pick cursor sits in.
+  // Columns are FIXED to slots (column s = slot s, always).
+  // In odd rounds the snake reverses so the column making the (curPos+1)-th
+  // pick of the round is the one whose slot index equals (TEAMS-1 - curPos).
+  // But since column s = slot s, that means we display the cursor at the
+  // column whose slot is the current drafter — which we get from snakeOrder.
+  const curIdx     = currentMockPickIndex();
+  const curRound   = Math.floor(curIdx / TEAMS);
+  const curSlot    = mockState.snakeOrder[curIdx];          // 0-based slot of the current pick
+  const curS       = curSlot;                                // since columns are fixed to slots
 
   for (let r = 0; r < mockState.mockRounds; r++) {
     html += `<tr style="border-top:1px solid var(--border)"><td class="t3 mono" style="padding:4px 6px;font-size:9px;text-align:center;font-weight:700">${r+1}</td>`;
     for (let s = 0; s < TEAMS; s++) {
-      const boardSlot  = r % 2 === 0 ? s : TEAMS - 1 - s;
-      const overallPick = r * TEAMS + s + 1;
-      const pick        = mockState.picks.find(p => p.overallPick === overallPick);
-      const isMe        = boardSlot === mySlot0;
-      const isCurrent   = !mockState.finished && r === curRound && s === curS;
+      // Columns are fixed: column s = slot s.
+      // In a snake draft the overallPick made by column s depends on round direction:
+      //   Even rounds (r=0,2,...): col 0 goes first, col TEAMS-1 last  -> overallPick = r*TEAMS + s + 1
+      //   Odd rounds  (r=1,3,...): col TEAMS-1 goes first, col 0 last   -> overallPick = r*TEAMS + (TEAMS - s)
+      const boardSlot   = s;
+      const overallPick = r % 2 === 0
+        ? r * TEAMS + s + 1
+        : r * TEAMS + (TEAMS - s);
+      const pick      = mockState.picks.find(p => p.overallPick === overallPick);
+      const isMe      = boardSlot === mySlot0;
+      const isCurrent = !mockState.finished && r === curRound && s === curS;
 
       let cellBg = isMe ? 'rgba(0,210,106,0.05)' : 'transparent';
       if (isCurrent) cellBg = 'rgba(0,210,106,0.12)';
