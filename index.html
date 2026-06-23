@@ -12154,6 +12154,8 @@ function simRunOne(draftPos, numTeams, numRounds, strategy, pool) {
   return { roster, totalProj: calcOptimalLineupProj(roster.map(p => ({ ...p, proj: p.proj }))) };
 }
 
+const SIM_RUNS = 50; // number of Monte Carlo simulations per strategy
+
 // ── Run Monte Carlo for all enabled strategies ────────────────────────────
 async function runStrategySimulator() {
   console.log('[SIM] fired — mySlot:', mockState.mySlot, 'SCORING:', SCORING, 'adpCache half size:', (adpCache['half']||[]).length, 'adpCache SCORING size:', (adpCache[SCORING]||[]).length, 'enabled:', [...mockSimEnabled]);
@@ -12173,7 +12175,7 @@ async function runStrategySimulator() {
     return { ...p, proj };
   });
 
-  const RUNS = 50;
+  const RUNS = SIM_RUNS;
 
   document.getElementById('mockSimResults').style.display  = 'none';
   document.getElementById('mockSimLoading').style.display  = 'block';
@@ -12387,12 +12389,12 @@ function renderSimResults(results) {
   if (results.length >= 2) {
     const gap = results[0].avgProj - results[1].avgProj;
     if (gap >= 8) insights.push({ icon:'🏆', color:'var(--green)', bg:'rgba(0,210,106,0.07)', border:'rgba(0,210,106,0.25)',
-      text:`<strong>${results[0].strategy.name}</strong> leads by <strong>+${gap.toFixed(0)} avg pts</strong> — a dominant result across all ${RUNS} sims.` });
+      text:`<strong>${results[0].strategy.name}</strong> leads by <strong>+${gap.toFixed(0)} avg pts</strong> — a dominant result across all ${SIM_RUNS} sims.` });
   }
   results.forEach(r => {
     const spread = r.bestProj - r.avgProj;
     if (spread <= 8) insights.push({ icon:'🎯', color:'#6366f1', bg:'rgba(99,102,241,0.07)', border:'rgba(99,102,241,0.25)',
-      text:`<strong>${r.strategy.name}</strong> is highly consistent — ceiling is only <strong>+${spread.toFixed(0)} pts</strong> above avg across ${RUNS} sims.` });
+      text:`<strong>${r.strategy.name}</strong> is highly consistent — ceiling is only <strong>+${spread.toFixed(0)} pts</strong> above avg across ${SIM_RUNS} sims.` });
   });
   results.slice(1).forEach(r => {
     if (r.bestProj > results[0].avgProj + 10) insights.push({ icon:'⚡', color:'var(--amber)', bg:'rgba(245,166,35,0.07)', border:'rgba(245,166,35,0.25)',
@@ -12402,7 +12404,7 @@ function renderSimResults(results) {
   container.innerHTML = `
     <div style="margin-bottom:14px">
       <div class="t2 fs11 fw6" style="margin-bottom:3px">📍 Pick ${slot} of ${TEAMS} · Snake picks: ${snakePicks.join(', ')}</div>
-      <div class="t3 fs9">🎲 ${RUNS} simulations per strategy · Roster shown is most common player per round · % = how often that player appeared</div>
+      <div class="t3 fs9">🎲 ${SIM_RUNS} simulations per strategy · Roster shown is most common player per round · % = how often that player appeared</div>
     </div>
 
     <!-- Stat cards -->
@@ -12810,16 +12812,21 @@ function renderMockBoard() {
 
   let html = `<thead><tr><th style="padding:4px 6px;font-size:8px;color:var(--text3);text-align:left;width:28px">Rd</th>${slotHeaders}</tr></thead><tbody>`;
 
+  // Precompute which visual cell (r,s) the current pick cursor sits in
+  const curIdx   = currentMockPickIndex();
+  const curRound = Math.floor(curIdx / TEAMS);            // 0-based round
+  const curPos   = curIdx % TEAMS;                        // 0-based position within round
+  // In even rounds the s-th column IS the curPos-th pick; in odd rounds it's reversed
+  const curS     = curRound % 2 === 0 ? curPos : TEAMS - 1 - curPos;
+
   for (let r = 0; r < mockState.mockRounds; r++) {
     html += `<tr style="border-top:1px solid var(--border)"><td class="t3 mono" style="padding:4px 6px;font-size:9px;text-align:center;font-weight:700">${r+1}</td>`;
     for (let s = 0; s < TEAMS; s++) {
       const boardSlot  = r % 2 === 0 ? s : TEAMS - 1 - s;
       const overallPick = r * TEAMS + s + 1;
-      const overallIdx  = overallPick - 1;
       const pick        = mockState.picks.find(p => p.overallPick === overallPick);
       const isMe        = boardSlot === mySlot0;
-      const isCurrent   = overallIdx === currentMockPickIndex() && !mockState.finished;
-      if (r < 2) console.log(`[BOARD] r=${r} s=${s} boardSlot=${boardSlot} overallPick=${overallPick} isMe=${isMe} isCurrent=${isCurrent} hasPick=${!!pick} pick=${pick?.player?.name||''}`);
+      const isCurrent   = !mockState.finished && r === curRound && s === curS;
 
       let cellBg = isMe ? 'rgba(0,210,106,0.05)' : 'transparent';
       if (isCurrent) cellBg = 'rgba(0,210,106,0.12)';
