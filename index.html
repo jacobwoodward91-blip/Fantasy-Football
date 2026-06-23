@@ -12088,31 +12088,58 @@ function simEligibility(strategyKey, round, roster, numRounds) {
 }
 
 // ── Pick from pool given eligibility ──────────────────────────────────────
+// ── Pick from pool given eligibility ──────────────────────────────────────
+// Tags act as a SCORING BOOST within position eligibility — they don't bypass
+// strategy rules. Must Get adds a boost roughly equal to half a round of value;
+// Target adds a smaller nudge. This way:
+//   - If Lamb is tagged 🎯 but a top-tier RB is available in a Heavy RB round,
+//     RB wins because RB is the only eligible position.
+//   - If WR is eligible and Lamb's ADP-boosted score beats other WR options,
+//     Lamb gets the pick. Otherwise a better WR (e.g. Chase) wins.
+//   - Across Monte Carlo runs with simAdp randomization, Lamb only "wins" if
+//     he's genuinely the best WR available at that pick after random noise.
 function simPickFromEligibility(pool, draftedNames, eligibility) {
   const { positions, priority } = eligibility;
   if (!positions.length) return null;
 
+  // Tag boost: subtract from effective ADP rank (lower = picked sooner)
+  // Must Get: -7 picks (half round); Target: -3 picks
+  const tagBoost = (name) => {
+    const tag = rankTagMap[name];
+    if (tag === 'mustget') return -7;
+    if (tag === 'target')  return -3;
+    return 0;
+  };
+  const effectiveAdp = (p) => (p.simAdp || p.adp) + tagBoost(p.name);
+
   if (priority) {
     // Strict priority: try each position in order
     for (const pos of positions) {
-      const found = pool.find(p => {
+      const candidates = pool.filter(p => {
         if (draftedNames.has(p.name)) return false;
         if (rankTagMap[p.name] === 'avoid') return false;
         const ppos = p.pos === 'DST' ? 'DEF' : p.pos;
         return ppos === pos;
       });
-      if (found) return found;
+      if (candidates.length) {
+        // Sort by effective ADP (tag boost factored in)
+        candidates.sort((a, b) => effectiveAdp(a) - effectiveAdp(b));
+        return candidates[0];
+      }
     }
     return null;
   }
 
-  // BPA: pick highest-ADP player among any eligible position
-  return pool.find(p => {
+  // BPA among eligible positions, with tag boost
+  const candidates = pool.filter(p => {
     if (draftedNames.has(p.name)) return false;
     if (rankTagMap[p.name] === 'avoid') return false;
     const ppos = p.pos === 'DST' ? 'DEF' : p.pos;
     return positions.includes(ppos);
-  }) || null;
+  });
+  if (!candidates.length) return null;
+  candidates.sort((a, b) => effectiveAdp(a) - effectiveAdp(b));
+  return candidates[0];
 }
 
 // ── Snake pick number for a given round + slot ────────────────────────────
@@ -12136,67 +12163,15 @@ function simRunOne(draftPos, numTeams, numRounds, strategy, pool) {
     simDrainOpponents(lastUserPick, overall, pool, draftedNames, numTeams);
     lastUserPick = overall;
 
-    // ── Tag overrides (🔥 mustget, 🎯 target) ─────────────────────────────
-    // Tagged players bias toward being drafted within their reach window —
-    // but they DON'T override the strategy's positional rules unless their
-    // position is already eligible for this round. Otherwise, e.g., a 🎯 WR
-    // would get drafted on a Hero RB strategy in round 2 even though Hero RB
-    // explicitly avoids WR in round 1.
-    //
-    // Wait — that's backwards. Hero RB avoids RB in rounds 2-5, not WR.
-    // The point stands either way: tags should respect strategy constraints.
-    //
-    // Tags are also probabilistic, not deterministic:
-    //   mustget: 80% chance to grab if in reach window (1 round)
-    //   target:  50% chance to grab if in reach window (half round)
-    // This produces realistic variance across Monte Carlo runs — you won't
-    // get the same targeted player in every single sim.
-    const eligibility = simEligibility(strategy.key, round, roster, numRounds);
-    const eligiblePositions = new Set(eligibility.positions);
-
-    const mustGetWindow = numTeams;
-    const targetWindow  = numTeams * 0.5;
-
-    // Find candidates whose position is allowed by the strategy this round
-    const mustGetCandidate = pool.find(p => {
-      if (draftedNames.has(p.name)) return false;
-      if (rankTagMap[p.name] !== 'mustget') return false;
-      const ppos = p.pos === 'DST' ? 'DEF' : p.pos;
-      if (!eligiblePositions.has(ppos)) return false;
-      return overall >= (p.simAdp || p.adp) - mustGetWindow;
-    });
-
-    const targetCandidate = pool.find(p => {
-      if (draftedNames.has(p.name)) return false;
-      if (rankTagMap[p.name] !== 'target') return false;
-      const ppos = p.pos === 'DST' ? 'DEF' : p.pos;
-      if (!eligiblePositions.has(ppos)) return false;
-      return overall >= (p.simAdp || p.adp) - targetWindow;
-    });
-
-    // Probabilistic resolution — tags create a bias, not a guarantee.
-    // Tuned so that across 50 sims, targeted players appear roughly half the
-    // time, which is realistic given they're available in their reach window.
-    //   mustget: 65% chance to grab if in reach window (1 round)
-    //   target:  35% chance to grab if in reach window (half round)
-    // This produces realistic variance across Monte Carlo runs — you won't
-    // get the same targeted player in every single sim, and the median
-    // roster across runs won't be dominated by tagged players.
-    let taggedReach = null;
-    if (mustGetCandidate && Math.random() < 0.65) taggedReach = mustGetCandidate;
-    else if (targetCandidate && Math.random() < 0.35) taggedReach = targetCandidate;
-
-    if (taggedReach) {
-      const tagPos = taggedReach.pos === 'DST' ? 'DEF' : taggedReach.pos;
-      const tagCounts = roster.filter(r => r.pos === tagPos).length;
-      if (tagCounts < SIM_ROSTER_LIMITS[tagPos]) {
-        draftedNames.add(taggedReach.name);
-        roster.push({ ...taggedReach, round, overall, pos: tagPos });
-        continue;
-      }
-    }
+    // Tags (🔥 mustget, 🎯 target, 🚫 avoid) act as scoring modifiers inside
+    // simPickFromEligibility — not as overrides. A targeted player wins only
+    // if their tag-boosted score genuinely beats other eligible candidates.
+    // This means in a Heavy RB round where only RB is eligible, a targeted
+    // WR has zero impact. In a balanced round where WR is eligible, a target
+    // WR is preferred ONLY when their effective ADP beats other WRs.
 
     // ── Normal strategy pick ───────────────────────────────────────────────
+    const eligibility = simEligibility(strategy.key, round, roster, numRounds);
     let picked = simPickFromEligibility(pool, draftedNames, eligibility);
 
     // ── Hard fallback ──────────────────────────────────────────────────────
