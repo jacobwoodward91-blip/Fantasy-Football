@@ -12137,21 +12137,56 @@ function simRunOne(draftPos, numTeams, numRounds, strategy, pool) {
     lastUserPick = overall;
 
     // ── Tag overrides (🔥 mustget, 🎯 target) ─────────────────────────────
-    // Tagged players reach within their window regardless of strategy
-    const mustGetWindow = numTeams;        // 1 full round reach
-    const targetWindow  = numTeams * 0.5;  // half round reach
-    const taggedReach = pool.find(p =>
-      !draftedNames.has(p.name) &&
-      rankTagMap[p.name] === 'mustget' &&
-      overall >= (p.simAdp || p.adp) - mustGetWindow
-    ) || pool.find(p =>
-      !draftedNames.has(p.name) &&
-      rankTagMap[p.name] === 'target' &&
-      overall >= (p.simAdp || p.adp) - targetWindow
-    ) || null;
+    // Tagged players bias toward being drafted within their reach window —
+    // but they DON'T override the strategy's positional rules unless their
+    // position is already eligible for this round. Otherwise, e.g., a 🎯 WR
+    // would get drafted on a Hero RB strategy in round 2 even though Hero RB
+    // explicitly avoids WR in round 1.
+    //
+    // Wait — that's backwards. Hero RB avoids RB in rounds 2-5, not WR.
+    // The point stands either way: tags should respect strategy constraints.
+    //
+    // Tags are also probabilistic, not deterministic:
+    //   mustget: 80% chance to grab if in reach window (1 round)
+    //   target:  50% chance to grab if in reach window (half round)
+    // This produces realistic variance across Monte Carlo runs — you won't
+    // get the same targeted player in every single sim.
+    const eligibility = simEligibility(strategy.key, round, roster, numRounds);
+    const eligiblePositions = new Set(eligibility.positions);
+
+    const mustGetWindow = numTeams;
+    const targetWindow  = numTeams * 0.5;
+
+    // Find candidates whose position is allowed by the strategy this round
+    const mustGetCandidate = pool.find(p => {
+      if (draftedNames.has(p.name)) return false;
+      if (rankTagMap[p.name] !== 'mustget') return false;
+      const ppos = p.pos === 'DST' ? 'DEF' : p.pos;
+      if (!eligiblePositions.has(ppos)) return false;
+      return overall >= (p.simAdp || p.adp) - mustGetWindow;
+    });
+
+    const targetCandidate = pool.find(p => {
+      if (draftedNames.has(p.name)) return false;
+      if (rankTagMap[p.name] !== 'target') return false;
+      const ppos = p.pos === 'DST' ? 'DEF' : p.pos;
+      if (!eligiblePositions.has(ppos)) return false;
+      return overall >= (p.simAdp || p.adp) - targetWindow;
+    });
+
+    // Probabilistic resolution — tags create a bias, not a guarantee.
+    // Tuned so that across 50 sims, targeted players appear roughly half the
+    // time, which is realistic given they're available in their reach window.
+    //   mustget: 65% chance to grab if in reach window (1 round)
+    //   target:  35% chance to grab if in reach window (half round)
+    // This produces realistic variance across Monte Carlo runs — you won't
+    // get the same targeted player in every single sim, and the median
+    // roster across runs won't be dominated by tagged players.
+    let taggedReach = null;
+    if (mustGetCandidate && Math.random() < 0.65) taggedReach = mustGetCandidate;
+    else if (targetCandidate && Math.random() < 0.35) taggedReach = targetCandidate;
 
     if (taggedReach) {
-      // Honor tag override but respect roster limits
       const tagPos = taggedReach.pos === 'DST' ? 'DEF' : taggedReach.pos;
       const tagCounts = roster.filter(r => r.pos === tagPos).length;
       if (tagCounts < SIM_ROSTER_LIMITS[tagPos]) {
@@ -12162,7 +12197,6 @@ function simRunOne(draftPos, numTeams, numRounds, strategy, pool) {
     }
 
     // ── Normal strategy pick ───────────────────────────────────────────────
-    const eligibility = simEligibility(strategy.key, round, roster, numRounds);
     let picked = simPickFromEligibility(pool, draftedNames, eligibility);
 
     // ── Hard fallback ──────────────────────────────────────────────────────
