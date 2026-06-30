@@ -1087,15 +1087,15 @@
     </div>
     <div class="settings-body" id="settingsBody">
       <div class="slider-row">
-        <div class="slider-label">Decay rate: <span id="decayLabel">3.5%</span> per pick</div>
-        <input type="range" id="decaySlider" min="1" max="8" step="0.1" value="3.5" oninput="onDecayChange(this.value)">
+        <div class="slider-label">Decay rate: <span id="decayLabel">2.0%</span> per pick</div>
+        <input type="range" id="decaySlider" min="0.5" max="5" step="0.1" value="2.0" oninput="onDecayChange(this.value)">
       </div>
       <div class="slider-presets">
         <span class="fs10" style="color: var(--text3);margin-right:4px;align-self:center">Presets:</span>
-        <button class="preset-btn" onclick="setDecay(2)">Flat (2%)</button>
-        <button class="preset-btn active" onclick="setDecay(3.5)">Default (3.5%)</button>
-        <button class="preset-btn" onclick="setDecay(5.5)">Steep (5.5%)</button>
-        <button class="preset-btn" onclick="setDecay(7.5)">Sharp (7.5%)</button>
+        <button class="preset-btn" onclick="setDecay(1.0)">Flat (1.0%)</button>
+        <button class="preset-btn active" onclick="setDecay(2.0)">Default (2.0%)</button>
+        <button class="preset-btn" onclick="setDecay(3.0)">Steep (3.0%)</button>
+        <button class="preset-btn" onclick="setDecay(4.5)">Sharp (4.5%)</button>
       </div>
       <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border)">
         <div class="t3 fs10 fw6 caps" style="margin-bottom:6px;letter-spacing:0.08em">Pick 1 vs last 1st-round pick value spread</div>
@@ -1590,10 +1590,30 @@
           <div class="t1 fw7" style="font-size:15px" id="mockPickStatus">Round 1, Pick 1</div>
           <div class="t3 fs10" id="mockPickSubStatus"></div>
         </div>
-        <div style="display:flex;gap:8px;align-items:center">
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
           <div id="mockYourPickBadge" style="display:none;background:rgba(0,210,106,0.15);border:1px solid var(--green);border-radius:6px;padding:5px 12px;color:var(--green);font-size:11px;font-weight:700">
             🎯 YOUR PICK
           </div>
+
+          <!-- Auto-Draft Toggle -->
+          <div style="display:flex;align-items:center;gap:6px;background:var(--surface2);border:1px solid var(--border2);border-radius:7px;padding:4px 8px">
+            <label for="mockAutoDraftToggle" class="t3 fs10 fw6" style="cursor:pointer;user-select:none">⚡ Auto-Draft</label>
+            <select id="mockAutoDraftStrategy" onchange="setAutoDraftStrategy(this.value)"
+                    class="t2 fs10" style="background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:2px 6px;cursor:pointer">
+              <option value="balanced">Balanced</option>
+              <option value="strongRB">Heavy RB</option>
+              <option value="heroRB">Hero RB</option>
+              <option value="zeroRB">Zero RB</option>
+              <option value="strongWR">Heavy WR</option>
+              <option value="zeroWR">Zero WR</option>
+              <option value="earlyQB">Early QB</option>
+            </select>
+            <button id="mockAutoDraftToggle" onclick="toggleAutoDraft()"
+                    style="background:var(--surface);border:1px solid var(--border);border-radius:4px;width:36px;height:18px;position:relative;cursor:pointer;padding:0;transition:background .15s">
+              <div id="mockAutoDraftKnob" style="position:absolute;top:1px;left:1px;width:14px;height:14px;background:var(--text3);border-radius:50%;transition:all .15s"></div>
+            </button>
+          </div>
+
           <button onclick="resetMockDraft()" class="t3 fs11" style="background:var(--surface2);border:1px solid var(--border2);border-radius:7px;padding:6px 14px;cursor:pointer">↩ Reset</button>
         </div>
       </div>
@@ -2020,7 +2040,7 @@ let TEAMS = 14;
 let TOTAL = ROUNDS * TEAMS;
 let SCORING = 'half';
 
-let decayRate = 0.965;
+let decayRate = 0.980;
 let fairThreshold = false;
 let sideA = [], sideB = [];
 let scenarios = [];
@@ -2136,8 +2156,40 @@ const POS_COLORS = {QB:'#4A90E2',RB:'#00D26A',WR:'#F5A623',TE:'#FF4757',DEF:'#8A
 
 let DRAFT_TYPE = 'snake'; // kept for future use but labels now use overall pick number
 
+// ── Pick value chart (Hill-adapted, three-segment exponential) ───────────
+// Rich Hill's NFL chart philosophy: pure exponential decay over-values the
+// elite tier and zeroes-out mid picks too fast. Real trade markets show
+// mid/late picks retain more value than a single decay rate captures.
+//
+// Three-segment exponential, all keyed off the user's decayRate slider so
+// the slider still controls overall steepness:
+//   Round 1 (picks 1..TEAMS):              user's full decayRate
+//   Rounds 2-10 (picks TEAMS+1..TEAMS*10): slower decay  (1 - 0.55 × Δ)
+//   Rounds 11-16 (picks TEAMS*10+1..):     faster decay  (1 - 1.8 × Δ)
+//
+// At default 2% slider, gives pick 28 = 66 (was 58), pick 56 = 48 (was 33),
+// pick 100 = 30 (was 14), pick 224 ≈ 1 (still ~0). Tracks FantasyCalc shape.
 function pickValue(n) {
- return 10000 * Math.pow(decayRate, n - 1) / 100;
+  const TOTAL_PICKS = TEAMS * ROUNDS;
+  if (n < 1 || n > TOTAL_PICKS) return 0;
+
+  const delta = 1 - decayRate;                  // e.g. 0.02 at slider = 2%
+  const r1Decay   = decayRate;                  // matches slider exactly
+  const midDecay  = 1 - delta * 0.55;           // ~45% slower decay
+  const tailDecay = 1 - delta * 1.80;           // ~80% faster decay
+
+  const R1_END  = TEAMS;        // end of round 1 (varies by league size)
+  const MID_END = TEAMS * 10;   // end of round 10
+
+  if (n <= R1_END) {
+    return 100 * Math.pow(r1Decay, n - 1);
+  }
+  const atR1End = 100 * Math.pow(r1Decay, R1_END - 1);
+  if (n <= MID_END) {
+    return atR1End * Math.pow(midDecay, n - R1_END);
+  }
+  const atMidEnd = atR1End * Math.pow(midDecay, MID_END - R1_END);
+  return atMidEnd * Math.pow(tailDecay, n - MID_END);
 }
 
 // Label is simply "Pick N" — overall pick number, no round.slot confusion
@@ -11175,6 +11227,8 @@ let mockState = {
   finished:     false,
   managerTend:  {},     // ownerId -> { pos -> { round -> pct } }
   snakeOrder:   [],     // overallPick index -> slot (0-based)
+  autoDraft:    false,  // when true, bot picks for the user using autoDraftStrategy
+  autoDraftStrategy: 'balanced', // strategy key to use when auto-drafting for user
 };
 
 // ── POS colors (reuse existing map) ────────────────────────────────────────
@@ -11894,311 +11948,352 @@ function simGaussian(mean = 0, sd = 1) {
   return mean + sd * Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
 }
 
-// ── Randomize ADP pool with rank noise ────────────────────────────────────
-// SD scales with ADP — early picks have tighter consensus, late picks vary more
-function simRandomizePool(pool) {
-  return pool
-    .map(p => {
-      const sd = Math.max(2, p.adp * 0.12);
-      return { ...p, simAdp: Math.max(1, p.adp + simGaussian(0, sd)) };
+// ── Randomize ADP pool with noise ────────────────────────────────────────
+// SD scales with ADP — early picks have tight consensus, late picks vary widely
+// Returns players sorted by simAdp ascending, with an integer `rank` (1-based)
+// assigned per their sorted position so the rest of the planner code can use
+// rank arithmetic (rank ± window) consistently regardless of ADP format.
+function randomizeBoard(pool) {
+  const boarded = pool.map(p => {
+    const sd = Math.max(2, p.adp * 0.12);
+    return { ...p, simAdp: Math.max(1, p.adp + simGaussian(0, sd)) };
+  }).sort((a, b) => a.simAdp - b.simAdp);
+  boarded.forEach((p, i) => { p.rank = i + 1; });
+  return boarded;
+}
+
+// ── plannerFindBest (ported from index_2) ─────────────────────────────────
+// Find best available player at a position from the remaining board.
+// Respects Rankings-tab tags: Avoid players skipped unless they've fallen
+// 2+ rounds below their rank; Must Get / Target players get a sort boost.
+function plannerFindBest(overall, pos, draftedNames, allowedPositions, board, leagueSize) {
+  const ls = leagueSize || 14;
+  return board
+    .filter(p => p.rank && !draftedNames.has(p.name))
+    .filter(p => {
+      const ppos = p.pos === 'DST' ? 'DEF' : p.pos;
+      return pos ? ppos === pos : allowedPositions.includes(ppos);
     })
-    .sort((a, b) => a.simAdp - b.simAdp);
+    .filter(p => {
+      // Avoid: skip unless they've fallen 2+ full rounds below their rank
+      if (rankTagMap[p.name] === 'avoid') return overall >= (p.rank || 0) + 2 * ls;
+      return true;
+    })
+    .sort((a, b) => {
+      // Boost Must Get / Target so they're preferred over equal-value BPA
+      const boost = { mustget: 40, target: 15 };
+      const scoreA = (a.proj || 0) + (boost[rankTagMap[a.name]] || 0);
+      const scoreB = (b.proj || 0) + (boost[rankTagMap[b.name]] || 0);
+      return scoreB - scoreA;
+    })[0] || null;
 }
 
-// ── Find best available at position(s) from a randomized pool ─────────────
-function simFindBest(pool, draftedNames, positions, avoidTags = true) {
-  const posArr = Array.isArray(positions) ? positions : [positions];
-  return pool.find(p => {
-    const pos = p.pos === 'DST' ? 'DEF' : p.pos;
-    if (draftedNames.has(p.name)) return false;
-    if (avoidTags && rankTagMap[p.name] === 'avoid') return false;
-    return posArr.includes(pos);
-  }) || null;
+// ── findTaggedReachPlayer (ported from index_2) ───────────────────────────
+// Find the highest-priority Must Get / Target player we should proactively reach for.
+// Must Get: reachable up to 1 full round (leagueSize picks) before their rank.
+// Target:   reachable up to 8 picks before their rank.
+function findTaggedReachPlayer(overall, draftedNames, board, leagueSize) {
+  const ls = leagueSize || 14;
+  const src = board.filter(p =>
+    p.rank && !draftedNames.has(p.name) &&
+    (rankTagMap[p.name] === 'mustget' || rankTagMap[p.name] === 'target')
+  );
+  src.sort((a, b) => {
+    const order = { mustget: 0, target: 1 };
+    const diff  = order[rankTagMap[a.name]] - order[rankTagMap[b.name]];
+    return diff !== 0 ? diff : (a.rank || 999) - (b.rank || 999);
+  });
+  for (const p of src) {
+    const window = rankTagMap[p.name] === 'mustget' ? ls : 8;
+    if (overall >= (p.rank || 999) - window) return p;
+  }
+  return null;
 }
 
-function simFindBestDynamic(pool, draftedNames, eligible, avoidTags = true) {
-  return pool.find(p => {
-    const pos = p.pos === 'DST' ? 'DEF' : p.pos;
-    if (draftedNames.has(p.name)) return false;
-    if (avoidTags && rankTagMap[p.name] === 'avoid') return false;
-    return eligible.includes(pos);
-  }) || null;
-}
-
-// ── Drain opponent picks between user picks ───────────────────────────────
-// Uses league tendency weights to simulate realistic positional drain —
-// if your league runs heavy RB in round 1, RBs drain faster, not pure BPA.
-// Opponents don't respect your avoid tags (they draft freely).
-function simDrainOpponents(fromPick, toPick, pool, draftedNames, numTeams) {
-  const round10Start = 9 * numTeams + 1;
-  const hasTend      = ['RB','WR','QB','TE'].some(pos => POS_DATA?.[pos]?.leagueTendency);
-
+// ── simulateOtherPicks (ported from index_2) ──────────────────────────────
+// Drain board for all picks between last user pick and current. Opponents
+// take BPA (rank order); K/DEF eligible for opponents only in round 10+.
+function simulateOtherPicks(fromPick, toPick, draftedNames, board, leagueSize) {
+  const ls = leagueSize || 14;
   for (let pick = fromPick + 1; pick < toPick; pick++) {
-    const pickRound = Math.ceil(pick / numTeams);
-    const allowKDef = pick >= round10Start;
-
-    // Build league tendency weights for this round
-    let chosenPos = null;
-    if (hasTend && pickRound <= 16) {
-      const ELIGIBLE_POS = ['RB','WR','QB','TE'].concat(allowKDef ? ['K','DEF'] : []);
-      const weights = {};
-      ELIGIBLE_POS.forEach(pos => {
-        weights[pos] = POS_DATA?.[pos]?.leagueTendency?.[pickRound] || 0;
-      });
-      const totalW = Object.values(weights).reduce((s, v) => s + v, 0);
-      if (totalW > 0) {
-        let rand = Math.random() * totalW;
-        for (const pos of ELIGIBLE_POS) {
-          rand -= (weights[pos] || 0);
-          if (rand <= 0) { chosenPos = pos; break; }
-        }
-      }
-    }
-
-    // Draft best available at tendency-chosen position; BPA fallback if exhausted
-    let bpa = null;
-    if (chosenPos) {
-      bpa = pool.find(p => {
-        const pos = p.pos === 'DST' ? 'DEF' : p.pos;
-        return !draftedNames.has(p.name) && pos === chosenPos;
-      });
-    }
-    if (!bpa) {
-      bpa = pool.find(p => {
-        const pos = p.pos === 'DST' ? 'DEF' : p.pos;
-        if (!allowKDef && (pos === 'K' || pos === 'DEF')) return false;
-        return !draftedNames.has(p.name);
-      });
-    }
+    const pickRound = Math.ceil(pick / ls);
+    const allowKDef = pickRound >= 10;
+    const bpa = board
+      .filter(p => p.rank && !draftedNames.has(p.name))
+      .filter(p => allowKDef ? true : (p.pos !== 'DST' && p.pos !== 'K' && p.pos !== 'DEF'))
+      .sort((a, b) => a.rank - b.rank)[0];
     if (bpa) draftedNames.add(bpa.name);
   }
 }
 
-// ── Roster construction limits ────────────────────────────────────────────
-// What's the maximum # of each position the user wants to draft, total?
-// Tuned for 14-team half-PPR with 1QB/2RB/2WR/1TE/1FLEX/1K/1DEF and ~7 bench
-const SIM_ROSTER_LIMITS = { QB:2, RB:6, WR:6, TE:2, K:1, DEF:1 };
-
-// ── Strategy eligibility ───────────────────────────────────────────────────
-// Returns { positions, priority } for a given round + current roster state.
-//   positions: array of eligible position strings
-//   priority:  if true, use the list as an ordered preference (try [0] first,
-//              fall back to [1] only if no [0] is available). If false, pick
-//              the highest-ADP player among any of these positions (true BPA).
-// This is the single source of truth for what the strategy does. All other
-// pick logic is mechanical — given eligibility, pick the best player.
-function simEligibility(strategyKey, round, roster, numRounds) {
-  const counts = { QB:0, RB:0, WR:0, TE:0, K:0, DEF:0 };
-  roster.forEach(p => { counts[p.pos] = (counts[p.pos]||0) + 1; });
-  const underLimit = (pos) => counts[pos] < SIM_ROSTER_LIMITS[pos];
-
-  // ── Forced K/DEF in final 2 rounds ──────────────────────────────────────
-  // Last 2 rounds: must take K and DEF if missing
-  if (round === numRounds) {
-    if (!counts.K)   return { positions: ['K'],   priority: true };
-    if (!counts.DEF) return { positions: ['DEF'], priority: true };
-  }
-  if (round === numRounds - 1) {
-    // Penultimate round: if both K & DEF missing, take whichever has best value here
-    if (!counts.K && !counts.DEF)   return { positions: ['K','DEF'], priority: false };
-    if (!counts.K   && counts.DEF)  return { positions: ['K'],       priority: true };
-    if (!counts.DEF && counts.K)    return { positions: ['DEF'],     priority: true };
-  }
-
-  // K/DEF are only available in the final 2 rounds
-  // (don't let strategies draft them early as filler)
-  const allowKDef = round >= numRounds - 1;
-
-  // ── Helper: trim base list ──────────────────────────────────────────────
-  // Apply standard "no QB2/TE2 until late" constraint
-  const trimQbTe = (list, allowMultiQbAt = 9) => {
-    return list.filter(p => {
-      if (!underLimit(p)) return false;
-      if (round < allowMultiQbAt && p === 'QB' && counts.QB >= 1) return false;
-      if (round < 9            && p === 'TE' && counts.TE >= 1) return false;
-      return true;
-    });
-  };
-
-  // Base eligible positions (RB/WR/QB/TE) — pruned by roster limits
-  const baseSkill = trimQbTe(['RB','WR','QB','TE']);
-  const baseAll   = allowKDef ? baseSkill.concat(['K','DEF'].filter(underLimit)) : baseSkill;
-
-  // ── Strategy logic ──────────────────────────────────────────────────────
-  switch (strategyKey) {
-    case 'balanced':
-      return { positions: baseAll, priority: false };
-
-    case 'strongRB': // Heavy RB
-      // Lock RB rounds 1-3, then BPA among skill, RB/WR depth filling
-      if (round <= 3 && underLimit('RB')) return { positions: ['RB'], priority: true };
-      return { positions: baseAll, priority: false };
-
-    case 'heroRB':
-      // Round 1: take one RB (the "hero")
-      // Rounds 2-5: AVOID more RBs entirely (this is what makes it Hero RB — wait on RB2)
-      // Rounds 6+: open back up, prioritize RB if we still only have 1
-      if (round === 1 && underLimit('RB')) return { positions: ['RB'], priority: true };
-      if (round >= 2 && round <= 5) {
-        const noRB = baseSkill.filter(p => p !== 'RB');
-        return { positions: noRB.length ? noRB : baseSkill, priority: false };
-      }
-      // Round 6+: if we only have 1 RB, prioritize RB
-      if (round <= 10 && counts.RB <= 1 && underLimit('RB')) {
-        const rest = baseAll.filter(p => p !== 'RB');
-        return { positions: ['RB', ...rest], priority: true };
-      }
-      return { positions: baseAll, priority: false };
-
-    case 'zeroRB':
-      // Rounds 1-5: NO RBs whatsoever
-      if (round <= 5) {
-        const noRB = baseSkill.filter(p => p !== 'RB');
-        return { positions: noRB.length ? noRB : baseSkill, priority: false };
-      }
-      // Rounds 6-10: catch up on RBs — strict priority
-      if (round <= 10 && counts.RB < 4) {
-        const rest = baseAll.filter(p => p !== 'RB');
-        return { positions: ['RB', ...rest], priority: true };
-      }
-      return { positions: baseAll, priority: false };
-
-    case 'strongWR': // Heavy WR
-      if (round <= 3 && underLimit('WR')) return { positions: ['WR'], priority: true };
-      return { positions: baseAll, priority: false };
-
-    case 'zeroWR':
-      if (round <= 5) {
-        const noWR = baseSkill.filter(p => p !== 'WR');
-        return { positions: noWR.length ? noWR : baseSkill, priority: false };
-      }
-      if (round <= 10 && counts.WR < 4) {
-        const rest = baseAll.filter(p => p !== 'WR');
-        return { positions: ['WR', ...rest], priority: true };
-      }
-      return { positions: baseAll, priority: false };
-
-    case 'earlyQB':
-      if (counts.QB === 0 && round <= 3) return { positions: ['QB'], priority: true };
-      return { positions: baseAll, priority: false };
-
-    default:
-      return { positions: baseAll, priority: false };
-  }
-}
-
-// ── Pick from pool given eligibility ──────────────────────────────────────
-// ── Pick from pool given eligibility ──────────────────────────────────────
-// Tags act as a SCORING BOOST within position eligibility — they don't bypass
-// strategy rules. Must Get adds a boost roughly equal to half a round of value;
-// Target adds a smaller nudge. This way:
-//   - If Lamb is tagged 🎯 but a top-tier RB is available in a Heavy RB round,
-//     RB wins because RB is the only eligible position.
-//   - If WR is eligible and Lamb's ADP-boosted score beats other WR options,
-//     Lamb gets the pick. Otherwise a better WR (e.g. Chase) wins.
-//   - Across Monte Carlo runs with simAdp randomization, Lamb only "wins" if
-//     he's genuinely the best WR available at that pick after random noise.
-function simPickFromEligibility(pool, draftedNames, eligibility) {
-  const { positions, priority } = eligibility;
-  if (!positions.length) return null;
-
-  // Tag boost: subtract from effective ADP rank (lower = picked sooner)
-  // Must Get: -7 picks (half round); Target: -3 picks
-  const tagBoost = (name) => {
-    const tag = rankTagMap[name];
-    if (tag === 'mustget') return -7;
-    if (tag === 'target')  return -3;
-    return 0;
-  };
-  const effectiveAdp = (p) => (p.simAdp || p.adp) + tagBoost(p.name);
-
-  if (priority) {
-    // Strict priority: try each position in order
-    for (const pos of positions) {
-      const candidates = pool.filter(p => {
-        if (draftedNames.has(p.name)) return false;
-        if (rankTagMap[p.name] === 'avoid') return false;
-        const ppos = p.pos === 'DST' ? 'DEF' : p.pos;
-        return ppos === pos;
-      });
-      if (candidates.length) {
-        // Sort by effective ADP (tag boost factored in)
-        candidates.sort((a, b) => effectiveAdp(a) - effectiveAdp(b));
-        return candidates[0];
-      }
-    }
-    return null;
-  }
-
-  // BPA among eligible positions, with tag boost
-  const candidates = pool.filter(p => {
-    if (draftedNames.has(p.name)) return false;
-    if (rankTagMap[p.name] === 'avoid') return false;
-    const ppos = p.pos === 'DST' ? 'DEF' : p.pos;
-    return positions.includes(ppos);
-  });
-  if (!candidates.length) return null;
-  candidates.sort((a, b) => effectiveAdp(a) - effectiveAdp(b));
-  return candidates[0];
-}
-
-// ── Snake pick number for a given round + slot ────────────────────────────
-function simSnakePick(round, draftPos, numTeams) {
+// ── snakePick ─────────────────────────────────────────────────────────────
+function snakePick(round, draftPos, numTeams) {
   return round % 2 === 1
     ? (round - 1) * numTeams + draftPos
     : round * numTeams - draftPos + 1;
 }
 
-// ── Run one draft simulation for a strategy ───────────────────────────────
-// Clean rebuild: eligibility-window model. Each round, the strategy declares
-// which positions are eligible (with optional priority order). The picker
-// finds the best available player matching that eligibility.
-function simRunOne(draftPos, numTeams, numRounds, strategy, pool) {
+// ── plannerBuildLineup (ported from index_2) ──────────────────────────────
+// Optimal lineup: QB(1), RB(2), WR(2), TE(1), FLEX, K(1), DEF(1)
+function plannerBuildLineup(roster) {
+  const byPos = { QB: [], RB: [], WR: [], TE: [], K: [], DEF: [] };
+  roster.forEach(p => {
+    const pos = p.pos === 'DST' ? 'DEF' : p.pos;
+    if (byPos[pos]) byPos[pos].push(p);
+  });
+  Object.values(byPos).forEach(arr => arr.sort((a, b) => (b.proj || 0) - (a.proj || 0)));
+
+  const lineup = [];
+  const used   = new Set();
+  const slots  = [
+    { pos: 'QB', count: 1 }, { pos: 'RB', count: 2 }, { pos: 'WR', count: 2 },
+    { pos: 'TE', count: 1 }, { pos: 'K',  count: 1 }, { pos: 'DEF', count: 1 },
+  ];
+
+  for (const slot of slots) {
+    let filled = 0;
+    for (const p of byPos[slot.pos] || []) {
+      if (filled >= slot.count) break;
+      if (!used.has(p.name)) {
+        lineup.push({ ...p, slotLabel: slot.pos });
+        used.add(p.name);
+        filled++;
+      }
+    }
+  }
+  // FLEX
+  const flex = roster
+    .filter(p => ['RB','WR','TE'].includes(p.pos === 'DST' ? 'DEF' : p.pos) && !used.has(p.name))
+    .sort((a, b) => (b.proj || 0) - (a.proj || 0))[0];
+  if (flex) { lineup.push({ ...flex, slotLabel: 'FLEX' }); used.add(flex.name); }
+
+  const totalProj = lineup.reduce((s, p) => s + (p.proj || 0), 0);
+  return { lineup, totalProj };
+}
+
+// ── plannerSimulate (ported verbatim from index_2 with field substitutions) ─
+// DS_RANKINGS → board (live ADP pool); value3d/dsProj → proj
+function plannerSimulate(draftPos, leagueSize, strategy, board, numRounds) {
   const draftedNames = new Set();
-  const roster       = [];
+  const roster = [];
+  let earlyOnzieDone = false;
+  let lateOnzieDone  = false;
   let lastUserPick   = 0;
 
   for (let round = 1; round <= numRounds; round++) {
-    const overall = simSnakePick(round, draftPos, numTeams);
-    simDrainOpponents(lastUserPick, overall, pool, draftedNames, numTeams);
+    const overall = snakePick(round, draftPos, leagueSize);
+    simulateOtherPicks(lastUserPick, overall, draftedNames, board, leagueSize);
+
+    let resolvedTarget;
+
+    // ── Must Get / Target reach override ─────────────────────────────────
+    // Tagged players reach within their window — BUT they don't override
+    // strategy positional locks. If the strategy explicitly requires a
+    // specific position in this round (e.g. Strong RB rounds 1-3, Hero RB
+    // round 1, Zero RB banned-early), the tag override only fires when the
+    // tagged player's position matches the lock. Otherwise the strategy
+    // wins. This way tags are a preference, not a strategy-breaking force.
+    const strategyLockedPos = (() => {
+      if (strategy.isStrong && round <= 3) return strategy.primaryPos;
+      if (strategy.isHero && round === 1) return strategy.primaryEarly;
+      if (strategy.isHero && round === 6) return strategy.primaryLate;
+      if (strategy.isFlood && round <= 5) return { bannedPos: strategy.bannedEarly };
+      if (strategy.isFlood && round >= 6) return strategy.floodPos;
+      if (strategy.isEarlyQB && round <= 3 && !roster.some(p => p.pos === 'QB')) return 'QB';
+      return null;
+    })();
+
+    const taggedReach = findTaggedReachPlayer(overall, draftedNames, board, leagueSize);
+    if (taggedReach) {
+      const tagPos = taggedReach.pos === 'DST' ? 'DEF' : taggedReach.pos;
+      let allow = true;
+      if (strategyLockedPos) {
+        if (typeof strategyLockedPos === 'object' && strategyLockedPos.bannedPos) {
+          allow = tagPos !== strategyLockedPos.bannedPos;
+        } else {
+          allow = tagPos === strategyLockedPos;
+        }
+      }
+      if (allow) {
+        draftedNames.add(taggedReach.name);
+        roster.push({ ...taggedReach, round, overallPick: overall, pos: tagPos });
+        lastUserPick = overall;
+        continue;
+      }
+    }
+
+    // ── K / DEF override ──────────────────────────────────────────────────
+    const hasK   = roster.some(p => p.pos === 'K');
+    const hasDEF = roster.some(p => p.pos === 'DEF');
+    if (!hasK && round >= 10 && round <= 12) {
+      resolvedTarget = 'K';
+    } else if (!hasDEF && round >= 11 && round <= 13) {
+      resolvedTarget = 'DEF';
+    } else if (strategy.isHero) {
+      const hasQB = roster.some(p => p.pos === 'QB');
+      const hasTE = roster.some(p => p.pos === 'TE');
+      const neededOnzie = !hasQB ? 'QB' : 'TE';
+
+      if (round === 1) {
+        resolvedTarget = strategy.primaryEarly;
+      } else if (round <= 5) {
+        if (!earlyOnzieDone) {
+          const bestSecondary = plannerFindBest(overall, strategy.secondaryEarly, draftedNames, null, board, leagueSize);
+          const bestOnzie     = plannerFindBest(overall, null, draftedNames, ['QB','TE'], board, leagueSize);
+          const forceOnzie    = round === 5;
+          if (forceOnzie || (bestOnzie && (!bestSecondary || (bestOnzie.proj || 0) >= (bestSecondary.proj || 0)))) {
+            resolvedTarget = bestOnzie ? bestOnzie.pos : 'TE';
+            earlyOnzieDone = true;
+          } else {
+            resolvedTarget = strategy.secondaryEarly;
+          }
+        } else {
+          resolvedTarget = strategy.secondaryEarly;
+        }
+      } else if (round === 6) {
+        resolvedTarget = strategy.primaryLate;
+      } else {
+        if (!lateOnzieDone && !(hasQB && hasTE)) {
+          const bestPrimary = plannerFindBest(overall, strategy.primaryLate, draftedNames, null, board, leagueSize);
+          const bestOnzie   = plannerFindBest(overall, neededOnzie, draftedNames, null, board, leagueSize);
+          const forceOnzie  = round === 10;
+          if (forceOnzie || (bestOnzie && (!bestPrimary || (bestOnzie.proj || 0) >= (bestPrimary.proj || 0)))) {
+            resolvedTarget = neededOnzie;
+            lateOnzieDone = true;
+          } else {
+            resolvedTarget = strategy.primaryLate;
+          }
+        } else {
+          resolvedTarget = strategy.primaryLate;
+        }
+      }
+    } else if (strategy.isStrong) {
+      const hasQB = roster.some(p => p.pos === 'QB');
+      const hasTE = roster.some(p => p.pos === 'TE');
+      const secondaryCount = roster.filter(p => p.pos === strategy.secondaryPos).length;
+      const neededOnzie = !hasQB ? 'QB' : 'TE';
+
+      if (round <= 3) {
+        resolvedTarget = strategy.primaryPos;
+      } else if (round <= 5) {
+        const roundsLeft   = 5 - round + 1;
+        const onziesNeeded = (!hasQB ? 1 : 0) + (!hasTE ? 1 : 0);
+        if (onziesNeeded >= roundsLeft) {
+          resolvedTarget = neededOnzie;
+        } else if (secondaryCount === 0 && round === 5) {
+          resolvedTarget = strategy.secondaryPos;
+        } else {
+          const bestSecondary = plannerFindBest(overall, strategy.secondaryPos, draftedNames, null, board, leagueSize);
+          const onzieEligible = ['QB','TE'].filter(p => !(p==='QB'&&hasQB) && !(p==='TE'&&hasTE));
+          const bestOnzie     = onzieEligible.length ? plannerFindBest(overall, null, draftedNames, onzieEligible, board, leagueSize) : null;
+          if (bestOnzie && bestSecondary && (bestOnzie.proj || 0) > (bestSecondary.proj || 0)) {
+            resolvedTarget = bestOnzie.pos;
+          } else {
+            resolvedTarget = strategy.secondaryPos;
+          }
+        }
+      } else {
+        const bestSecondary = plannerFindBest(overall, strategy.secondaryPos, draftedNames, null, board, leagueSize);
+        const onzieEligible = ['QB','TE'].filter(p => !(p==='QB'&&hasQB) && !(p==='TE'&&hasTE));
+        const bestOnzie     = onzieEligible.length ? plannerFindBest(overall, null, draftedNames, onzieEligible, board, leagueSize) : null;
+        const bestPrimary   = plannerFindBest(overall, strategy.primaryPos, draftedNames, null, board, leagueSize);
+        const forceOnzie    = round === 10 && onzieEligible.length > 0;
+
+        if (bestOnzie && (forceOnzie || (bestSecondary && (bestOnzie.proj || 0) >= (bestSecondary.proj || 0)))) {
+          resolvedTarget = bestOnzie.pos;
+          lateOnzieDone = true;
+        } else if (secondaryCount >= 3 && bestPrimary && bestSecondary &&
+                   (bestPrimary.proj || 0) > (bestSecondary.proj || 0) * 1.12) {
+          resolvedTarget = strategy.primaryPos;
+        } else {
+          resolvedTarget = strategy.secondaryPos;
+        }
+      }
+    } else if (strategy.isFlood) {
+      const hasQB = roster.some(p => p.pos === 'QB');
+      const hasTE = roster.some(p => p.pos === 'TE');
+
+      if (round <= 5) {
+        const eligible = ['QB','RB','WR','TE'].filter(p =>
+          p !== strategy.bannedEarly &&
+          !(p === 'QB' && hasQB) &&
+          !(p === 'TE' && hasTE)
+        );
+        const roundsLeft   = 5 - round + 1;
+        const onziesNeeded = (!hasQB ? 1 : 0) + (!hasTE ? 1 : 0);
+
+        if (onziesNeeded >= roundsLeft) {
+          const neededPos = !hasQB && !hasTE ? null : !hasQB ? 'QB' : 'TE';
+          const bestOnzie = plannerFindBest(overall, neededPos, draftedNames, ['QB','TE'].filter(p => !(p==='QB'&&hasQB) && !(p==='TE'&&hasTE)), board, leagueSize);
+          resolvedTarget = bestOnzie ? bestOnzie.pos : (!hasQB ? 'QB' : 'TE');
+        } else {
+          const best = plannerFindBest(overall, null, draftedNames, eligible, board, leagueSize);
+          resolvedTarget = best ? best.pos : eligible[0];
+        }
+      } else {
+        resolvedTarget = strategy.floodPos;
+      }
+    } else if (strategy.isEarlyQB) {
+      const hasQB = roster.some(p => p.pos === 'QB');
+      const hasTE = roster.some(p => p.pos === 'TE');
+      if (!hasQB && round <= 3) {
+        resolvedTarget = 'QB';
+      } else if (round <= 7) {
+        const eligible = ['RB','WR'].concat(!hasTE ? ['TE'] : []);
+        const best = plannerFindBest(overall, null, draftedNames, eligible, board, leagueSize);
+        resolvedTarget = best ? best.pos : eligible[0];
+      } else {
+        const eligible = ['RB','WR','TE'].concat(!hasQB ? ['QB'] : []);
+        const best = plannerFindBest(overall, null, draftedNames, eligible, board, leagueSize);
+        resolvedTarget = best ? best.pos : eligible[0];
+      }
+    } else {
+      // Balanced: BPA, QB/TE capped at 1 each
+      const hasQB = roster.filter(p => p.pos === 'QB').length >= 1;
+      const hasTE = roster.filter(p => p.pos === 'TE').length >= 1;
+      const eligible = ['QB','RB','WR','TE'].filter(p => !(p === 'QB' && hasQB) && !(p === 'TE' && hasTE));
+      const player = plannerFindBest(overall, null, draftedNames, eligible, board, leagueSize);
+      if (player) {
+        draftedNames.add(player.name);
+        roster.push({ ...player, round, overallPick: overall, pos: player.pos === 'DST' ? 'DEF' : player.pos });
+      } else {
+        roster.push({ name: '(No match)', pos: '?', proj: 0, round, overallPick: overall });
+      }
+      lastUserPick = overall;
+      continue;
+    }
+
+    // Final pick using resolved target
+    const player = plannerFindBest(overall, resolvedTarget, draftedNames, null, board, leagueSize);
+    if (player) {
+      draftedNames.add(player.name);
+      roster.push({ ...player, round, overallPick: overall, pos: player.pos === 'DST' ? 'DEF' : player.pos });
+    } else {
+      // Fallback: take BPA among any remaining position
+      const fallback = plannerFindBest(overall, null, draftedNames, ['QB','RB','WR','TE','K','DEF'], board, leagueSize);
+      if (fallback) {
+        draftedNames.add(fallback.name);
+        roster.push({ ...fallback, round, overallPick: overall, pos: fallback.pos === 'DST' ? 'DEF' : fallback.pos });
+      } else {
+        roster.push({ name: '(No match)', pos: resolvedTarget || '?', proj: 0, round, overallPick: overall });
+      }
+    }
     lastUserPick = overall;
-
-    // Tags (🔥 mustget, 🎯 target, 🚫 avoid) act as scoring modifiers inside
-    // simPickFromEligibility — not as overrides. A targeted player wins only
-    // if their tag-boosted score genuinely beats other eligible candidates.
-    // This means in a Heavy RB round where only RB is eligible, a targeted
-    // WR has zero impact. In a balanced round where WR is eligible, a target
-    // WR is preferred ONLY when their effective ADP beats other WRs.
-
-    // ── Normal strategy pick ───────────────────────────────────────────────
-    const eligibility = simEligibility(strategy.key, round, roster, numRounds);
-    let picked = simPickFromEligibility(pool, draftedNames, eligibility);
-
-    // ── Hard fallback ──────────────────────────────────────────────────────
-    // If somehow no eligible player found, fall back to BPA among any
-    // remaining position under limit (extreme edge case — shouldn't happen)
-    if (!picked) {
-      const counts = { QB:0, RB:0, WR:0, TE:0, K:0, DEF:0 };
-      roster.forEach(p => { counts[p.pos] = (counts[p.pos]||0) + 1; });
-      picked = pool.find(p => {
-        if (draftedNames.has(p.name)) return false;
-        if (rankTagMap[p.name] === 'avoid') return false;
-        const ppos = p.pos === 'DST' ? 'DEF' : p.pos;
-        return counts[ppos] < SIM_ROSTER_LIMITS[ppos];
-      });
-    }
-    // Truly desperate fallback: take anything
-    if (!picked) {
-      picked = pool.find(p => !draftedNames.has(p.name));
-    }
-
-    if (picked) {
-      draftedNames.add(picked.name);
-      roster.push({ ...picked, round, overall, pos: picked.pos === 'DST' ? 'DEF' : picked.pos });
-    }
   }
 
-  return { roster, totalProj: calcOptimalLineupProj(roster) };
+  return { roster, totalProj: plannerBuildLineup(roster).totalProj };
+}
+
+// ── Compatibility shim: rest of code calls simRunOne, simRandomizePool ─────
+function simRandomizePool(pool) { return randomizeBoard(pool); }
+function simRunOne(draftPos, numTeams, numRounds, strategy, pool) {
+  return plannerSimulate(draftPos, numTeams, strategy, pool, numRounds);
+}
+
+// ── Map each roster pick to { round, overall } shape the renderer expects ──
+// plannerSimulate uses `overallPick`; renderer uses `overall`. Normalize:
+function _normalizeRoster(roster) {
+  return roster.map(p => ({ ...p, overall: p.overallPick ?? p.overall }));
 }
 
 const SIM_RUNS = 50; // number of Monte Carlo simulations per strategy
@@ -12593,6 +12688,11 @@ async function startMockDraft() {
   document.getElementById('mockDraftScreen').style.display   = 'block';
   document.getElementById('mockResultsScreen').style.display = 'none';
 
+  // Initialize auto-draft toggle UI (state was preserved or reset)
+  const strategySelect = document.getElementById('mockAutoDraftStrategy');
+  if (strategySelect) strategySelect.value = mockState.autoDraftStrategy;
+  updateAutoDraftToggleUI();
+
   renderMockBoard();
   renderMockAvailablePlayers();
   advanceMockPick();
@@ -12641,8 +12741,12 @@ function advanceMockPick() {
   if (!isMe) {
     // Bot pick — fire after small delay so board renders
     setTimeout(() => botMockPick(slot), 350);
+  } else if (mockState.autoDraft) {
+    // User's turn but auto-draft is ON — pick for them using their chosen strategy.
+    // Short delay so the board updates visually before the next pick fires.
+    setTimeout(() => autoPickForUser(), 250);
   }
-  // If user's turn, just wait — they click a player in the available list
+  // If user's turn and auto-draft is OFF, just wait — they click a player.
 }
 
 // ── Bot pick logic ─────────────────────────────────────────────────────────
@@ -12809,6 +12913,183 @@ function userMockPick(playerName) {
   const player = mockState.available.find(p => p.name === playerName);
   if (!player) return;
   recordMockPick(currentMockSlot(), player);
+}
+
+// ── Auto-Draft (mini-draft mode) ──────────────────────────────────────────
+// Lets the user manually draft the first N rounds, then flip auto-draft ON
+// to have the chosen strategy finish the rest. Reuses the same plannerFindBest
+// logic the simulator uses — so the picks are consistent with what you'd see
+// in a sim, just on the actual live board.
+function toggleAutoDraft() {
+  mockState.autoDraft = !mockState.autoDraft;
+  updateAutoDraftToggleUI();
+  // If we just turned it ON and it's currently the user's turn, fire immediately
+  if (mockState.autoDraft && !mockState.finished &&
+      (currentMockSlot() + 1) === mockState.mySlot) {
+    setTimeout(() => autoPickForUser(), 200);
+  }
+}
+
+function setAutoDraftStrategy(key) {
+  mockState.autoDraftStrategy = key;
+  // If auto-draft is ON and it's the user's turn, the change won't affect the
+  // current pick (would feel weird); next pick will use the new strategy.
+}
+
+function updateAutoDraftToggleUI() {
+  const btn  = document.getElementById('mockAutoDraftToggle');
+  const knob = document.getElementById('mockAutoDraftKnob');
+  if (!btn || !knob) return;
+  if (mockState.autoDraft) {
+    btn.style.background  = 'var(--green)';
+    btn.style.borderColor = 'var(--green)';
+    knob.style.left       = '19px';
+    knob.style.background = '#fff';
+  } else {
+    btn.style.background  = 'var(--surface)';
+    btn.style.borderColor = 'var(--border)';
+    knob.style.left       = '1px';
+    knob.style.background = 'var(--text3)';
+  }
+}
+
+// Pick a player for the user using their chosen auto-draft strategy.
+// Uses the SAME plannerFindBest logic the simulator uses, but operates on
+// the live available pool with the user's actual current roster.
+function autoPickForUser() {
+  if (mockState.finished) return;
+  if ((currentMockSlot() + 1) !== mockState.mySlot) return;
+
+  const strategy = MOCK_STRATEGIES.find(s => s.key === mockState.autoDraftStrategy)
+                 || MOCK_STRATEGIES.find(s => s.key === 'balanced');
+  const round   = currentMockRound();
+  const overall = currentMockPickIndex() + 1;
+
+  // Build the user's current roster from picks (only their own picks)
+  const myRoster = mockState.picks
+    .filter(p => (p.slot + 1) === mockState.mySlot)
+    .map(p => ({ ...p.player, pos: p.player.pos === 'DST' ? 'DEF' : p.player.pos, round: p.round }));
+
+  // Build a board snapshot from current available pool, with integer rank
+  // assigned by ADP order (matches what plannerSimulate expects)
+  const board = mockState.available
+    .map(p => {
+      const fp = getFPProjection(p.name);
+      const proj = fp?.fpts ?? Math.max(0, 300 - p.adp * 2);
+      return { ...p, proj, simAdp: p.adp };
+    })
+    .sort((a, b) => a.adp - b.adp);
+  board.forEach((p, i) => { p.rank = i + 1; });
+
+  // Resolve the strategy's target position for this round given current roster
+  const resolved = resolveStrategyTarget(strategy, round, myRoster, mockState.mockRounds);
+
+  // Strategy lock check (matches plannerSimulate behavior)
+  const draftedNames = new Set(); // empty — board is already filtered to available
+  let picked = null;
+
+  if (resolved.targetPos) {
+    picked = plannerFindBest(overall, resolved.targetPos, draftedNames, null, board, TEAMS);
+  } else if (resolved.eligible) {
+    picked = plannerFindBest(overall, null, draftedNames, resolved.eligible, board, TEAMS);
+  }
+
+  // Hard fallback: BPA among any non-K/non-DEF if not in late rounds
+  if (!picked) {
+    const allowKDef = round >= mockState.mockRounds - 1;
+    const allowed = allowKDef ? ['QB','RB','WR','TE','K','DEF'] : ['QB','RB','WR','TE'];
+    picked = plannerFindBest(overall, null, draftedNames, allowed, board, TEAMS);
+  }
+  // Last resort: anything
+  if (!picked && board.length) picked = board[0];
+
+  if (picked) {
+    // Find the matching player in mockState.available (preserve original object)
+    const orig = mockState.available.find(p => p.name === picked.name);
+    if (orig) recordMockPick(currentMockSlot(), orig);
+  }
+}
+
+// Resolve the strategy's target position for a given round + roster state.
+// Mirrors the logic in plannerSimulate's switch statement, but extracts only
+// the "what position should I take?" decision — no actual picking happens here.
+// Returns { targetPos } for a single-position lock or { eligible: [...] } for BPA among positions.
+function resolveStrategyTarget(strategy, round, roster, numRounds) {
+  const hasK   = roster.some(p => p.pos === 'K');
+  const hasDEF = roster.some(p => p.pos === 'DEF');
+  const hasQB  = roster.some(p => p.pos === 'QB');
+  const hasTE  = roster.some(p => p.pos === 'TE');
+
+  // K/DEF forced in final rounds
+  if (!hasK   && round >= 10 && round <= 12) return { targetPos: 'K' };
+  if (!hasDEF && round >= 11 && round <= 13) return { targetPos: 'DEF' };
+
+  if (strategy.isStrong) {
+    const secondaryCount = roster.filter(p => p.pos === strategy.secondaryPos).length;
+    const neededOnzie    = !hasQB ? 'QB' : 'TE';
+    if (round <= 3) return { targetPos: strategy.primaryPos };
+    if (round <= 5) {
+      const roundsLeft   = 5 - round + 1;
+      const onziesNeeded = (!hasQB ? 1 : 0) + (!hasTE ? 1 : 0);
+      if (onziesNeeded >= roundsLeft) return { targetPos: neededOnzie };
+      if (secondaryCount === 0 && round === 5) return { targetPos: strategy.secondaryPos };
+      // Open up — prefer secondary but allow onzie if better
+      const onzieElg = ['QB','TE'].filter(p => !(p==='QB'&&hasQB) && !(p==='TE'&&hasTE));
+      return { eligible: onzieElg.length ? [strategy.secondaryPos, ...onzieElg] : [strategy.secondaryPos] };
+    }
+    // Rounds 6+: flood secondary, opportunistic onzie/primary
+    const onzieElg = ['QB','TE'].filter(p => !(p==='QB'&&hasQB) && !(p==='TE'&&hasTE));
+    if (round === 10 && onzieElg.length) return { eligible: onzieElg };
+    return { eligible: onzieElg.length
+      ? [strategy.secondaryPos, strategy.primaryPos, ...onzieElg]
+      : [strategy.secondaryPos, strategy.primaryPos] };
+  }
+
+  if (strategy.isHero) {
+    if (round === 1) return { targetPos: strategy.primaryEarly };
+    if (round <= 5) {
+      const onzieElg = ['QB','TE'].filter(p => !(p==='QB'&&hasQB) && !(p==='TE'&&hasTE));
+      return { eligible: onzieElg.length ? [strategy.secondaryEarly, ...onzieElg] : [strategy.secondaryEarly] };
+    }
+    if (round === 6) return { targetPos: strategy.primaryLate };
+    // Rounds 7+: primary late, with onzie if needed
+    const onzieElg = ['QB','TE'].filter(p => !(p==='QB'&&hasQB) && !(p==='TE'&&hasTE));
+    return { eligible: onzieElg.length ? [strategy.primaryLate, ...onzieElg] : [strategy.primaryLate] };
+  }
+
+  if (strategy.isFlood) {
+    if (round <= 5) {
+      const eligible = ['QB','RB','WR','TE'].filter(p =>
+        p !== strategy.bannedEarly &&
+        !(p === 'QB' && hasQB) &&
+        !(p === 'TE' && hasTE)
+      );
+      const roundsLeft   = 5 - round + 1;
+      const onziesNeeded = (!hasQB ? 1 : 0) + (!hasTE ? 1 : 0);
+      if (onziesNeeded >= roundsLeft) {
+        const onzieElg = ['QB','TE'].filter(p => !(p==='QB'&&hasQB) && !(p==='TE'&&hasTE));
+        return { eligible: onzieElg };
+      }
+      return { eligible };
+    }
+    return { targetPos: strategy.floodPos };
+  }
+
+  if (strategy.isEarlyQB) {
+    if (!hasQB && round <= 3) return { targetPos: 'QB' };
+    if (round <= 7) {
+      const eligible = ['RB','WR'].concat(!hasTE ? ['TE'] : []);
+      return { eligible };
+    }
+    const eligible = ['RB','WR','TE'].concat(!hasQB ? ['QB'] : []);
+    return { eligible };
+  }
+
+  // Balanced default
+  const eligible = ['QB','RB','WR','TE'].filter(p =>
+    !(p === 'QB' && hasQB) && !(p === 'TE' && hasTE)
+  );
+  return { eligible };
 }
 
 // ── Record a pick ──────────────────────────────────────────────────────────
@@ -13190,6 +13471,7 @@ function resetMockDraft() {
   mockState.picks     = [];
   mockState.available = [];
   mockState.finished  = false;
+  mockState.autoDraft = false;
 
   document.getElementById('mockSetupScreen').style.display   = 'block';
   document.getElementById('mockDraftScreen').style.display   = 'none';
